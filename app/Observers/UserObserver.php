@@ -10,10 +10,15 @@ class UserObserver
     public function creating(User $user){
         $do_id = uniqid('do_');
 
-        //为新用户生成一个 do_id
-        $user->do_id = $do_id;
-        $user->name = $do_id;
+        //如果未设置 do_id 生成一个
+        if (!isset($user->do_id)){
+            $user->do_id = $do_id;
+        }
 
-//        dd($user);
+        //如果未设置 name 则赋值为 do_id
+        if (!isset($user->name)){
+            $user->name = $do_id;
+        }
+
     }
 }
