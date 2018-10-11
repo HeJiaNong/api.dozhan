@@ -13,11 +13,23 @@ use Faker\Generator as Faker;
 |
 */
 
-$factory->define(App\User::class, function (Faker $faker) {
+$factory->define(App\Models\User::class, function (Faker $faker) {
+
+    //bcrypt 是一个消耗 cpu 的函数，用静态变量可以不用每次都去重新计算
+    static $password;
+
+    //获取当前时间并转换为字符串格式
+    $now = \Carbon\Carbon::now()->toDateTimeString();
+
     return [
+        'do_id' => uniqid('do_'),
         'name' => $faker->name,
         'email' => $faker->unique()->safeEmail,
-        'password' => '$2y$10$TKh8H1.PfQx37YgCzwiKb.KjNyWgaHb9cbcoQgdIVFlYg7B77UdFm', // secret
+        'phone_number' => $faker->phoneNumber,
+        'qq_number' => rand(1,9999999999),
+        'password' => $password?:bcrypt('123456'), // secret
         'remember_token' => str_random(10),
+        'created_at' => $now,
+        'updated_at' => $now,
     ];
 });

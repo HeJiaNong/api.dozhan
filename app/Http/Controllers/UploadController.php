@@ -21,7 +21,7 @@ class UploadController extends Controller
         //修改文件生存时间
 //        $res = $qiniu->setDeleteAfterDays(1,"2018-10-10 22:21:15.mp4","dozhan");dd($res);
 
-        dd('test_function');
+        dump('test_function');
     }
 
     //上传视频
