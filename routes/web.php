@@ -11,6 +11,15 @@
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
-});
+use Illuminate\Support\Facades\Route;
+
+//测试路由
+Route::any('/','UploadController@index')->name('test');
+
+//上传视频
+Route::view('/video','video');
+Route::post('/video','UploadController@videoUpload')->name('upload.video');
+
+//上传图片
+Route::view('/image','image');
+Route::post('/image','UploadController@imageUpload')->name('upload.image');
