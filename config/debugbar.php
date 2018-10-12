@@ -16,7 +16,7 @@ return [
 
     'enabled' => env('APP_DEBUG', null),
     'except' => [
-        //
+        'api/*',
     ],
 
     /*
