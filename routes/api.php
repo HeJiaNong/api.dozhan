@@ -37,10 +37,21 @@ $api->version('v1',['namespace' => 'App\Http\Controllers\Api'],function ($api){
         'limit' => config('api.rate_limits.sign.limit'),    //接口频率限制
         'expires' => config('api.rate_limits.sign.expires'),
     ], function ($api) {
+        //------------------游客可以访问的接口-----------------------
+        $api->get('test','TestController@store')->name('api.test.store');
+
         //发送邮件
         $api->post('email','EmailController@store')->name('api.email.store');
 
         //注册用户
         $api->get('user','UserController@store')->name('api.user.store');
+
+        //------------------需要 token 验证的接口-----------------------
+//        $api->group(['middleware' => 'api.auth'], function($api) {
+//            // 当前登录用户信息
+//            $api->get('user', 'UserController@me')
+//                ->name('api.user.show');
+//        });
+
     });
 });

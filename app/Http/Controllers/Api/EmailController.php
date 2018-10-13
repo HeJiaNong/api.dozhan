@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\Mail;
 class EmailController extends Controller
 {
     public function store(EmailRequest $request){
+
         //接收数据
         $email = $request->email;
         $password = $request->password;
@@ -23,13 +24,13 @@ class EmailController extends Controller
 
         //通过 key 生成 url 链接 访问链接即可注册
         $url = app(\Dingo\Api\Routing\UrlGenerator::class)->version('v1')->route('api.user.store',['key' => $key]);
-
-        //发送邮件
+//        dd($url);
+        //发送邮件;
         Mail::to($email)->send(new UserRegisterMail($url));
 
         //如果发送失败
         if (!empty(Mail::failures())){
-            return $this->response->error('邮件发送失败',500);
+            return $this->response->    error('邮件发送失败',500);
         }
 
         //将数据存入缓存
