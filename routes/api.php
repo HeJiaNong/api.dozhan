@@ -31,7 +31,10 @@ use Illuminate\Http\Request;
 // Dingo/api 路由 获得一个路由实例
 $api = app(\Dingo\Api\Routing\Router::class);
 
-$api->version('v1',['namespace' => 'App\Http\Controllers\Api'],function ($api){
+$api->version('v1',[
+    'namespace' => 'App\Http\Controllers\Api',
+    'middleware' => 'serializer:array',
+],function ($api){
     //游客可以访问的接口
     $api->group([
         'middleware' => 'api.throttle', //DingoApi 已经为我们提供了调用频率限制的中间件 api.throttle
@@ -40,10 +43,13 @@ $api->version('v1',['namespace' => 'App\Http\Controllers\Api'],function ($api){
     ], function ($api) {
         //测试接口
         $api->get('test','TestController@store')->name('api.test.store');
-        //邮件验证
-        $api->post('email','EmailController@store')->name('api.email.store');
-        //邮件注册用户
-        $api->get('emailregister','UserController@emailRegister')->name('api.user.emailRegister');
+
+        //邮箱验证码
+        $api->post('verificationCodes/email','VerificationCodesController@email')->name('api.verificationCodes.email');
+
+        //用户注册
+        $api->post('user','UserController@store')->name('api.users.store');
+
         //用户登陆
         $api->post('authorizations','AuthorizationsController@store')->name('api.authorizations.store');
     });

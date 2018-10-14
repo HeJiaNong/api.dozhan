@@ -38,6 +38,34 @@ class UserController extends Controller
         return redirect(route('login'));
     }
 
+    //用户注册
+    public function store(UserRequest $request,User $user){
+        //获取 Cache 中的数据
+        $data = Cache::get($request->key);
+
+        //如果用户的邮箱与缓存邮箱不匹配或者验证码不正确
+        if ($request->email !== $data['email'] || $request->code !== $data['code']){
+            Cache::forget($request->key);
+            return $this->response->errorUnauthorized('验证码错误');
+        }
+
+        //创建用户
+        $user = $user->create([
+            'email' => $request->email,
+            'password' => bcrypt($request->password),
+        ]);
+
+        //清除 此条验证码缓存
+        Cache::forget($request->key);
+
+        //dingo 封装的方法，就是返回 201 的状态码
+        return $this->response->item($user,new UserTransformer())->setMeta([
+            'access_token' => Auth::guard('api')->fromUser($user),
+            'token_type' => 'Bearer',
+            'expires_in' => Auth::guard('api')->factory()->getTTL() * 60
+        ])->setStatusCode(201);
+    }
+
     //获取用户个人信息
     public function me(){
         return $this->response->item($this->user(),new UserTransformer());

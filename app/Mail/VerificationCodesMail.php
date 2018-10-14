@@ -7,20 +7,20 @@ use Illuminate\Mail\Mailable;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Contracts\Queue\ShouldQueue;
 
-class UserRegisterMail extends Mailable
+class VerificationCodesMail extends Mailable
 {
     use Queueable, SerializesModels;
 
-    public $url;
+    public $code;
 
     /**
      * Create a new message instance.
      *
      * @return void
      */
-    public function __construct($url)
+    public function __construct($code)
     {
-        $this->url = $url;
+        $this->code = $code;
     }
 
     /**

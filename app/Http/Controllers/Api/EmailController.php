@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Requests\Api\EmailRequest;
-use App\Mail\UserRegisterMail;
+use App\Mail\VerificationCodeMail;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Mail;
@@ -26,14 +26,14 @@ class EmailController extends Controller
 
         try{
             //发送邮件;
-            Mail::to($email)->send(new UserRegisterMail($url));
+            Mail::to($email)->send(new VerificationCodeMail($url));
         }catch (\Exception $e){
             return $this->response->errorUnauthorized('请检查邮箱正确性');
         }
 
         //如果发送失败
         if (!empty(Mail::failures())){
-            return $this->response->    error('邮件发送失败',500);
+            return $this->response->error('邮件发送失败',500);
         }
 
         //将数据存入缓存
