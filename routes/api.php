@@ -32,26 +32,34 @@ use Illuminate\Http\Request;
 $api = app(\Dingo\Api\Routing\Router::class);
 
 $api->version('v1',['namespace' => 'App\Http\Controllers\Api'],function ($api){
+    //游客可以访问的接口
     $api->group([
-//        'middleware' => 'api.throttle', //DingoApi 已经为我们提供了调用频率限制的中间件 api.throttle
-//        'limit' => config('api.rate_limits.sign.limit'),    //接口频率限制
-//        'expires' => config('api.rate_limits.sign.expires'),
+        'middleware' => 'api.throttle', //DingoApi 已经为我们提供了调用频率限制的中间件 api.throttle
+        'limit' => config('api.rate_limits.sign.limit'),    //接口频率限制
+        'expires' => config('api.rate_limits.sign.expires'),
     ], function ($api) {
-        //------------------游客可以访问的接口-----------------------
+        //测试接口
         $api->get('test','TestController@store')->name('api.test.store');
-
-        //发送邮件
+        //邮件验证
         $api->post('email','EmailController@store')->name('api.email.store');
-
-        //注册用户
-        $api->get('user','UserController@store')->name('api.user.store');
-
-        //------------------需要 token 验证的接口--------  ---------------
-//        $api->group(['middleware' => 'api.auth'], function($api) {
-//            // 当前登录用户信息
-//            $api->get('user', 'UserController@me')
-//                ->name('api.user.show');
-//        });
-
+        //邮件注册用户
+        $api->get('emailregister','UserController@emailRegister')->name('api.user.emailRegister');
+        //用户登陆
+        $api->post('authorizations','AuthorizationsController@store')->name('api.authorizations.store');
     });
+
+    //需要token验证的接口
+    $api->group(['middleware' => 'api.auth'],function ($api){
+        //刷新token
+        $api->put('authorizations/current','AuthorizationsController@update')->name('api.authorizations.update');
+        //删除token
+        $api->delete('authorizations/current','AuthorizationsController@destroy')->name('api.authorizations.destroy');
+        //当前登陆用户信息
+        $api->get('user','UserController@me')->name('api.user.show');
+        //编辑登陆用户信息 patch 部分修改资源，提供部分资源信息 注意，PATCH 请求方式只能接收 application/x-www-form-urlencoded 的 [Content-type] 的表单信息
+        $api->patch('user','UserController@update')->name('api.user.update');
+    });
+
+
+
 });

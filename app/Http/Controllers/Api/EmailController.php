@@ -11,7 +11,6 @@ use Illuminate\Support\Facades\Mail;
 class EmailController extends Controller
 {
     public function store(EmailRequest $request){
-
         //接收数据
         $email = $request->email;
         $password = $request->password;
@@ -23,10 +22,14 @@ class EmailController extends Controller
         $expiredAt = now()->addMinutes(30);
 
         //通过 key 生成 url 链接 访问链接即可注册
-        $url = app(\Dingo\Api\Routing\UrlGenerator::class)->version('v1')->route('api.user.store',['key' => $key]);
-//        dd($url);
-        //发送邮件;
-        Mail::to($email)->send(new UserRegisterMail($url));
+        $url = app(\Dingo\Api\Routing\UrlGenerator::class)->version('v1')->route('api.user.emailRegister',['key' => $key]);
+
+        try{
+            //发送邮件;
+            Mail::to($email)->send(new UserRegisterMail($url));
+        }catch (\Exception $e){
+            return $this->response->errorUnauthorized('请检查邮箱正确性');
+        }
 
         //如果发送失败
         if (!empty(Mail::failures())){
@@ -43,7 +46,6 @@ class EmailController extends Controller
         ];
 
         //发送成功，返回key
-        return $this->response->array($result)->setStatusCode(201);
-
+        return $this->response->created();
     }
 }
