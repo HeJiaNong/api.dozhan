@@ -25,7 +25,7 @@ class User extends Authenticatable implements JWTSubject
 
     //可写入字段
     protected $fillable = [
-        'do_id','name','email','phone_number','qq_number','password',
+        'do_id','name','avatar','email','phone_number','qq_number','password',
     ];
 
     //隐藏字段

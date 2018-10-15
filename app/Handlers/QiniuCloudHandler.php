@@ -17,7 +17,7 @@ use Qiniu\Storage\UploadManager;
  */
 class QiniuCloudHandler
 {
-    public $myQiniuDomain; //你的七牛域名
+    public $qiniuDomain; //你的七牛域名
     public $bucket;        //对象存储空间名
     private $access_key;    //AK
     private $secret_key;    //SK
@@ -36,7 +36,7 @@ class QiniuCloudHandler
      * 初始化配置信息
      */
     private function build(){
-        $this->QiniuDomain = \config('qiniu.QiniuDomain');
+        $this->qiniuDomain = \config('qiniu.qiniuDomain');
         $this->bucket      = \config('qiniu.bucket');
         $this->access_key  = \config('qiniu.access_key');
         $this->secret_key  = \config('qiniu.secret_key');
@@ -54,8 +54,10 @@ class QiniuCloudHandler
      * @return mixed
      * @throws \Exception
      */
-    public function uploadFile($file,string $persistentOps = '',string $overwriteKey = '')
+    public function uploadFile($file,string $persistentOps = '',string $overwriteKey = '',string $bucket = '')
     {
+        $overwriteKey = (empty($overwriteKey)?$this->overwriteKey($file):$overwriteKey);
+
         $policy = [
             'scope' => $this->bucket,
             'deadline' => $this->expires,
@@ -65,7 +67,7 @@ class QiniuCloudHandler
             'persistentNotifyUrl' => $this->notify_url, //接收持久化处理结果通知的 URL
             'persistentPipeline' => $this->pipeline,    //转码队列名
 
-            //返回内容
+            //自定义返回内容
             'returnBody' => '{"bucket":"$(bucket)","key":"$(key)","mimeType":$(mimeType),"hash":"$(etag)","persistentId":"$(persistentId)"}',
         ];
 
@@ -74,13 +76,18 @@ class QiniuCloudHandler
             //生成简单上传凭证
             $this->auth->uploadToken($this->bucket,null,$this->expires,$policy,true),
             //上传至七牛的文件名
-            (empty($overwriteKey)?$this->OverwriteKey($file):$overwriteKey),
+            $overwriteKey,
             //本地文件的路径
             $file->getRealPath()
         );
 
+        $res = $this->parseRes($res);
+
+        //拼接文件url
+        $res['url'] = $this->getFileUrl($overwriteKey);
+
         //解析后，返回上传结果
-        return $this->parseRes($res);
+        return $res;
     }
 
     /**
@@ -127,6 +134,16 @@ class QiniuCloudHandler
     }
 
     /**
+     * 通过当前时间生成名字
+     * @param $file
+     * @param $prefix string 前缀
+     * @return string
+     */
+    public function overwriteKey($file,string $prefix = ''){
+        return $prefix . now()->toDateTimeString().'.'.$file->getClientOriginalExtension();
+    }
+
+    /**
      * EncodedEntryURI 格式,本格式用于在 URI中指定目标资源空间与目标资源名
      * @param $key string 空间文件名
      * @return string
@@ -150,15 +167,6 @@ class QiniuCloudHandler
         return $res;
     }
 
-    /**
-     * 通过当前时间生成名字
-     * @param $file
-     * @return string
-     */
-    public function OverwriteKey($file){
-        return now()->toDateTimeString().'.'.$file->getClientOriginalExtension();
-    }
-
     /**解析返回状态码
      * @param $res array 七牛返回的数据
      * @return mixed
@@ -167,10 +175,9 @@ class QiniuCloudHandler
 
         // 列举文件
         list($ret, $err) = $res;
-
         //状态判断
         if ($err !== null) {
-            return $err;
+            return false;
         } else {
             return $ret;
         }
@@ -196,6 +203,17 @@ class QiniuCloudHandler
         $res = $this->getBucketManagerObject()->batch($ops);
 
         return $this->parseRes($res);
+    }
+
+    /**
+     * 拼接空间文件的url链接
+     * @param $key string 空间文件名
+     * @param string $domain 域名
+     * @return string
+     */
+    public function getFileUrl($key,$domain = ''){
+        $domain = empty($domain)?$this->qiniuDomain:$domain;
+        return $domain . '/' . $key;
     }
 
 }

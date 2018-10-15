@@ -11,6 +11,7 @@ class UserTransformer extends TransformerAbstract
             'id' => $user->id,
             'do_id' => $user->do_id,
             'name' => $user->name,
+            'avatar' => $user->avatar,
             'phone_number' => $user->phone_number ? true : false,
             'qq_number' => $user->qq_number ? true : false,
             'created_at' => $user->created_at->toDateTimeString(),

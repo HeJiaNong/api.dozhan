@@ -28,12 +28,12 @@ class EmailController extends Controller
             //发送邮件;
             Mail::to($email)->send(new VerificationCodeMail($url));
         }catch (\Exception $e){
-            return $this->response->errorUnauthorized('请检查邮箱正确性');
+            return $this->response->errorInternal('邮件发送失败');
         }
 
         //如果发送失败
         if (!empty(Mail::failures())){
-            return $this->response->error('邮件发送失败',500);
+            return $this->response->errorInternal('邮件发送失败');
         }
 
         //将数据存入缓存

@@ -33,7 +33,7 @@ $api = app(\Dingo\Api\Routing\Router::class);
 
 $api->version('v1',[
     'namespace' => 'App\Http\Controllers\Api',
-    'middleware' => 'serializer:array',
+    'middleware' => 'serializer',
 ],function ($api){
     //游客可以访问的接口
     $api->group([
@@ -43,13 +43,10 @@ $api->version('v1',[
     ], function ($api) {
         //测试接口
         $api->get('test','TestController@store')->name('api.test.store');
-
         //邮箱验证码
         $api->post('verificationCodes/email','VerificationCodesController@email')->name('api.verificationCodes.email');
-
         //用户注册
         $api->post('user','UserController@store')->name('api.users.store');
-
         //用户登陆
         $api->post('authorizations','AuthorizationsController@store')->name('api.authorizations.store');
     });
@@ -64,8 +61,10 @@ $api->version('v1',[
         $api->get('user','UserController@me')->name('api.user.show');
         //编辑登陆用户信息 patch 部分修改资源，提供部分资源信息 注意，PATCH 请求方式只能接收 application/x-www-form-urlencoded 的 [Content-type] 的表单信息
         $api->patch('user','UserController@update')->name('api.user.update');
+        //资源api
+        $api->group(['prefix' => 'resource'],function ($api){
+            $api->post('image','ResourceController@image')->name('api.resource.image');
+        });
     });
-
-
 
 });

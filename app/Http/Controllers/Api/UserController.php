@@ -76,7 +76,7 @@ class UserController extends Controller
         $user = $this->user();
 
         //只取出请求中的一部分数据
-        $attributes = $request->only(['name', 'phone_number', 'qq_number']);
+        $attributes = $request->only(['name','avatar','phone_number','qq_number']);
 
         $user->update($attributes);
 
