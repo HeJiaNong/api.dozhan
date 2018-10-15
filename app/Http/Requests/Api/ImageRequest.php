@@ -25,29 +25,29 @@ class ImageRequest extends FormRequest
     {
 
         $rule = [
-            'type' => 'required|string|in:avatar,banner,video_cover',
+            'scene' => 'required|string|in:avatar,banner,video_cover',
         ];
 
-        switch ($this->type){
+        switch ($this->scene){
             case 'avatar':
                 $rule['image'] = [
                     'required',
                     'dimensions:width=200,height=200',  //限制图片分辨率
-                    'mimes:jpeg,bmp,png',   //限制图片类型
+                    'mimes:psd,jpeg,png,gif,webp,tiff,bmp',   //限制图片类型
                 ];
                 break;
             case 'banner':
                 $rule['image'] = [
                     'required',
                     'dimensions:width=1024,height=400',  //限制图片分辨率
-                    'mimes:jpeg,bmp,png',   //限制图片类型
+                    'mimes:psd,jpeg,png,gif,webp,tiff,bmp',   //限制图片类型
                 ];
                 break;
             case 'video_cover':
                 $rule['image'] = [
                     'required',
                     'dimensions:width=480,height=300',  //限制图片分辨率
-                    'mimes:jpeg,bmp,png',   //限制图片类型
+                    'mimes:psd,jpeg,png,gif,webp,tiff,bmp',   //限制图片类型
                 ];
                 break;
         }

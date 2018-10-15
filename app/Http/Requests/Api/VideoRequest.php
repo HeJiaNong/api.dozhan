@@ -24,7 +24,10 @@ class VideoRequest extends FormRequest
     public function rules()
     {
         return [
-            //
+            'video' => [
+                'required',
+                'mimetypes:video/avi,video/mp4',
+            ],
         ];
     }
 }

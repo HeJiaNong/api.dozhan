@@ -37,7 +37,7 @@ class UserRequest extends FormRequest
                 $userId = Auth::guard('api')->id();
                 return [
                     'name' => 'between:3,25|unique:users,name,' .$userId,    //unique:table,column,except,idColumn
-                    'avatar' => 'string|exists:images,url', //验证头像的url链接必须存在与images表中
+                    'avatar' => 'string',   //图片链接地址
                     'phone_number' => 'string|unique:users,phone_number,' .$userId,    //强迫 Unique 规则忽略指定 ID
                     'qq_number' => 'string|unique:users,qq_number,' .$userId,    //强迫 Unique 规则忽略指定 ID
                 ];

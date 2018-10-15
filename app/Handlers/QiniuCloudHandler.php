@@ -50,16 +50,17 @@ class QiniuCloudHandler
      * 上传文件
      * @param $file resource 文件对象
      * @param string $persistentOps 上传策略
-     * @param string $overwriteKey 自定义上传后的名称
+     * @param string $filename 自定义上传后的名称
      * @return mixed
      * @throws \Exception
      */
-    public function uploadFile($file,string $persistentOps = '',string $overwriteKey = '',string $bucket = '')
+    public function uploadFile(string $filePath,string $filename,$persistentOps = '',string $bucket = '')
     {
-        $overwriteKey = (empty($overwriteKey)?$this->overwriteKey($file):$overwriteKey);
+
+        $bucket = empty($bucket) ? $this->bucket : $bucket;
 
         $policy = [
-            'scope' => $this->bucket,
+            'scope' => $bucket,
             'deadline' => $this->expires,
 
             //持久化处理
@@ -74,20 +75,15 @@ class QiniuCloudHandler
         // 调用 UploadManager 的 putFile 方法进行文件的上传。
         $res = (new UploadManager())->putFile(
             //生成简单上传凭证
-            $this->auth->uploadToken($this->bucket,null,$this->expires,$policy,true),
+            $this->auth->uploadToken($bucket,null,$this->expires,$policy,true),
             //上传至七牛的文件名
-            $overwriteKey,
+            $filename,
             //本地文件的路径
-            $file->getRealPath()
+            $filePath
         );
 
-        $res = $this->parseRes($res);
-
-        //拼接文件url
-        $res['url'] = $this->getFileUrl($overwriteKey);
-
         //解析后，返回上传结果
-        return $res;
+        return $this->parseRes($res);
     }
 
     /**
@@ -139,8 +135,8 @@ class QiniuCloudHandler
      * @param $prefix string 前缀
      * @return string
      */
-    public function overwriteKey($file,string $prefix = ''){
-        return $prefix . now()->toDateTimeString().'.'.$file->getClientOriginalExtension();
+    public function makeFileNameByTime(string $prefix = '',string $ext = ''){
+        return str_replace(' ','-',$prefix . now()->toDateTimeString().'.'.$ext);
     }
 
     /**

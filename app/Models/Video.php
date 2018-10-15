@@ -5,9 +5,9 @@ namespace App\Models;
 use App\Handlers\QiniuCloudHandler;
 use Illuminate\Database\Eloquent\Model;
 
-class Image extends Model
+class Video extends Model
 {
-    protected $fillable = ['user_id','scene','mime','key','bucket'];
+    protected $fillable = ['user_id','mime','key','bucket'];
 
     //模型关联
     public function user(){
