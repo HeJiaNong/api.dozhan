@@ -25,7 +25,7 @@ class ImageRequest extends FormRequest
     {
 
         $rule = [
-            'scene' => 'required|string|in:avatar,banner,video_cover',
+            'scene' => 'required|string|in:avatar,banner,cover',
         ];
 
         switch ($this->scene){
@@ -43,7 +43,7 @@ class ImageRequest extends FormRequest
                     'mimes:psd,jpeg,png,gif,webp,tiff,bmp',   //限制图片类型
                 ];
                 break;
-            case 'video_cover':
+            case 'cover':
                 $rule['image'] = [
                     'required',
                     'dimensions:width=480,height=300',  //限制图片分辨率

@@ -14,6 +14,11 @@ class Video extends Model
         $this->belongsTo(User::class);
     }
 
+    //模型关联
+    public function av(){
+        $this->hasOne(Av::class);
+    }
+
     //访问器
     public function getKeyAttribute($value)
     {

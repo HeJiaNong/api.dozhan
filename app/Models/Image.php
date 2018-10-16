@@ -9,16 +9,16 @@ class Image extends Model
 {
     protected $fillable = ['user_id','scene','mime','key','bucket'];
 
-    //模型关联
-    public function user(){
-        $this->belongsTo(User::class);
-    }
-
     //访问器
     public function getKeyAttribute($value)
     {
         $qiniu = new QiniuCloudHandler();
         //拼接url
         return $qiniu->qiniuDomain . '/' . $value;
+    }
+
+    //模型关联
+    public function user(){
+        $this->belongsTo(User::class);
     }
 }

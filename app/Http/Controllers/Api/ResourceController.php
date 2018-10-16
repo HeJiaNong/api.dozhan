@@ -47,7 +47,7 @@ class ResourceController extends Controller
 
         $image = Image::create($data);
 
-        return $this->response->item($image,new ImageTransformer())->setStatusCode(201);
+        return $this->response->item($image,new ImageTransformer())->setMeta($res)->setStatusCode(201);
     }
 
     //获取不同理想对应的不同的标准尺寸
@@ -59,7 +59,7 @@ class ResourceController extends Controller
             case 'banner':
                 $size = '1024x400';
                 break;
-            case 'video_cover':
+            case 'cover':
                 $size = '480x300';
                 break;
         }
@@ -94,6 +94,6 @@ class ResourceController extends Controller
 
         $video = Video::create($data);
 
-        return $this->response->item($video,new VideoTransformer())->setStatusCode(201);
+        return $this->response->item($video,new VideoTransformer())->setMeta($res)->setStatusCode(201);
     }
 }

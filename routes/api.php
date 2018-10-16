@@ -78,7 +78,9 @@ $api->version('v1',[
         $api->patch('user','UserController@update')->name('api.user.update');
         //资源api
         $api->group(['prefix' => 'resource'],function ($api){
+            //上传图片
             $api->post('image','ResourceController@image')->name('api.resource.image');
+            //上传视频
             $api->post('video','ResourceController@video')->name('api.resource.video');
         });
     });

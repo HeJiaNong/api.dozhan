@@ -10,6 +10,16 @@ class User extends Authenticatable implements JWTSubject
 {
     use Notifiable;
 
+    //可写入字段
+    protected $fillable = [
+        'do_id','name','avatar','email','phone_number','qq_number','password',
+    ];
+
+    //隐藏字段
+    protected $hidden = [
+        'password', 'remember_token',
+    ];
+
     //返回了 User 的 id
     public function getJWTIdentifier()
     {
@@ -22,14 +32,29 @@ class User extends Authenticatable implements JWTSubject
         return [];
     }
 
+    //模型关联
+    public function album(){
+        return $this->hasMany(Album::class);
+    }
 
-    //可写入字段
-    protected $fillable = [
-        'do_id','name','avatar','email','phone_number','qq_number','password',
-    ];
+    //模型关联
+    public function av(){
+        return $this->hasMany(Av::class);
+    }
 
-    //隐藏字段
-    protected $hidden = [
-        'password', 'remember_token',
-    ];
+    //模型关联
+    public function image(){
+        return $this->hasMany(Image::class);
+    }
+
+    //模型关联
+    public function video(){
+        return $this->hasMany(Video::class);
+    }
+
+    //模型关联
+    public function comment(){
+        return $this->hasMany(Comment::class);
+    }
+
 }

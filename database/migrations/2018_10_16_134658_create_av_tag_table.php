@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class AddAvatarToUsersTable extends Migration
+class CreateAvTagTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,11 +13,12 @@ class AddAvatarToUsersTable extends Migration
      */
     public function up()
     {
-        Schema::table('users', function (Blueprint $table) {
-            $table->string('avatar')->nullable()->after('name')->comment('头像链接地址');
+        Schema::create('av_tag', function (Blueprint $table) {
+            $table->integer('av_id')->unsigned()->comment('视频ID');
+            $table->integer('tag_id')->unsigned()->comment('标签ID');
         });
     }
-
+    
     /**
      * Reverse the migrations.
      *
@@ -25,8 +26,6 @@ class AddAvatarToUsersTable extends Migration
      */
     public function down()
     {
-        Schema::table('users', function (Blueprint $table) {
-            $table->dropColumn('avatar');
-        });
+        Schema::dropIfExists('av_tag');
     }
 }

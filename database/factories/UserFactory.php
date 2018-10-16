@@ -24,6 +24,7 @@ $factory->define(App\Models\User::class, function (Faker $faker) {
     return [
         'do_id' => uniqid('do_'),
         'name' => $faker->name,
+        'avatar' => 'http://pglgpkuzs.bkt.clouddn.com/image/avatar/dozhan%E9%BB%98%E8%AE%A4%E5%A4%B4%E5%83%8F.webp',
         'email' => $faker->unique()->safeEmail,
         'phone_number' => $faker->phoneNumber,
         'qq_number' => rand(1,9999999999),
