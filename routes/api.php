@@ -76,7 +76,7 @@ $api->version('v1',[
         $api->post('user','UsersController@store')->name('api.users.store');
         //用户登陆
         $api->post('authorizations','AuthorizationsController@store')->name('api.authorizations.store');
-        //获取用户发布的专辑
+        //获取指定用户发布的专辑
         $api->get('users/{user}/albums','AlbumsController@userIndex')->name('api.users.album.index');
     });
 
