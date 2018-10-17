@@ -61,7 +61,15 @@ $api->version('v1',[
         'expires' => config('api.rate_limits.sign.expires'),
     ], function ($api) {
         //测试接口
-        $api->get('test','TestController@store')->name('api.test.store');
+        $api->get('test',function (){
+            dd([
+                'APP_ENV' => env('APP_ENV'),
+                'APP_DEBUG' => env('APP_DEBUG'),
+                'API_DEBUG' => env('API_DEBUG'),
+                'Token过期时间:' => Auth::guard('api')->factory()->getTTL().'分钟',
+                '网站URL' => env('APP_URL'),
+            ]);
+        });
         //邮箱验证码
         $api->post('verificationCodes/email','VerificationCodesController@email')->name('api.verificationCodes.email');
         //用户注册
