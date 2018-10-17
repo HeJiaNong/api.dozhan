@@ -6,6 +6,8 @@ use League\Fractal\TransformerAbstract;
 
 class UserTransformer extends TransformerAbstract
 {
+    protected $availableIncludes = ['album','image','comment','video','av'];
+
     public function transform(User $user){
         return [
             'id' => $user->id,
@@ -17,5 +19,25 @@ class UserTransformer extends TransformerAbstract
             'created_at' => $user->created_at->toDateTimeString(),
             'updated_at' => $user->updated_at->toDateTimeString(),
         ];
+    }
+
+    public function includeAlbum(User $user){
+        return $this->collection($user->album,new AlbumTransformer());
+    }
+
+    public function includeImage(User $user){
+        return $this->collection($user->image,new ImageTransformer());
+    }
+
+    public function includeComment(User $user){
+        return $this->collection($user->comment,new CommentTransformer());
+    }
+
+    public function includeVideo(User $user){
+        return $this->collection($user->video,new VideoTransformer());
+    }
+
+    public function includeAv(User $user){
+        return $this->collection($user->av,new AvTransformer());
     }
 }

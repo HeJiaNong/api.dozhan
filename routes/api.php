@@ -48,7 +48,11 @@ $api = app(\Dingo\Api\Routing\Router::class);
 
 $api->version('v1',[
     'namespace' => 'App\Http\Controllers\Api',
-    'middleware' => 'serializer',
+    'middleware' => [
+        'serializer',
+        'bindings', //路由模型绑定
+    ],
+
 ],function ($api){
     //游客可以访问的接口
     $api->group([
@@ -61,9 +65,11 @@ $api->version('v1',[
         //邮箱验证码
         $api->post('verificationCodes/email','VerificationCodesController@email')->name('api.verificationCodes.email');
         //用户注册
-        $api->post('user','UserController@store')->name('api.users.store');
+        $api->post('user','UsersController@store')->name('api.users.store');
         //用户登陆
         $api->post('authorizations','AuthorizationsController@store')->name('api.authorizations.store');
+        //获取用户发布的专辑
+        $api->get('users/{user}/albums','AlbumsController@userIndex')->name('api.users.album.index');
     });
 
     //需要token验证的接口
@@ -73,15 +79,15 @@ $api->version('v1',[
         //删除token
         $api->delete('authorizations/current','AuthorizationsController@destroy')->name('api.authorizations.destroy');
         //当前登陆用户信息
-        $api->get('user','UserController@me')->name('api.user.show');
+        $api->get('user','UsersController@me')->name('api.user.show');
         //编辑登陆用户信息 patch 部分修改资源，提供部分资源信息 注意，PATCH 请求方式只能接收 application/x-www-form-urlencoded 的 [Content-type] 的表单信息
-        $api->patch('user','UserController@update')->name('api.user.update');
+        $api->patch('user','UsersController@update')->name('api.user.update');
         //资源api
         $api->group(['prefix' => 'resource'],function ($api){
             //上传图片
-            $api->post('image','ResourceController@image')->name('api.resource.image');
+            $api->post('image','ResourcesController@image')->name('api.resource.image');
             //上传视频
-            $api->post('video','ResourceController@video')->name('api.resource.video');
+            $api->post('video','ResourcesController@video')->name('api.resource.video');
         });
     });
 

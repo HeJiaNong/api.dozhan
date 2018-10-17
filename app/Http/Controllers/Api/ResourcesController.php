@@ -13,7 +13,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use function Qiniu\base64_urlSafeEncode;
 
-class ResourceController extends Controller
+class ResourcesController extends Controller
 {
     //上传图片
     public function image(ImageRequest $request,QiniuCloudHandler $qiniu){

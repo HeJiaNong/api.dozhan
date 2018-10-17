@@ -8,7 +8,7 @@ use App\Transformers\UserTransformer;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
 
-class UserController extends Controller
+class UsersController extends Controller
 {
     //邮箱认证注册用户
     public function emailRegister(UserRequest $request){

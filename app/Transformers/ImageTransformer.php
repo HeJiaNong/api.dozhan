@@ -6,15 +6,21 @@ use League\Fractal\TransformerAbstract;
 
 class ImageTransformer extends TransformerAbstract
 {
+    protected $availableIncludes = ['user'];
+
     public function transform(Image $image){
         return [
             'id' => $image->id,
+            'name' => $image->name,
+            'description' => $image->description,
             'user_id' => $image->user_id,
-            'scene' => $image->scene,
-            'mime' => $image->mime,
-            'key' => $image->key,
+            'category_id' => $image->category_id,
             'created_at' => $image->created_at->toDateTimeString(),
             'updated_at' => $image->updated_at->toDateTimeString(),
         ];
+    }
+
+    public function includeUser(Image $image){
+        return $this->item($image->user,new UserTransformer());
     }
 }

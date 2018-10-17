@@ -19,10 +19,20 @@ class AvsTableSeeder extends Seeder
         //专辑id
         $album_ids = \App\Models\Album::all()->pluck('id')->toArray();
 
-        //todo 视频资源id
+        //频资源id
+        $video_ids = \App\Models\Video::all()->pluck('id')->toArray();
 
-        $avs = factory(\App\Models\Av::class)->times(30)->make()->each(function ($model,$index){
-            //
+        //图片id
+        $image_ids = \App\Models\Image::all()->pluck('id')->toArray();
+
+
+        $avs = factory(\App\Models\Av::class)->times(50)->make()->each(function ($model,$index)use($user_ids,$album_ids,$video_ids,$image_ids){
+            $model->user_id = array_random($user_ids);
+            $model->album_id = array_random($album_ids);
+            $model->url_id = array_random($video_ids);
+            $model->cover_id = array_random($image_ids);
         });
+
+        \App\Models\Av::insert($avs->toArray());
     }
 }
