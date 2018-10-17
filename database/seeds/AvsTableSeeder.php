@@ -34,6 +34,7 @@ class AvsTableSeeder extends Seeder
             $model->url_id = array_random($video_ids);
             $model->cover_id = array_random($image_ids);
             $model->category_id = array_random($category_ids);
+
         });
 
         \App\Models\Av::insert($avs->toArray());
