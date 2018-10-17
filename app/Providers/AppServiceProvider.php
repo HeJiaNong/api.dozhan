@@ -2,6 +2,9 @@
 
 namespace App\Providers;
 
+use Dingo\Api\Facade\API;
+use Illuminate\Auth\Access\AuthorizationException;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\ServiceProvider;
 
@@ -30,6 +33,13 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        //
+        //针对dingoapi的所有都是500错误做出优化
+        API::error(function (ModelNotFoundException $exception){
+            abort(404);
+        });
+
+        API::error(function (AuthorizationException $exception){
+            abort(403,$exception->getMessage());
+        });
     }
 }

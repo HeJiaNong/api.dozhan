@@ -108,6 +108,8 @@ $api->version('v1',[
         $api->post('albums','AlbumsController@store')->name('api.albums.store');
         //修改专辑
         $api->patch('albums/{album}','AlbumsController@update')->name('api.albums.update');
+        //删除专辑
+        $api->delete('albums/{album}','AlbumsController@destroy')->name('api.albums.destroy');
     });
 
 });

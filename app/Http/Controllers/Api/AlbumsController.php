@@ -42,6 +42,7 @@ class AlbumsController extends Controller
         return $this->response->item($album,new AlbumTransformer());
     }
 
+    //更新专辑信息
     public function update(Album $album,AlbumsRequest $request){
         //权限验证
         $this->authorize('update',$album);
@@ -52,6 +53,17 @@ class AlbumsController extends Controller
         $album->update($attributes);
 
         return $this->response->array($album->toArray());
+    }
+
+    //删除专辑
+    public function destroy(Album $album){
+        //权限验证
+        $this->authorize('destroy',$album);
+
+        //执行删除
+        $album->delete();
+
+        return $this->response->noContent();
     }
 
 }
