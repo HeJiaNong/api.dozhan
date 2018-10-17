@@ -56,9 +56,9 @@ class QiniuCloudHandler
      */
     public function uploadFile(string $filePath,string $filename,$persistentOps = '',string $bucket = '')
     {
-
+        //获取空间名
         $bucket = empty($bucket) ? $this->bucket : $bucket;
-
+        //
         $policy = [
             'scope' => $bucket,
             'deadline' => $this->expires,
@@ -74,7 +74,7 @@ class QiniuCloudHandler
 
         // 调用 UploadManager 的 putFile 方法进行文件的上传。
         $res = (new UploadManager())->putFile(
-            //生成简单上传凭证
+            //生成上传凭证
             $this->auth->uploadToken($bucket,null,$this->expires,$policy,true),
             //上传至七牛的文件名
             $filename,

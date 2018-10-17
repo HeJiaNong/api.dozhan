@@ -33,7 +33,7 @@ class AlbumsRequest extends FormRequest
                 break;
             case 'PATCH':
                 return [
-                    'name' => 'string|unique:albums,' . $this->user()->id,
+                    'name' => 'string|unique:albums,name,' . $this->user()->id,
                     'description' => 'string',
                     'category_id' => 'string|exists:categories,id',
                 ];

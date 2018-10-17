@@ -46,6 +46,11 @@ class AlbumsController extends Controller
         //权限验证
         $this->authorize('update',$album);
 
+        //只取出请求中的一部分数据
+        $attributes = $request->only(['name','description','category_id']);
+
+        $album->update($attributes);
+
         return $this->response->array($album->toArray());
     }
 
