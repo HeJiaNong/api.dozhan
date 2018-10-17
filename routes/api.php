@@ -70,6 +70,7 @@ $api->version('v1',[
                 '网站URL' => env('APP_URL'),
             ]);
         });
+        //----------------------------------------------------------------------------------------
         //邮箱验证码
         $api->post('verificationCodes/email','VerificationCodesController@email')->name('api.verificationCodes.email');
         //用户注册
@@ -77,7 +78,13 @@ $api->version('v1',[
         //用户登陆
         $api->post('authorizations','AuthorizationsController@store')->name('api.authorizations.store');
         //获取指定用户发布的专辑
-        $api->get('users/{user}/albums','AlbumsController@userIndex')->name('api.users.album.index');
+        $api->get('users/{user}/albums','AlbumsController@userIndex')->name('api.users.albums.index');
+        //----------------------------------------------------------------------------------------------
+        //获取专辑列表
+        $api->get('albums','AlbumsController@index')->name('api.albums.index');
+        //获取专辑所属分类
+        $api->get('albums/{album}/category','AlbumsController@AlbumIndex')->name('api.albums.category.index');
+
     });
 
     //需要token验证的接口
@@ -97,6 +104,10 @@ $api->version('v1',[
             //上传视频
             $api->post('video','ResourcesController@video')->name('api.resource.video');
         });
+        //发布专辑
+        $api->post('albums','AlbumsController@store')->name('api.albums.store');
+        //修改专辑
+        $api->patch('albums/{album}','AlbumsController@update')->name('api.albums.update');
     });
 
 });

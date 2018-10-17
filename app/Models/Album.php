@@ -6,11 +6,11 @@ use Illuminate\Database\Eloquent\Model;
 
 class Album extends Model
 {
-    protected $fillable = ['category_id'];
+    protected $fillable = ['name','description','user_id','category_id'];
 
     //模型关联
     public function av(){
-        return $this->belongsTo(Av::class);
+        return $this->hasMany(Av::class);
     }
 
     //模型关联

@@ -57,4 +57,9 @@ class User extends Authenticatable implements JWTSubject
         return $this->hasMany(Comment::class);
     }
 
+    //验证模型的对应用户是否与当前登陆用户一致
+    public function isAuthOf($model)
+    {
+        return $model->user_id == $this->id;
+    }
 }
