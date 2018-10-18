@@ -72,6 +72,8 @@ class QiniuCloudHandler
             'returnBody' => '{"bucket":"$(bucket)","key":"$(key)","mimeType":$(mimeType),"hash":"$(etag)","persistentId":"$(persistentId)"}',
         ];
 
+        dd($this->auth->uploadToken($bucket,null,$this->expires,$policy,true));
+
         // 调用 UploadManager 的 putFile 方法进行文件的上传。
         $res = (new UploadManager())->putFile(
             //生成上传凭证

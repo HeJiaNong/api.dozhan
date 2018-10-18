@@ -10,7 +10,7 @@ return [
     //SK
     'secret_key'    => '07HYzerzkxElZyPgnShHn9luffNPNuKwegpE16oY',
     //自定义凭证有效期（expires单位为秒，为上传凭证的有效时间）
-    'expires'       => time()+3600,
+    'expires'       => time()+3600 * 10,
     //队列名
     'pipeline'      => 'dozhan',
     //持久化处理回调地址
