@@ -15,21 +15,17 @@ class AlbumsController extends Controller
 {
     //获取指定用户发布的专辑
     public function userIndex(User $user,Request $request){
-        $albums = $user->album();
-        $albums = $albums->paginate(20);
-        return $this->response->paginator($albums,new AlbumTransformer());
+        return $this->response->paginator($user->album()->paginate(20),new AlbumTransformer());
     }
 
     //专辑列表
     public function index(){
-        $albums = Album::paginate(20);
-        return $this->response->paginator($albums,new AlbumTransformer());
+        return $this->response->paginator(Album::paginate(20),new AlbumTransformer());
     }
 
     //获取某专辑对应的分类
     public function CategoryIndex(Album $album){
-        $category = $album->category;
-        return $this->response->item($category,new CategoryTransformer());
+        return $this->response->item($album->category,new CategoryTransformer());
     }
 
     //发布专辑
@@ -69,7 +65,7 @@ class AlbumsController extends Controller
 
     //获取某专辑下的所有视频
     public function AvsIndex(Album $album){
-        return $this->response->collection($album->av,new AvTransformer());
+        return $this->response->paginator($album->av()->paginate(20),new AvTransformer());
     }
 
 }

@@ -19,11 +19,12 @@ class CategoriesController extends Controller
 
     //获取某分类下的所有专辑
     public function albumsIndex(Category $category){
-        return $this->response->collection($category->album,new AlbumTransformer());
+        return $this->response->paginator($category->album()->paginate(20),new AlbumTransformer());
     }
 
+    //获取某分类下的所有视频
     public function avsIndex(Category $category){
-        return $this->response->collection($category->av,new AvTransformer());
+        return $this->response->paginator($category->av()->paginate(20),new AvTransformer());
     }
 
     //新增分类
