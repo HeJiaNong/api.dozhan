@@ -16,7 +16,7 @@ class AuthServiceProvider extends ServiceProvider
         \App\Models\Album::class => \App\Policies\AlbumPolicy::class,
         \App\Models\Av::class => \App\Policies\AvPolicy::class,
         \App\Models\Category::class => \App\Policies\CategoryPolicy::class,
-
+        \App\Models\Tag::class => \App\Policies\TagPolicy::class,
     ];
 
     /**

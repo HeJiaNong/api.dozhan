@@ -2,11 +2,10 @@
 
 namespace App\Policies;
 
-use App\Models\Category;
 use App\Models\User;
 use Illuminate\Auth\Access\HandlesAuthorization;
 
-class CategoryPolicy
+class TagPolicy
 {
     use HandlesAuthorization;
 
@@ -23,23 +22,17 @@ class CategoryPolicy
     //过滤器
     public function before($user, $ability)
     {
-        if ($user->hasPermissionTo('manage_categories')) {
+        if ($user->hasPermissionTo('manage_tags')) {
             return true;
         }
     }
 
-    //新增权限
-    public function create(){
-        return false;
-    }
-
-    //更新权限
     public function update(){
         return false;
     }
 
-    //删除权限
     public function destroy(){
         return false;
     }
+
 }

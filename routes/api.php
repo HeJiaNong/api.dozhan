@@ -94,6 +94,9 @@ $api->version('v1',[
         $api->get('categories/{category}/avs','CategoriesController@avsIndex')->name('api.categories.avs.index');
         //视频列表
         $api->get('avs','AvsController@index')->name('api.avs.index');
+        //获取所有标签
+        $api->get('tags','TagsController@index')->name('api.tags.index');
+
 
     });
 
@@ -132,6 +135,12 @@ $api->version('v1',[
         $api->patch('avs/{av}','AvsController@update')->name('api.av.update');
         //删除视频
         $api->delete('avs/{av}','AvsController@destroy')->name('api.av.destroy');
+        //新增标签
+        $api->post('tags','TagsController@store')->name('api.tags.store');
+        //修改标签
+        $api->patch('tags/{tag}','TagsController@update')->name('api.tags.update');
+        //删除标签
+        $api->delete('tags/{tag}','TagsController@destroy')->name('api.tags.destroy');
     });
 
 });

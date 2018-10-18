@@ -3,7 +3,6 @@ namespace App\Observers;
 
 // creating, created, updating, updated, saving,
 // saved,  deleting, deleted, restoring, restored
-use App\Models\Album;
 use App\Models\Category;
 use Illuminate\Support\Facades\DB;
 
