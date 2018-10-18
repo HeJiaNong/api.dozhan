@@ -30,7 +30,7 @@ class Av extends Model
 
     //模型关联
     public function video(){
-        return $this->belongsTo(Video::class,'url_id');
+        return $this->belongsTo(Video::class);
     }
 
     //模型关联
@@ -40,6 +40,6 @@ class Av extends Model
 
     //模型关联
     public function image(){
-        return $this->belongsTo(Image::class,'cover_id');
+        return $this->belongsTo(Image::class);
     }
 }

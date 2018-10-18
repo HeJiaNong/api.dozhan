@@ -92,6 +92,8 @@ $api->version('v1',[
         $api->get('categories/{category}/albums','CategoriesController@albumsIndex')->name('api.categories.albums.index');
         //获取某分类下的所有视频
         $api->get('categories/{category}/avs','CategoriesController@avsIndex')->name('api.categories.avs.index');
+        //视频列表
+        $api->get('avs','AvsController@index')->name('api.avs.index');
 
     });
 

@@ -15,8 +15,8 @@ class AvTransformer extends TransformerAbstract
             'description' => $av->description,
             'user_id' => $av->user_id,
             'album_id' => $av->album_id,
-            'url_id' => $av->url_id,
-            'cover_id' => $av->cover_id,
+            'video_id' => $av->video_id,
+            'image_id' => $av->image_id,
             'created_at' => $av->created_at->toDateTimeString(),
             'updated_at' => $av->updated_at->toDateTimeString(),
         ];

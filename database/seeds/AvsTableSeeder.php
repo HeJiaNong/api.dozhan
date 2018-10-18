@@ -31,8 +31,8 @@ class AvsTableSeeder extends Seeder
         $avs = factory(\App\Models\Av::class)->times(50)->make()->each(function ($model,$index)use($user_ids,$album_ids,$video_ids,$image_ids,$category_ids){
             $model->user_id = array_random($user_ids);
             $model->album_id = array_random($album_ids);
-            $model->url_id = array_random($video_ids);
-            $model->cover_id = array_random($image_ids);
+            $model->video_id = array_random($video_ids);
+            $model->image_id = array_random($image_ids);
             $model->category_id = array_random($category_ids);
 
         });
