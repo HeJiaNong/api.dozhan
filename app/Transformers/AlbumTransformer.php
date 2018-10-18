@@ -4,7 +4,7 @@ namespace App\Transformers;
 use App\Models\Album;
 use League\Fractal\TransformerAbstract;
 
-class AlbumTransformer extends TransformerAbstract
+class   AlbumTransformer extends TransformerAbstract
 {
     protected $availableIncludes = ['av','user','category'];
 

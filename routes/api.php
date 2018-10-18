@@ -86,6 +86,12 @@ $api->version('v1',[
         $api->get('albums/{album}/category','AlbumsController@CategoryIndex')->name('api.albums.category.index');
         //获取专辑下的所有视频
         $api->get('albums/{album}/avs','AlbumsController@AvsIndex')->name('api.albums.avs.index');
+        //获取分类列表
+        $api->get('categories','CategoriesController@index')->name('api.categories.index');
+        //获取某分类下的所有专辑
+        $api->get('categories/{category}/albums','CategoriesController@albumsIndex')->name('api.categories.albums.index');
+        //获取某分类下的所有视频
+        $api->get('categories/{category}/avs','CategoriesController@avsIndex')->name('api.categories.avs.index');
 
     });
 
@@ -112,6 +118,8 @@ $api->version('v1',[
         $api->patch('albums/{album}','AlbumsController@update')->name('api.albums.update');
         //删除专辑
         $api->delete('albums/{album}','AlbumsController@destroy')->name('api.albums.destroy');
+        //新建分类
+        $api->post('categories','CategoriesController@store')->name('api.categories.store');
     });
 
 });
