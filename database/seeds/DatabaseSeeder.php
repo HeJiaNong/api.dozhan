@@ -19,5 +19,6 @@ class DatabaseSeeder extends Seeder
          $this->call(VideosTableSeeder::class);
          $this->call(AvsTableSeeder::class);
          $this->call(CommentsTableSeeder::class);
+         $this->call(AvTagTableSeeder::class);
     }
 }

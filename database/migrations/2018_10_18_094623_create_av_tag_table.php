@@ -14,11 +14,11 @@ class CreateAvTagTable extends Migration
     public function up()
     {
         Schema::create('av_tag', function (Blueprint $table) {
-            $table->integer('av_id')->unsigned()->comment('视频ID');
-            $table->integer('tag_id')->unsigned()->comment('标签ID');
+            $table->integer('av_id')->unsigned()->index()->comment('视频id');
+            $table->integer('tag_id')->unsigned()->index()->comment('视频id');
         });
     }
-    
+
     /**
      * Reverse the migrations.
      *

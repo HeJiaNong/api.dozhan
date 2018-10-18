@@ -69,8 +69,7 @@ class AlbumsController extends Controller
 
     //获取某专辑下的所有视频
     public function AvsIndex(Album $album){
-        $avs = $album->av;
-        return $this->response->collection($avs,new AvTransformer());
+        return $this->response->collection($album->av,new AvTransformer());
     }
 
 }

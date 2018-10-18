@@ -12,4 +12,9 @@ class Category extends Model
     public function album(){
         return $this->hasMany(Album::class);
     }
+
+    //模型关联
+    public function av(){
+        return $this->hasMany(Av::class);
+    }
 }

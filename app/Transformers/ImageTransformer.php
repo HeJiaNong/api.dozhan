@@ -11,10 +11,10 @@ class ImageTransformer extends TransformerAbstract
     public function transform(Image $image){
         return [
             'id' => $image->id,
-            'name' => $image->name,
-            'description' => $image->description,
             'user_id' => $image->user_id,
-            'category_id' => $image->category_id,
+            'scene' => $image->scene,
+            'mime' => $image->mime,
+            'key' => $image->key,
             'created_at' => $image->created_at->toDateTimeString(),
             'updated_at' => $image->updated_at->toDateTimeString(),
         ];

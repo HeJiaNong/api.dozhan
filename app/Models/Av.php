@@ -14,6 +14,11 @@ class Av extends Model
     }
 
     //模型关联
+    public function category(){
+        return $this->belongsTo(Category::class);
+    }
+
+    //模型关联
     public function album(){
         return $this->belongsTo(Album::class);
     }
@@ -35,6 +40,6 @@ class Av extends Model
 
     //模型关联
     public function image(){
-        return $this->hasOne(Image::class,'cover_id');
+        return $this->belongsTo(Image::class,'cover_id');
     }
 }
