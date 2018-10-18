@@ -83,7 +83,9 @@ $api->version('v1',[
         //获取专辑列表
         $api->get('albums','AlbumsController@index')->name('api.albums.index');
         //获取专辑所属分类
-        $api->get('albums/{album}/category','AlbumsController@AlbumIndex')->name('api.albums.category.index');
+        $api->get('albums/{album}/category','AlbumsController@CategoryIndex')->name('api.albums.category.index');
+        //获取专辑下的所有视频
+        $api->get('albums/{album}/avs','AlbumsController@AvsIndex')->name('api.albums.avs.index');
 
     });
 

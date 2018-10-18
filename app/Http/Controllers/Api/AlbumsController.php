@@ -6,6 +6,7 @@ use App\Http\Requests\Api\AlbumsRequest;
 use App\Models\Album;
 use App\Models\User;
 use App\Transformers\AlbumTransformer;
+use App\Transformers\AvTransformer;
 use App\Transformers\CategoryTransformer;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -26,7 +27,7 @@ class AlbumsController extends Controller
     }
 
     //获取某专辑对应的分类
-    public function albumIndex(Album $album){
+    public function CategoryIndex(Album $album){
         $category = $album->category;
         return $this->response->item($category,new CategoryTransformer());
     }
@@ -64,6 +65,12 @@ class AlbumsController extends Controller
         $album->delete();
 
         return $this->response->noContent();
+    }
+
+    //获取某专辑下的所有视频
+    public function AvsIndex(Album $album){
+        $avs = $album->av;
+        return $this->response->collection($avs,new AvTransformer());
     }
 
 }
