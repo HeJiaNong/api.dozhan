@@ -4,11 +4,15 @@ namespace App\Models;
 
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Foundation\Auth\User as Authenticatable;
+use Spatie\Permission\Traits\HasRoles;
 use Tymon\JWTAuth\Contracts\JWTSubject;
 
 class User extends Authenticatable implements JWTSubject
 {
+    use HasRoles;   //用户权限管理包
     use Notifiable;
+
+//    protected $guard_name = 'api';    //或者你想要使用的任何警卫
 
     //可写入字段
     protected $fillable = [
@@ -61,5 +65,12 @@ class User extends Authenticatable implements JWTSubject
     public function isAuthOf($model)
     {
         return $model->user_id == $this->id;
+    }
+
+    //检测当前登陆用户是否拥有某权限，如果没有跳转报错
+    public function hasPermissionOrError($permission){
+        if (!$this->hasPermissionTo('manage_categories')){
+            abort(401);
+        }
     }
 }

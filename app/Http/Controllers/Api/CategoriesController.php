@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Http\Requests\Api\CategoryRequest;
 use App\Models\Album;
 use App\Models\Category;
 use App\Transformers\AlbumTransformer;
@@ -26,8 +27,39 @@ class CategoriesController extends Controller
     }
 
     //新增分类
-    public function store(){
-        //todo 需要权限认证,管理员或者站长才能操作
+    public function store(CategoryRequest $request){
+        //权限验证
+        $this->user()->hasPermissionOrError('manage_categories');
+
+        $categories = $request->only(['name','description']);
+
+        Category::create($categories);
+
+        return $this->response->created();
+    }
+
+    //删除分类
+    public function destroy(Category $category){
+        //权限验证
+        $this->user()->hasPermissionOrError('manage_categories');
+
+        //删除分类
+        $category->delete();
+
+        //返回响应
+        return $this->response->noContent();
+    }
+
+    //修改分类
+    public function update(Category $category,CategoryRequest $request){
+        //权限验证
+        $this->user()->hasPermissionOrError('manage_categories');
+
+        $data = $request->only(['name','description']);
+
+        $category->update($data);
+
+        return $this->response->item($category,new CategoryTransformer());
     }
 
 }

@@ -120,6 +120,10 @@ $api->version('v1',[
         $api->delete('albums/{album}','AlbumsController@destroy')->name('api.albums.destroy');
         //新建分类
         $api->post('categories','CategoriesController@store')->name('api.categories.store');
+        //修改分类
+        $api->patch('categories/{category}','CategoriesController@update')->name('api.categories.update');
+        //删除分类
+        $api->delete('categories/{category}','CategoriesController@destroy')->name('api.categories.destroy');
     });
 
 });

@@ -30,5 +30,12 @@ class UsersTableSeeder extends Seeder
 
         //保存
         $user->save();
+
+        //为用户添加角色
+        $user->assignRole(['Founder']);
+
+        //为2号用户添加角色
+        $user = \App\Models\User::find(2);
+        $user->assignRole('Maintainer');
     }
 }
