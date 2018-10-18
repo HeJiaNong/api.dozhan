@@ -20,14 +20,40 @@ class SeedRolesAndPermissionsData extends Migration
         app()['cache']->forget('spatie.permission.cache');
 
         //创建权限
+        //模型权限
         Permission::create(['name' => 'manage_categories']);
+        Permission::create(['name' => 'manage_avs']);
+        Permission::create(['name' => 'manage_albums']);
+        Permission::create(['name' => 'manage_videos']);
+        Permission::create(['name' => 'manage_comments']);
+        Permission::create(['name' => 'manage_images']);
+        Permission::create(['name' => 'manage_tags']);
+        Permission::create(['name' => 'manage_users']);
+        //站点权限
+        Permission::create(['name' => 'site_setting']);
 
-        //创建角色,赋予权限
+        //管理员角色,赋予权限
         $maintainer = Role::create(['name' => 'Maintainer']);
         $maintainer->givePermissionTo('manage_categories');
+        $maintainer->givePermissionTo('manage_avs');
+        $maintainer->givePermissionTo('manage_albums');
+        $maintainer->givePermissionTo('manage_videos');
+        $maintainer->givePermissionTo('manage_comments');
+        $maintainer->givePermissionTo('manage_images');
+        $maintainer->givePermissionTo('manage_tags');
+        $maintainer->givePermissionTo('manage_users');
 
+        //站长角色
         $founder = Role::create(['name' => 'Founder']);
+        $founder->givePermissionTo('site_setting');
         $founder->givePermissionTo('manage_categories');
+        $founder->givePermissionTo('manage_avs');
+        $founder->givePermissionTo('manage_albums');
+        $founder->givePermissionTo('manage_videos');
+        $founder->givePermissionTo('manage_comments');
+        $founder->givePermissionTo('manage_images');
+        $founder->givePermissionTo('manage_tags');
+        $founder->givePermissionTo('manage_users');
     }
 
     /**

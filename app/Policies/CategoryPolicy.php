@@ -2,11 +2,11 @@
 
 namespace App\Policies;
 
-use App\Models\Album;
+use App\Models\Category;
 use App\Models\User;
 use Illuminate\Auth\Access\HandlesAuthorization;
 
-class AlbumPolicy
+class CategoryPolicy
 {
     use HandlesAuthorization;
 
@@ -23,19 +23,23 @@ class AlbumPolicy
     //过滤器
     public function before($user, $ability)
     {
-        if ($user->hasPermissionTo('manage_albums')) {
+        if ($user->hasPermissionTo('manage_categories')) {
             return true;
         }
     }
 
+    //新增权限
+    public function create(){
+        return true;
+    }
+
     //更新权限
-    public function update(User $user,Album $album){
-        return $user->isAuthOf($album);
+    public function update(){
+        return true;
     }
 
     //删除权限
-    public function destroy(User $user,Album $album){
-        return $user->isAuthOf($album);
+    public function destroy(){
+        return true;
     }
-
 }

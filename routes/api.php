@@ -126,6 +126,12 @@ $api->version('v1',[
         $api->patch('categories/{category}','CategoriesController@update')->name('api.categories.update');
         //删除分类
         $api->delete('categories/{category}','CategoriesController@destroy')->name('api.categories.destroy');
+        //发布视频
+        $api->post('avs','AvsController@store')->name('api.avs.store');
+        //编辑视频
+        $api->patch('avs/{av}','AvsController@update')->name('api.av.update');
+        //删除视频
+        $api->delete('avs/{av}','AvsController@destroy')->name('api.av.destroy');
     });
 
 });

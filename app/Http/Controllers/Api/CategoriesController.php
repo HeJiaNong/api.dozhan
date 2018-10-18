@@ -30,7 +30,7 @@ class CategoriesController extends Controller
     //新增分类
     public function store(CategoryRequest $request){
         //权限验证
-        $this->user()->hasPermissionOrError('manage_categories');
+        $this->authorize('create',Category::class);
 
         $categories = $request->only(['name','description']);
 
@@ -42,7 +42,7 @@ class CategoriesController extends Controller
     //删除分类
     public function destroy(Category $category){
         //权限验证
-        $this->user()->hasPermissionOrError('manage_categories');
+        $this->authorize('destroy',$category);
 
         //删除分类
         $category->delete();
@@ -54,7 +54,7 @@ class CategoriesController extends Controller
     //修改分类
     public function update(Category $category,CategoryRequest $request){
         //权限验证
-        $this->user()->hasPermissionOrError('manage_categories');
+        $this->authorize('update',Category::class);
 
         $data = $request->only(['name','description']);
 

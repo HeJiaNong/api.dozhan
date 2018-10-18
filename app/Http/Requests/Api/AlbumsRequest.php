@@ -28,14 +28,14 @@ class AlbumsRequest extends FormRequest
                 return [
                     'name' => 'required|string|unique:albums',
                     'description' => 'required|string',
-                    'category_id' => 'required|string|exists:categories,id',
+                    'category_id' => 'required|integer|exists:categories,id',
                 ];
                 break;
             case 'PATCH':
                 return [
-                    'name' => 'string|unique:albums,name,' . $this->user()->id,
+                    'name' => 'string|unique:albums,name,' . $this->album->id,
                     'description' => 'string',
-                    'category_id' => 'string|exists:categories,id',
+                    'category_id' => 'integer|exists:categories,id',
                 ];
                 break;
         }

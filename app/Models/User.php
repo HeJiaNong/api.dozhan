@@ -67,10 +67,4 @@ class User extends Authenticatable implements JWTSubject
         return $model->user_id == $this->id;
     }
 
-    //检测当前登陆用户是否拥有某权限，如果没有跳转报错
-    public function hasPermissionOrError($permission){
-        if (!$this->hasPermissionTo('manage_categories')){
-            abort(401);
-        }
-    }
 }

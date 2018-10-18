@@ -44,6 +44,11 @@ class AlbumsController extends Controller
         //权限验证
         $this->authorize('update',$album);
 
+        //权限验证
+        if (!$this->user()->isAuthOf($album) && !($this->user()->hasPermissionTo('manage_albums'))){
+            return $this->response->errorUnauthorized();
+        }
+
         //只取出请求中的一部分数据
         $attributes = $request->only(['name','description','category_id']);
 

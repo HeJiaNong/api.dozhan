@@ -21,6 +21,7 @@ class AppServiceProvider extends ServiceProvider
         \App\Models\User::observe(\App\Observers\UserObserver::class);
         \App\Models\Category::observe(\App\Observers\CategoryObserver::class);
         \App\Models\Album::observe(\App\Observers\AlbumObserver::class);
+        \App\Models\Av::observe(\App\Observers\AvObserver::class);
 
     }
 
