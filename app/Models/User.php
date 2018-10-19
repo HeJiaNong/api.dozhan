@@ -6,13 +6,22 @@ use Illuminate\Notifications\Notifiable;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Spatie\Permission\Traits\HasRoles;
 use Tymon\JWTAuth\Contracts\JWTSubject;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class User extends Authenticatable implements JWTSubject
 {
     use HasRoles;   //用户权限管理包
     use Notifiable;
+    use SoftDeletes;    //启用软删除
 
 //    protected $guard_name = 'api';    //或者你想要使用的任何警卫
+
+    /**
+     * 需要被转换成日期的属性。
+     *
+     * @var array
+     */
+    protected $dates = ['deleted_at'];
 
     //可写入字段
     protected $fillable = [

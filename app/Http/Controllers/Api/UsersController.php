@@ -71,7 +71,7 @@ class UsersController extends Controller
         return $this->response->item($this->user(),new UserTransformer());
     }
 
-    //修改用户信息
+    //修改登陆用户信息
     public function update(UserRequest $request){
         $user = $this->user();
 
@@ -81,5 +81,17 @@ class UsersController extends Controller
         $user->update($attributes);
 
         return $this->response->item($user,new UserTransformer());
+    }
+
+    public function show(User $user){
+        return $this->response->item($user,new UserTransformer());
+    }
+
+    public function destroy(User $user){
+        $this->authorize('destroy',User::class);
+
+        $user->delete();
+
+        return $this->response->noContent();
     }
 }

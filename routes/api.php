@@ -80,6 +80,10 @@ $api->version('v1',[
         //获取指定用户发布的专辑
         $api->get('users/{user}/albums','AlbumsController@userIndex')->name('api.users.albums.index');
         //==============================================================================================================
+        //获取某用户的信息
+        $api->get('users/{user}','UsersController@show')->name('api.users.show');
+        //==============================================================================================================
+
         //获取专辑列表
         $api->get('albums','AlbumsController@index')->name('api.albums.index');
         //获取专辑所属分类
@@ -117,6 +121,8 @@ $api->version('v1',[
         $api->get('user','UsersController@me')->name('api.user.show');
         //编辑登陆用户信息 patch 部分修改资源，提供部分资源信息 注意，PATCH 请求方式只能接收 application/x-www-form-urlencoded 的 [Content-type] 的表单信息
         $api->patch('user','UsersController@update')->name('api.user.update');
+        //删除某用户
+        $api->delete('users/{user}','UsersController@destroy')->name('api.users.destroy');
         //==============================================================================================================
         //资源api
         $api->group(['prefix' => 'resource'],function ($api){

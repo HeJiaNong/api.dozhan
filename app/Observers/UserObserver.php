@@ -28,4 +28,5 @@ class UserObserver
             $user->avatar = 'http://pglgpkuzs.bkt.clouddn.com/image/avatar/dozhan%E9%BB%98%E8%AE%A4%E5%A4%B4%E5%83%8F.webp';
         }
     }
+    
 }

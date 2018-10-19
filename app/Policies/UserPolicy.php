@@ -18,4 +18,16 @@ class UserPolicy
     {
         //
     }
+
+    public function before(User $user){
+        return $user->hasPermissionTo('manage_users');
+    }
+
+    public function destroy(User $user){
+        return false;
+    }
+
+    public function update(User $user){
+        return $user->isAuthOf($user);
+    }
 }
