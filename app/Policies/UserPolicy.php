@@ -33,4 +33,8 @@ class UserPolicy
         //如果操作的用户和当前登陆用户一直才允许更新
         return $manageUser->id == $user->id;
     }
+
+    public function restore(){
+        return false;
+    }
 }

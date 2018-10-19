@@ -123,8 +123,10 @@ $api->version('v1',[
         $api->patch('user','UsersController@updateMe')->name('api.user.update.me');
         //编辑某用户信息
         $api->patch('users/{user}','UsersController@update')->name('api.users.update');
-        //删除某用户
+        //注销某用户
         $api->delete('users/{user}','UsersController@destroy')->name('api.users.destroy');
+        //恢复注销某用户
+        $api->put('users/{user}','UsersController@restore')->name('api.users.restore');
         //==============================================================================================================
         //资源api
         $api->group(['prefix' => 'resource'],function ($api){

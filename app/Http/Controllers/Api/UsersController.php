@@ -108,4 +108,21 @@ class UsersController extends Controller
 
         return $this->response->item($user,new UserTransformer());
     }
+
+    //恢复已注销的用户
+    public function restore($user){
+        //权限验证
+        $this->authorize('restore',User::class);
+
+        $user = User::withTrashed()->find($user);
+
+        if (!$user){
+            abort(404);
+        }
+
+        //恢复
+        $user->restore();
+
+        return $this->response->item($user,new UserTransformer());
+    }
 }
