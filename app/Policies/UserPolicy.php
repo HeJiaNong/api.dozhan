@@ -20,14 +20,17 @@ class UserPolicy
     }
 
     public function before(User $user){
-        return $user->hasPermissionTo('manage_users');
+        if ($user->hasPermissionTo('manage_users')) {
+            return true;
+        }
     }
 
     public function destroy(User $user){
         return false;
     }
 
-    public function update(User $user){
-        return $user->isAuthOf($user);
+    public function update(User $user,$manageUser){
+        //如果操作的用户和当前登陆用户一直才允许更新
+        return $manageUser->id == $user->id;
     }
 }

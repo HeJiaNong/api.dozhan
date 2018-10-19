@@ -72,7 +72,7 @@ class UsersController extends Controller
     }
 
     //修改登陆用户信息
-    public function update(UserRequest $request){
+    public function updateMe(UserRequest $request){
         $user = $this->user();
 
         //只取出请求中的一部分数据
@@ -83,15 +83,29 @@ class UsersController extends Controller
         return $this->response->item($user,new UserTransformer());
     }
 
+    //查看某用户信息
     public function show(User $user){
         return $this->response->item($user,new UserTransformer());
     }
 
+    //注销用户
     public function destroy(User $user){
         $this->authorize('destroy',User::class);
 
         $user->delete();
 
         return $this->response->noContent();
+    }
+
+    //更新用户信息
+    public function update(User $user,UserRequest $request){
+        $this->authorize('update',$user);
+
+        //只取出请求中的一部分数据
+        $attributes = $request->only(['name','avatar','phone_number','qq_number']);
+
+        $user->update($attributes);
+
+        return $this->response->item($user,new UserTransformer());
     }
 }

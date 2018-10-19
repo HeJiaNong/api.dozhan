@@ -120,7 +120,9 @@ $api->version('v1',[
         //当前登陆用户信息
         $api->get('user','UsersController@me')->name('api.user.show');
         //编辑登陆用户信息 patch 部分修改资源，提供部分资源信息 注意，PATCH 请求方式只能接收 application/x-www-form-urlencoded 的 [Content-type] 的表单信息
-        $api->patch('user','UsersController@update')->name('api.user.update');
+        $api->patch('user','UsersController@updateMe')->name('api.user.update.me');
+        //编辑某用户信息
+        $api->patch('users/{user}','UsersController@update')->name('api.users.update');
         //删除某用户
         $api->delete('users/{user}','UsersController@destroy')->name('api.users.destroy');
         //==============================================================================================================

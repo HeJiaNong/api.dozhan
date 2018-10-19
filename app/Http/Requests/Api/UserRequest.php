@@ -19,17 +19,20 @@ class UserRequest extends FormRequest
                 return [
                     'email' => 'required|email|max:255|unique:users',    //unique:table,column,except,idColumn
                     'password' => 'required|string|min:6',
-                    'code' => 'required|string',
+                    'code' => 'required|integer',
                     'key' => 'required|string',
                 ];
                 break;
             case 'PATCH':
-                $userId = Auth::guard('api')->id();
+                $userId = $this->user()->id;
+                if ($this->user){
+                    $userId = $this->user->id;
+                }
                 return [
                     'name' => 'between:3,25|unique:users,name,' .$userId,    //unique:table,column,except,idColumn
                     'avatar' => 'string',   //图片链接地址
-                    'phone_number' => 'string|unique:users,phone_number,' .$userId,    //强迫 Unique 规则忽略指定 ID
-                    'qq_number' => 'string|unique:users,qq_number,' .$userId,    //强迫 Unique 规则忽略指定 ID
+                    'phone_number' => 'integer|unique:users,phone_number,' .$userId,    //强迫 Unique 规则忽略指定 ID
+                    'qq_number' => 'integer|unique:users,qq_number,' .$userId,    //强迫 Unique 规则忽略指定 ID
                 ];
                 break;
             default :
