@@ -58,4 +58,9 @@ class AvsController extends Controller
 
         return $this->response->noContent();
     }
+
+    //视频详情
+    public function show(Av $av){
+        return $this->response->item($av,new AvTransformer());
+    }
 }
