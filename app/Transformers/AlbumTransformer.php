@@ -29,6 +29,6 @@ class   AlbumTransformer extends TransformerAbstract
     }
 
     public function includeCategory(Album $album){
-        return $this->item($album->category,new CategoryTransformer());
+        return $this->collection($album->category,new CategoryTransformer());
     }
 }

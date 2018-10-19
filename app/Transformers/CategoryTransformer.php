@@ -6,7 +6,7 @@ use League\Fractal\TransformerAbstract;
 
 class CategoryTransformer extends TransformerAbstract
 {
-    protected $availableIncludes = ['album','av'];
+    protected $availableIncludes = ['albums','avs'];
 
     public function transform(Category $category){
         return [
@@ -18,11 +18,11 @@ class CategoryTransformer extends TransformerAbstract
         ];
     }
 
-    public function includeAlbum(Category $category){
-        return $this->collection($category->album,new AlbumTransformer());
+    public function includeAlbums(Category $category){
+        return $this->collection($category->albums,new AlbumTransformer());
     }
 
-    public function includeAv(Category $category){
-        return $this->collection($category->av,new AvTransformer());
+    public function includeAvs(Category $category){
+        return $this->collection($category->avs,new AvTransformer());
     }
 }

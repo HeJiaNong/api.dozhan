@@ -9,12 +9,13 @@ class Category extends Model
     protected $fillable = ['name','description'];
 
     //模型关联
-    public function album(){
-        return $this->hasMany(Album::class);
+    public function albums(){
+        return $this->morphedByMany(Album::class, 'categorygable');
     }
 
     //模型关联
-    public function av(){
-        return $this->hasMany(Av::class);
+    public function avs(){
+        return $this->morphedByMany(Av::class, 'categorygable');
     }
+
 }

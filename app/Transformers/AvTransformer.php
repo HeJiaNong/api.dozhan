@@ -28,7 +28,7 @@ class AvTransformer extends TransformerAbstract
     }
 
     public function includeCategory(Av $av){
-        return $this->item($av->category,new CategoryTransformer());
+        return $this->collection($av->category,new CategoryTransformer());
     }
 
     public function includeAlbum(Av $av){

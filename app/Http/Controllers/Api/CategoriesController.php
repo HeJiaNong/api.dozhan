@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Requests\Api\CategoryRequest;
 use App\Models\Album;
+use App\Models\Av;
 use App\Models\Category;
 use App\Transformers\AlbumTransformer;
 use App\Transformers\AvTransformer;
@@ -14,6 +15,12 @@ class CategoriesController extends Controller
 {
     //获取分类列表
     public function index(){
+        $album = Album::find(1);
+
+        $av = Av::find(2);
+
+
+        dd($album->category()->attach(2));
         return $this->response->collection(Category::all(),new CategoryTransformer());
     }
 

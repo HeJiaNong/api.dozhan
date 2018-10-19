@@ -18,7 +18,6 @@ class CreateAlbumsTable extends Migration
             $table->string('name')->unique()->index()->comment('专辑名称');
             $table->string('description')->index()->comment('专辑描述');
             $table->integer('user_id')->index()->unsigned()->comment('用户id');
-            $table->integer('category_id')->index()->unsigned()->comment('分类id');
             $table->timestamps();
         });
     }

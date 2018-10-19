@@ -21,7 +21,6 @@ class CreateAvsTable extends Migration
             $table->integer('album_id')->unsigned()->nullable()->comment('专辑ID');
             $table->integer('video_id')->unsigned()->comment('视频地址ID');
             $table->integer('image_id')->unsigned()->comment('封面地址ID');
-            $table->integer('category_id')->unsigned()->comment('分类ID');
             $table->timestamps();
         });
     }

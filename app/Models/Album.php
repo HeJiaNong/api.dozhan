@@ -20,6 +20,6 @@ class Album extends Model
 
     //模型关联
     public function category(){
-        return $this->belongsTo(Category::class);
+        return $this->morphToMany(Category::class,'categorygable');
     }
 }
