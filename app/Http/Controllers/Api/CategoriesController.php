@@ -14,7 +14,7 @@ class CategoriesController extends Controller
 {
     //获取分类列表
     public function index(){
-        return $this->response->item(Category::all(),new CategoryTransformer());
+        return $this->response->collection(Category::all(),new CategoryTransformer());
     }
 
     //获取某分类下的所有专辑
@@ -60,6 +60,10 @@ class CategoriesController extends Controller
 
         $category->update($data);
 
+        return $this->response->item($category,new CategoryTransformer());
+    }
+
+    public function show(Category $category){
         return $this->response->item($category,new CategoryTransformer());
     }
 

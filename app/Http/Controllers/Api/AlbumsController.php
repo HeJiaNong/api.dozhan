@@ -73,4 +73,9 @@ class AlbumsController extends Controller
         return $this->response->paginator($album->av()->paginate(20),new AvTransformer());
     }
 
+    //获取专辑详情
+    public function show(Album $album){
+        return $this->response->item($album,new AlbumTransformer());
+    }
+
 }

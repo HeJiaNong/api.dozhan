@@ -83,14 +83,15 @@ $api->version('v1',[
         //获取某用户的信息
         $api->get('users/{user}','UsersController@show')->name('api.users.show');
         //==============================================================================================================
-
+        //获取专辑信息
+        $api->get('albums/{album}','AlbumsController@show')->name('api.albums.index');
         //获取专辑列表
         $api->get('albums','AlbumsController@index')->name('api.albums.index');
-        //获取专辑所属分类
-        $api->get('albums/{album}/category','AlbumsController@CategoryIndex')->name('api.albums.category.index');
         //获取专辑下的所有视频
         $api->get('albums/{album}/avs','AlbumsController@AvsIndex')->name('api.albums.avs.index');
         //==============================================================================================================
+        //获取分类信息
+        $api->get('categories/{category}','CategoriesController@show')->name('api.categories.show');
         //获取分类列表
         $api->get('categories','CategoriesController@index')->name('api.categories.index');
         //获取某分类下的所有专辑
