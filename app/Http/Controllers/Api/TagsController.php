@@ -47,4 +47,9 @@ class TagsController extends Controller
     public function avsIndex(Tag $tag){
         return $this->response->paginator($tag->av()->paginate(20),new AvTransformer());
     }
+
+    //标签信息
+    public function show(Tag $tag){
+        return $this->response->item($tag,new TagTransformer());
+    }
 }

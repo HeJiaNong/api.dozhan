@@ -106,6 +106,8 @@ $api->version('v1',[
         //==============================================================================================================
         //获取所有标签
         $api->get('tags','TagsController@index')->name('api.tags.index');
+        //标签信息
+        $api->get('tags/{tag}','TagsController@show')->name('api.tags.show');
         //获取某标签下的所有视频
         $api->get('tags/{tag}/avs','TagsController@avsIndex')->name('api.tags.avs.index');
         //==============================================================================================================
