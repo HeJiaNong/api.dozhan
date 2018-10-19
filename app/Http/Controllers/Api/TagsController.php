@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Requests\Api\TagRequest;
 use App\Models\Tag;
+use App\Transformers\AvTransformer;
 use App\Transformers\TagTransformer;
 use Illuminate\Http\Request;
 
@@ -40,5 +41,10 @@ class TagsController extends Controller
         $tag->delete();
 
         return $this->response->noContent();
+    }
+
+    //获取某标签下的所有视频
+    public function avsIndex(Tag $tag){
+        return $this->response->paginator($tag->av()->paginate(20),new AvTransformer());
     }
 }

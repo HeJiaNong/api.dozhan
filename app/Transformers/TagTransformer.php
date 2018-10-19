@@ -12,7 +12,6 @@ class TagTransformer extends TransformerAbstract
         return [
             'id' => $tag->id,
             'name' => $tag->name,
-            'description' => $tag->description,
             'created_at' => $tag->created_at->toDateTimeString(),
             'updated_at' => $tag->updated_at->toDateTimeString(),
         ];
