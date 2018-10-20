@@ -74,19 +74,14 @@ class ResourcesController extends Controller
         return $qiniu->makeUploadToken($key,$policy);
     }
 
-    //上传视频回调地址
-    public function videoNotification(Request $request){
-        logger('七牛视频处理回调地址>>>>>>>>>>>>>>>>>>>>');
+    //七牛回调地址
+    public function notification(Request $request){
+
+        logger('七牛处理回调地址>>>>>>>>>>>>>>>>>>>>');
         logger($request->all());
-        logger('七牛视频处理回调地址<<<<<<<<<<<<<<<<<<<<');
+        logger('七牛处理回调地址<<<<<<<<<<<<<<<<<<<<');
     }
 
-    //上传图片回调地址
-    public function imageNotification(Request $request){
-        logger('七牛图片处理回调地址>>>>>>>>>>>>>>>>>>>>');
-        logger($request->all());
-        logger('七牛图片处理回调地址<<<<<<<<<<<<<<<<<<<<');
-    }
 
     //获取不同理想对应的不同的标准尺寸
     public function getStandardImageSize($scene){

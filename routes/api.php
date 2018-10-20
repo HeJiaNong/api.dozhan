@@ -71,9 +71,7 @@ $api->version('v1',[
             ]);
         });
         //七牛视频消息回调地址
-        $api->post('resource/videos/notification','ResourcesController@videoNotification')->name('api.resource.videos.notification');
-        //七牛图片消息回调地址
-        $api->post('resource/images/notification','ResourcesController@imageNotification')->name('api.resource.images.notification');
+        $api->post('resource/notification','ResourcesController@notification')->name('api.resource.notification');
 
         //==============================================================================================================
         //邮箱验证码

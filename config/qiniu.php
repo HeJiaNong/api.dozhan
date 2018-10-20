@@ -15,6 +15,7 @@ return [
     'pipeline'      => 'dozhan',
     //持久化处理回调地址
     'notify_url'    => 'http://www.baidu.com',
+//    'notify_url'    => app('Dingo\Api\Routing\UrlGenerator')->version('v1')->route('api.resource.notification'),
 
     //上传策略
     'policy' => [
