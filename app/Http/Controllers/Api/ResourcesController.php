@@ -15,10 +15,30 @@ use function Qiniu\base64_urlSafeEncode as s;
 
 class ResourcesController extends Controller
 {
+    //上传视频
+    public function video(VideoRequest $request,QiniuCloudHandler $qiniu){
+
+        list($key,$token) = $this->videoToken($qiniu);
+
+        $res = $qiniu->uploadFile($request->file('video')->getRealPath(),$key,$token);
+
+        dd($res);
+    }
+
+    //上传图片
+    public function image(ImageRequest $request,QiniuCloudHandler $qiniu){
+
+        $scene = $request->scene;
+
+        list($key,$token) = $this->imageToken($scene,$qiniu);
+
+        $res = $qiniu->uploadFile($request->file('image')->getRealPath(),$key,$token);
+
+        dd($res);
+    }
 
     //生成视频上传凭证
     public function videoToken(QiniuCloudHandler $qiniu){
-//        dd(2);
         $prefix = 'video/';
         $mimeType = 'mp4';
 
@@ -37,7 +57,6 @@ class ResourcesController extends Controller
 
     //生成图片上传凭证
     public function imageToken($scene,QiniuCloudHandler $qiniu){
-
         $prefix = 'video/';
         $mimeType = 'webp';
 
@@ -53,6 +72,20 @@ class ResourcesController extends Controller
 
         //上传token
         return $qiniu->makeUploadToken($key,$policy);
+    }
+
+    //上传视频回调地址
+    public function videoNotification(Request $request){
+        logger('七牛视频处理回调地址>>>>>>>>>>>>>>>>>>>>');
+        logger($request->all());
+        logger('七牛视频处理回调地址<<<<<<<<<<<<<<<<<<<<');
+    }
+
+    //上传图片回调地址
+    public function imageNotification(Request $request){
+        logger('七牛图片处理回调地址>>>>>>>>>>>>>>>>>>>>');
+        logger($request->all());
+        logger('七牛图片处理回调地址<<<<<<<<<<<<<<<<<<<<');
     }
 
     //获取不同理想对应的不同的标准尺寸

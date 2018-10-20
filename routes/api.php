@@ -70,6 +70,11 @@ $api->version('v1',[
                 '网站URL' => env('APP_URL'),
             ]);
         });
+        //七牛视频消息回调地址
+        $api->post('resource/videos/notification','ResourcesController@videoNotification')->name('api.resource.videos.notification');
+        //七牛图片消息回调地址
+        $api->post('resource/images/notification','ResourcesController@imageNotification')->name('api.resource.images.notification');
+
         //==============================================================================================================
         //邮箱验证码
         $api->post('verificationCodes/email','VerificationCodesController@email')->name('api.verificationCodes.email');
@@ -139,10 +144,10 @@ $api->version('v1',[
             $api->get('videos/token','ResourcesController@videoToken')->name('api.resource.videos.token');
             //获取图片上传凭证
             $api->get('images/token/{scene}','ResourcesController@imageToken')->name('api.resource.videos.token');
-            //七牛视频消息回调地址
-            $api->post('videos/notification','ResourceController@notification')->name('api.resource.videos.notification');
-            //七牛图片消息回调地址
-            $api->post('images/notification','ResourceController@notification')->name('api.resource.images.notification');
+            //上传视频
+            $api->post('video','ResourcesController@video');
+            //上传图片
+            $api->post('image','ResourcesController@image');
         });
 
         //==============================================================================================================
