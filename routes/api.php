@@ -135,12 +135,14 @@ $api->version('v1',[
         //==============================================================================================================
         //资源api
         $api->group(['prefix' => 'resource'],function ($api){
-            //上传图片
-            $api->post('image','ResourcesController@image')->name('api.resource.image');
-            //上传视频
-            $api->post('video','ResourcesController@video')->name('api.resource.video');
             //获取视频上传凭证
-            $api->get('videos/token','ResourcesController@videoToken')->name('api.videos.token');
+            $api->get('videos/token','ResourcesController@videoToken')->name('api.resource.videos.token');
+            //获取图片上传凭证
+            $api->get('images/token/{scene}','ResourcesController@imageToken')->name('api.resource.videos.token');
+            //七牛视频消息回调地址
+            $api->post('videos/notification','ResourceController@notification')->name('api.resource.videos.notification');
+            //七牛图片消息回调地址
+            $api->post('images/notification','ResourceController@notification')->name('api.resource.images.notification');
         });
 
         //==============================================================================================================
