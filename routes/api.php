@@ -139,7 +139,10 @@ $api->version('v1',[
             $api->post('image','ResourcesController@image')->name('api.resource.image');
             //上传视频
             $api->post('video','ResourcesController@video')->name('api.resource.video');
+            //获取视频上传凭证
+            $api->get('videos/token','ResourcesController@videoToken')->name('api.videos.token');
         });
+
         //==============================================================================================================
         //发布专辑
         $api->post('albums','AlbumsController@store')->name('api.albums.store');
