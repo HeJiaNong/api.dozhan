@@ -37,7 +37,7 @@ class UsersTableSeeder extends Seeder
         $user->email = '1451850833@qq.com';
         $user->phone_number = '17760489695';
         $user->qq_number = '1451850833';
-        $user->password = '123456';
+        $user->password = bcrypt('123456');
         $user->save();
 
         //为2号用户添加角色
