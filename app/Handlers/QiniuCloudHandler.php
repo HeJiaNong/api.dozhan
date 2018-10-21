@@ -42,8 +42,8 @@ class QiniuCloudHandler
         $this->secret_key  = \config('qiniu.secret_key');
         $this->expires     = \config('qiniu.expires');
         $this->pipeline    = \config('qiniu.pipeline');
-//        $this->notify_url  = app('Dingo\Api\Routing\UrlGenerator')->version('v1')->route('api.resource.notification');
-        $this->notify_url  = 'https://www.hjn.ink/api/resource/notification';
+        $this->notify_url  = app('Dingo\Api\Routing\UrlGenerator')->version('v1')->route('api.resource.notification');
+//        $this->notify_url  = 'https://www.hjn.ink/api/resource/notification';
         $this->auth        = new Auth($this->access_key, $this->secret_key);   //定义鉴权对象Auth
     }
 
