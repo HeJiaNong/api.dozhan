@@ -5,9 +5,9 @@ use App\Models\Comment;
 use App\Models\User;
 use League\Fractal\TransformerAbstract;
 
-class CommentTransformer extends TransformerAbstract
+class ReplyTransformer extends TransformerAbstract
 {
-    protected $availableIncludes = ['user','av','replies'];
+    protected $availableIncludes = ['target'];
 
     public function transform(Comment $comment){
         return [
@@ -22,16 +22,10 @@ class CommentTransformer extends TransformerAbstract
         ];
     }
 
-    public function includeUser(Comment $comment){
-        return $this->item($comment->user,new UserTransformer());
-    }
-
-    public function includeAv(Comment $comment){
-        return $this->item($comment->av,new AvTransformer());
-    }
-
-    public function includeReplies(Comment $comment){
-        return $this->collection($comment->replies,new ReplyTransformer());
+    public function includeTarget(Comment $comment){
+        if (isset($comment->target)){
+            return $this->item($comment->target,new UserTransformer());
+        }
     }
 
 }

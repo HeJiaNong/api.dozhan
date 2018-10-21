@@ -28,5 +28,7 @@ class AddHeadersToResponse
     {
         //为所有响应添加这个 解决跨域问题的 header 头
         $event->response->headers->set('Access-Control-Allow-Origin','*');
+        $event->response->headers->set('Access-Control-Allow-Headers','Content-Type');
+        $event->response->headers->set('Access-Control-Allow-Headers','Authorization');
     }
 }

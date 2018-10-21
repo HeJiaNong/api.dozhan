@@ -114,7 +114,14 @@ $api->version('v1',[
         //获取某标签下的所有视频
         $api->get('tags/{tag}/avs','TagsController@avsIndex')->name('api.tags.avs.index');
         //==============================================================================================================
-
+        //获取评论列表
+        $api->get('comments','CommentsController@index')->name('api.comments.index');
+        //获取某视频下的评论列表
+        $api->get('avs/{av}/comments','CommentsController@AvsIndex')->name('api.avs.comments.index');
+        //获取评论信息
+        $api->get('comments/{comment}','CommentsController@show')->name('api.comment.show');
+        //获取某评论的二级频率列表
+        $api->get('comments/{comment}/replies','CommentsController@replies')->name('api.comments.replies');
 
     });
 
@@ -177,6 +184,12 @@ $api->version('v1',[
         //删除标签
         $api->delete('tags/{tag}','TagsController@destroy')->name('api.tags.destroy');
         //==============================================================================================================
+        //新增评论
+        $api->post('comments','CommentsController@store')->name('api.comments.store');
+        //修改评论
+        $api->patch('comments/{comment}','CommentsController@update')->name('api.comments.update');
+        //删除评论
+        $api->delete('comments/{comment}','CommentsController@destroy')->name('api.comments.destroy');
     });
 
 });

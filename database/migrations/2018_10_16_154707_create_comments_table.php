@@ -18,6 +18,8 @@ class CreateCommentsTable extends Migration
             $table->string('comment')->comment('评论');
             $table->integer('user_id')->unsigned()->index()->comment('用户ID');
             $table->integer('av_id')->unsigned()->index()->comment('视频ID');
+            $table->integer('parent_id')->nullable()->unsigned()->index()->comment('父级评论ID');
+            $table->integer('target_id')->nullable()->unsigned()->index()->comment('父级评论用户');
             $table->timestamps();
         });
     }
