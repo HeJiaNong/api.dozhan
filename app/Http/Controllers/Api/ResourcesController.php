@@ -17,8 +17,9 @@ class ResourcesController extends Controller
 {
     //上传视频
     public function video(VideoRequest $request,QiniuCloudHandler $qiniu){
+        $mimeType = 'video/*';
 
-        list($key,$token) = $this->videoToken($qiniu);
+        list($key,$token) = $this->videoToken($mimeType,$qiniu);
 
         $res = $qiniu->uploadFile($request->file('video')->getRealPath(),$key,$token);
 
@@ -30,45 +31,47 @@ class ResourcesController extends Controller
 
         $scene = $request->scene;
 
-        list($key,$token) = $this->imageToken($scene,$qiniu);
+        $mimeType = 'image/*';
 
+        list($key,$token) = $this->imageToken($scene,$mimeType,$qiniu);
+//        dd($request->file('image')->getMimeType());
         $res = $qiniu->uploadFile($request->file('image')->getRealPath(),$key,$token);
 
         dd($res);
     }
 
     //生成视频上传凭证
-    public function videoToken(QiniuCloudHandler $qiniu){
+    public function videoToken($mimeType,QiniuCloudHandler $qiniu){
         $prefix = 'video/';
-        $mimeType = 'mp4';
+        $newType = 'mp4';
 
-        $key = $qiniu->makeFileNameByTime($prefix,$mimeType);
+        $key = $qiniu->makeFileNameByTime($prefix,$newType);
         $entry = s($qiniu->bucket . ":" . $key);
 
         //命令
-        $persistentOps = "avthumb/{$mimeType}/wmText/".s('Dozhan')."/wmFontSize/40/wmFontColor/".s('#ffffff'). "/wmGravityText/NorthWest"."|saveas/{$entry}";//
+        $persistentOps = "avthumb/{$newType}/wmText/".s('Dozhan')."/wmFontSize/40/wmFontColor/".s('#ffffff'). "/wmGravityText/NorthWest"."|saveas/{$entry}";//
 
         //上传策略
-        $policy = $qiniu->makeUploadPolicy($key,$persistentOps);
+        $policy = $qiniu->makeUploadPolicy($key,$persistentOps,$mimeType);
 
         //上传token
         return $qiniu->makeUploadToken($key,$policy);
     }
 
     //生成图片上传凭证
-    public function imageToken($scene,QiniuCloudHandler $qiniu){
+    public function imageToken($scene,$mimeType,QiniuCloudHandler $qiniu){
         $prefix = 'video/';
-        $mimeType = 'webp';
+        $newType = 'webp';
 
-        $key = $qiniu->makeFileNameByTime($prefix,$mimeType);
+        $key = $qiniu->makeFileNameByTime($prefix,$newType);
         $entry = s($qiniu->bucket . ":" . $key);
 
         $size = $this->getStandardImageSize($scene);
         //命令
-        $persistentOps = "imageMogr2/auto-orient/thumbnail/{$size}!/format/{$mimeType}"."|saveas/{$entry}";
+        $persistentOps = "imageMogr2/auto-orient/thumbnail/{$size}!/format/{$newType}"."|saveas/{$entry}";
 
         //上传策略
-        $policy = $qiniu->makeUploadPolicy($key,$persistentOps);
+        $policy = $qiniu->makeUploadPolicy($key,$persistentOps,$mimeType);
 
         //上传token
         return $qiniu->makeUploadToken($key,$policy);

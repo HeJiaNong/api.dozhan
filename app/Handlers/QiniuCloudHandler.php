@@ -42,7 +42,8 @@ class QiniuCloudHandler
         $this->secret_key  = \config('qiniu.secret_key');
         $this->expires     = \config('qiniu.expires');
         $this->pipeline    = \config('qiniu.pipeline');
-        $this->notify_url  = app('Dingo\Api\Routing\UrlGenerator')->version('v1')->route('api.resource.notification');
+//        $this->notify_url  = app('Dingo\Api\Routing\UrlGenerator')->version('v1')->route('api.resource.notification');
+        $this->notify_url  = 'https://www.hjn.ink/api/resource/notification';
         $this->auth        = new Auth($this->access_key, $this->secret_key);   //定义鉴权对象Auth
     }
 
@@ -110,7 +111,7 @@ class QiniuCloudHandler
     }
 
     //生成上传策略
-    public function makeUploadPolicy($key,$ops){
+    public function makeUploadPolicy($key,$ops,$mimeType){
         return [
             //==========================================================================================================
             //<bucket>//<bucket>:<keyPrefix>//<bucket>:<key>=表示只允许用户上传指定 key 的文件。在这种格式下文件默认允许修改，若已存在同名资源则会被覆盖。
@@ -163,14 +164,14 @@ class QiniuCloudHandler
 
             //==========================================================================================================
             //开启 MimeType 侦测功能。设为非 0 值，则忽略上传端传递的文件 MimeType 信息，使用七牛服务器侦测内容后的判断结果。
-//            "detectMime"            => 0,
+            "detectMime"            => 3,
             //==========================================================================================================
 
             //==========================================================================================================
             //限定用户上传的文件类型。指定本字段值，七牛服务器会侦测文件内容以判断 MimeType，再用判断值跟指定值进行匹配，匹配成功则允许上传，匹配失败则返回 403 状态码。
-//            "mimeLimit"             => "<MimeLimit                string>",
+            "mimeLimit"             => $mimeType,
             //文件存储类型。0 为普通存储（默认），1 为低频存储。
-//            "fileType"              => 0,
+            "fileType"              => 0,
             //==========================================================================================================
         ];
     }
