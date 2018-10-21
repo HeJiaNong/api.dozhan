@@ -27,12 +27,18 @@ class UsersTableSeeder extends Seeder
         $user->phone_number = '18780260029';
         $user->qq_number = '405745000';
         $user->password = bcrypt('hejiang335200');
-
-        //保存
         $user->save();
 
         //为用户添加角色
         $user->assignRole(['Founder']);
+
+        $user = \App\Models\User::find(2);
+        $user->name = '田';
+        $user->email = '1451850833@qq.com';
+        $user->phone_number = '17760489695';
+        $user->qq_number = '1451850833';
+        $user->password = '123456';
+        $user->save();
 
         //为2号用户添加角色
         $user = \App\Models\User::find(2);
