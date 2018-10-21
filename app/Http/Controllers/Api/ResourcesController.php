@@ -41,7 +41,7 @@ class ResourcesController extends Controller
     }
 
     //生成视频上传凭证
-    public function videoToken($mimeType,QiniuCloudHandler $qiniu){
+    public function videoToken($mimeType = 'video/*',QiniuCloudHandler $qiniu){
         $prefix = 'video/';
         $newType = 'mp4';
 
@@ -59,7 +59,7 @@ class ResourcesController extends Controller
     }
 
     //生成图片上传凭证
-    public function imageToken($scene,$mimeType,QiniuCloudHandler $qiniu){
+    public function imageToken($scene,$mimeType = 'image/*',QiniuCloudHandler $qiniu){
         $prefix = 'video/';
         $newType = 'webp';
 
