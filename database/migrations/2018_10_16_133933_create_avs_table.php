@@ -17,6 +17,7 @@ class CreateAvsTable extends Migration
             $table->increments('id');
             $table->string('name')->unique()->index()->comment('视频名称');
             $table->string('description')->comment('描述');
+            $table->string('comment_count')->default(0)->comment('评论数量');
             $table->integer('user_id')->unsigned()->comment('用户ID');
             $table->integer('album_id')->unsigned()->nullable()->comment('专辑ID');
             $table->integer('video_id')->unsigned()->comment('视频地址ID');

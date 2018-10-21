@@ -190,6 +190,9 @@ $api->version('v1',[
         $api->patch('comments/{comment}','CommentsController@update')->name('api.comments.update');
         //删除评论
         $api->delete('comments/{comment}','CommentsController@destroy')->name('api.comments.destroy');
+        //==============================================================================================================
+        //获取当前用户的所有通知
+        $api->get('user/notifications','NotificationsController@index')->name('api.user.notifications.index');
     });
 
 });

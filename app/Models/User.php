@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Foundation\Auth\User as Authenticatable;
+use Illuminate\Support\Facades\Auth;
 use Spatie\Permission\Traits\HasRoles;
 use Tymon\JWTAuth\Contracts\JWTSubject;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -11,8 +12,21 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 class User extends Authenticatable implements JWTSubject
 {
     use HasRoles;   //用户权限管理包
-    use Notifiable;
+    use Notifiable{
+        notify as protected laravelNotify;
+    }
     use SoftDeletes;    //启用软删除
+
+    //对laravel消息通知的notify方法的优化
+    public function notify($instance){
+        //如果要通知的人是自己，就不用通知了
+        if ($this->id == Auth::guard('api')->user()->id){
+            return;
+        }
+
+        $this->increment('notification_count');
+        $this->laravelNotify($instance);
+    }
 
 //    protected $guard_name = 'api';    //或者你想要使用的任何警卫
 
@@ -25,7 +39,7 @@ class User extends Authenticatable implements JWTSubject
 
     //可写入字段
     protected $fillable = [
-        'do_id','name','avatar','email','phone_number','qq_number','password',
+        'do_id','name','avatar','email','phone_number','qq_number','password','notification_count'
     ];
 
     //隐藏字段

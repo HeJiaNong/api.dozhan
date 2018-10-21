@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Av extends Model
 {
-    protected $fillable = ['name','description','user_id','album_id','video_id','image_id','category_id'];
+    protected $fillable = ['name','description','user_id','album_id','video_id','image_id','category_id','comment_count'];
 
     //模型关联
     public function tag(){

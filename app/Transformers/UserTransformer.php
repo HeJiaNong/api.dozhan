@@ -16,6 +16,7 @@ class UserTransformer extends TransformerAbstract
             'avatar' => $user->avatar,
             'phone_number' => $user->phone_number ? true : false,
             'qq_number' => $user->qq_number ? true : false,
+            'notification_count' => $user->notification_count,
             'created_at' => $user->created_at->toDateTimeString(),
             'updated_at' => $user->updated_at->toDateTimeString(),
         ];

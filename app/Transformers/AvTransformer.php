@@ -13,6 +13,7 @@ class AvTransformer extends TransformerAbstract
             'id' => $av->id,
             'name' => $av->name,
             'description' => $av->description,
+            'comment_count' => $av->comment_count,
             'user_id' => $av->user_id,
             'album_id' => $av->album_id,
             'video_id' => $av->video_id,

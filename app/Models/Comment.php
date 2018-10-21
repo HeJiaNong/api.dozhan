@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Comment extends Model
 {
+
     protected $fillable = ['comment','user_id','av_id','parent_id','target_id'];
 
     //模型关联

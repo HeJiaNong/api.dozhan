@@ -13,13 +13,13 @@ class CommentsController extends Controller
 {
     //获取一级评论列表
     public function index(){
-        return $this->response->collection(Comment::where('parent_id',null)->get(),new CommentTransformer());
+        return $this->response->paginator(Comment::where('parent_id',null)->paginate(20),new CommentTransformer());
     }
 
     //获取某视频下的一级评论列表
     public function AvsIndex(Av $av){
         //一级评论列表
-        return $this->response->collection($av->comment()->where(['parent_id' => null])->get(),new CommentTransformer());
+        return $this->response->paginator($av->comment()->where(['parent_id' => null])->paginate(20),new CommentTransformer());
     }
 
     //获取某一级评论下的二级评论
@@ -28,10 +28,10 @@ class CommentsController extends Controller
             return '这不是一级评论';
         }
 
-        $data = Comment::where('parent_id',$comment->id)->get();
+        $data = Comment::where('parent_id',$comment->id)->paginate(20);
 
 
-        return $this->response->collection($data,new ReplyTransformer());
+        return $this->response->paginator($data,new ReplyTransformer());
     }
 
     //评论详情
