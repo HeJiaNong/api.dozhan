@@ -31,7 +31,7 @@ class CategoriesController extends Controller
 
     //获取某分类下的所有视频
     public function avsIndex(Category $category){
-        return $this->response->paginator($category->av()->paginate(20),new AvTransformer());
+        return $this->response->paginator($category->avs()->paginate(20),new AvTransformer());
     }
 
     //新增分类
