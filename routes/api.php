@@ -194,15 +194,19 @@ $api->version('v1',[
         //获取当前用户的所有通知
         $api->get('user/notifications','NotificationsController@index')->name('api.user.notifications.index');
         //获取当前用户的未读通知
-        $api->get('user/unread/notifications','NotificationsController@unreadNotifications')->name('api.user.unread.notifications');
+        $api->get('user/unread/notifications','NotificationsController@unreadNotifications')->name('api.user.notifications.unread');
         //获取当前用户的已读通知
-        $api->get('user/markread/notifications','NotificationsController@markReadNotifications')->name('api.user.markread.notifications');
+        $api->get('user/markread/notifications','NotificationsController@markReadNotifications')->name('api.user.notifications.markread');
         //获取当前用户的未读通知统计
         $api->get('user/notifications/stats','NotificationsController@stats')->name('api.user.notifications.stats');
         //将当前用户所有通知设置为已读
-        $api->patch('user/read/notifications','NotificationsController@readAll')->name('api.user.read.notifications.all');
+        $api->patch('user/notifications','NotificationsController@readAll')->name('api.user.notifications.read');
         //将当前用户的某条通知设置为已读
-        $api->put('user/read/notifications/{notification}','NotificationsController@readSingle')->name('api.user.read.notifications.single');
+        $api->put('user/notifications/{notification}','NotificationsController@readSingle')->name('api.user.notification.read');
+        //删除当前用户的某条通知
+        $api->delete('user/notifications/{notification}','NotificationsController@destroySingle')->name('api.user.notification.destroy');
+        //删除当前用户所有通知
+        $api->delete('user/notifications/','NotificationsController@destroyAll')->name('api.user.notifications.destroy');
     });
 
 });

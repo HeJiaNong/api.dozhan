@@ -24,4 +24,9 @@ class NotificationPolicy
     public function readSingle(User $user,DatabaseNotification $notification){
         return $user->id == $notification->notifiable->id;
     }
+
+    public function destroy(User $user,DatabaseNotification $notification){
+        return $user->id == $notification->notifiable->id;
+    }
+
 }

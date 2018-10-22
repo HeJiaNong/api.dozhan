@@ -57,4 +57,21 @@ class NotificationsController extends Controller
         return $this->user()->unreadNotifications->count();
     }
 
+    //删除当前用户某条通知
+    public function destroySingle(DatabaseNotification $notification){
+        $this->authorize('destroy',$notification);
+
+        $notification->delete();
+
+        return $this->response->noContent();
+    }
+
+    //删除当前用户所有通知
+    public function destroyAll(){
+        //删除
+        $this->user()->notifications()->delete();
+
+        return $this->response->noContent();
+    }
+
 }
