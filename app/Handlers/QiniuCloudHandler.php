@@ -117,11 +117,11 @@ class QiniuCloudHandler
             //<bucket>//<bucket>:<keyPrefix>//<bucket>:<key>=表示只允许用户上传指定 key 的文件。在这种格式下文件默认允许修改，若已存在同名资源则会被覆盖。
             "scope"                 => "{$this->bucket}:{$key}",    //"{$this->bucket}:{$key}",
             //若为 1，表示允许用户上传以 scope 的 keyPrefix 为前缀的文件。
-//            "isPrefixalScope"       => 0,
+            //"isPrefixalScope"       => 0,
             //上传凭证有效截止时间。Unix时间戳，单位为秒。该截止时间为上传完成后，在七牛空间生成文件的校验时间，而非上传的开始时间，一般建议设置为上传开始时间 + 3600s，用户可根据具体的业务场景对凭证截止时间进行调整。
             "deadline"              => $this->expires,
             //限定为新增语意。如果设置为非 0 值，则无论 scope 设置为什么形式，仅能以新增模式上传文件。
-//            "insertOnly"            => 0,
+            //"insertOnly"            => 0,
             //==========================================================================================================
 
             //==========================================================================================================
@@ -138,13 +138,13 @@ class QiniuCloudHandler
 
             //==========================================================================================================
             //上传成功后，七牛云向业务服务器发送 POST 请求的 URL。必须是公网上可以正常进行 POST 请求并能响应 HTTP/1.1 200 OK 的有效 URL。另外，为了给客户端有一致的体验，我们要求 callbackUrl 返回包 Content-Type 为 "application/json"，即返回的内容必须是合法的 JSON 文本。出于高可用的考虑，本字段允许设置多个 callbackUrl（用英文符号 ; 分隔），在前一个 callbackUrl 请求失败的时候会依次重试下一个 callbackUrl。一个典型例子是：http://<ip1>/callback;http://<ip2>/callback，并同时指定下面的 callbackHost 字段。在 callbackUrl 中使用 ip 的好处是减少对 dns 解析的依赖，可改善回调的性能和稳定性。指定 callbackUrl，必须指定 callbackbody，且值不能为空。
-//            "callbackUrl"           => $this->notify_url,
+            //"callbackUrl"           => $this->notify_url,
             //上传成功后，七牛云向业务服务器发送回调通知时的 Host 值。与 callbackUrl 配合使用，仅当设置了 callbackUrl 时才有效。
             //"callbackHost"          => "<RequestHostForAppServer  string>",
             //上传成功后，七牛云向业务服务器发送 Content-Type: application/x-www-form-urlencoded 的 POST 请求。业务服务器可以通过直接读取请求的 query 来获得该字段，支持魔法变量和自定义变量。callbackBody 要求是合法的 url query string。例如key=$(key)&hash=$(etag)&w=$(imageInfo.width)&h=$(imageInfo.height)。如果callbackBodyType指定为application/json，则callbackBody应为json格式，例如:{"key":"$(key)","hash":"$(etag)","w":"$(imageInfo.width)","h":"$(imageInfo.height)"}。
-//            "callbackBody"          => '{"bucket":"$(bucket)","key":"$(key)","mimeType":$(mimeType),"hash":"$(etag)","persistentId":"$(persistentId)"}',
+            //"callbackBody"          => '{"bucket":"$(bucket)","key":"$(key)","mimeType":$(mimeType),"hash":"$(etag)","persistentId":"$(persistentId)"}',
             //上传成功后，七牛云向业务服务器发送回调通知 callbackBody 的 Content-Type
-//            "callbackBodyType"      => "application/json",
+            //"callbackBodyType"      => "application/json",
             //==========================================================================================================
 
             //==========================================================================================================
@@ -155,21 +155,21 @@ class QiniuCloudHandler
             //转码队列名。资源上传成功后，触发转码时指定独立的队列进行转码。为空则表示使用公用队列，处理速度比较慢。建议使用专用队列。
             "persistentPipeline"    => $this->pipeline,
             //自定义资源名。支持魔法变量和自定义变量。这个字段仅当用户上传的时候没有主动指定 key 的时候起作用。
-//            "saveKey"               => $key,
+            //"saveKey"               => $key,
             //限定上传文件大小最小值，单位Byte。
-//            "fsizeMin"              => "<FileSizeMin              int64>",
+            //"fsizeMin"              => "<FileSizeMin              int64>",
             //限定上传文件大小最大值，单位Byte。超过限制上传文件大小的最大值会被判为上传失败，返回 413 状态码。
-//            "fsizeLimit"            => 250000000,
+            //"fsizeLimit"            => 250000000,
             //==========================================================================================================
 
             //==========================================================================================================
             //开启 MimeType 侦测功能。设为非 0 值，则忽略上传端传递的文件 MimeType 信息，使用七牛服务器侦测内容后的判断结果。
-            "detectMime"            => 3,
+            //"detectMime"            => 3,
             //==========================================================================================================
 
             //==========================================================================================================
             //限定用户上传的文件类型。指定本字段值，七牛服务器会侦测文件内容以判断 MimeType，再用判断值跟指定值进行匹配，匹配成功则允许上传，匹配失败则返回 403 状态码。
-            "mimeLimit"             => $mimeType,
+            //"mimeLimit"             => $mimeType,
             //文件存储类型。0 为普通存储（默认），1 为低频存储。
             "fileType"              => 0,
             //==========================================================================================================
