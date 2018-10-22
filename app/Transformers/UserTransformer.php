@@ -14,6 +14,7 @@ class UserTransformer extends TransformerAbstract
             'do_id' => $user->do_id,
             'name' => $user->name,
             'avatar' => $user->avatar,
+            'email' => $user->email,
             'phone_number' => $user->phone_number ? true : false,
             'qq_number' => $user->qq_number ? true : false,
             'notification_count' => $user->notification_count,
