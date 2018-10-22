@@ -35,10 +35,11 @@ class Comment extends Notification
         return [
             'comment_id' => $this->comment->id,
             'comment_content' => $this->comment->comment,
+            'comment_parent_id' => $this->comment->parent_id,
+            'comment_target_id' => $this->comment->target_id,
             'user_id' => $user->id,
             'user_name' => $user->name,
             'user_avatar' => $user->avatar,
-            'av_link' => app(UrlGenerator::class)->version('v1')->route('api.avs.show',$av->id),
             'av_id' => $av->id,
             'av_name' => $av->name,
         ];

@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Requests\Api\AvRequest;
 use App\Models\Av;
+use App\Models\User;
 use App\Transformers\AvTransformer;
 use Illuminate\Http\Request;
 
@@ -62,5 +63,10 @@ class AvsController extends Controller
     //视频详情
     public function show(Av $av){
         return $this->response->item($av,new AvTransformer());
+    }
+
+    //获取某用户发布的视频列表
+    public function userIndex(User $user){
+        return $this->response->paginator($user->av()->paginate(20),new AvTransformer());
     }
 }

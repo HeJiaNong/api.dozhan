@@ -104,6 +104,8 @@ $api->version('v1',[
         //==============================================================================================================
         //视频列表
         $api->get('avs','AvsController@index')->name('api.avs.index');
+        //获取某用户的视频列表
+        $api->get('users/{user}/avs','AvsController@userIndex')->name('api.user.avs.index');
         //视频信息
         $api->get('avs/{av}','AvsController@show')->name('api.avs.show');
         //==============================================================================================================

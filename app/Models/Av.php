@@ -35,7 +35,8 @@ class Av extends Model
 
     //模型关联
     public function comment(){
-        return $this->hasMany(Comment::class);
+        //这里只查询1级评论
+        return $this->hasMany(Comment::class)->where('parent_id',null);
     }
 
     //模型关联
