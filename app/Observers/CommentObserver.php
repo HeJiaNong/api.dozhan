@@ -17,7 +17,6 @@ class CommentObserver
         $av = $comment->av;
         //增加视频的评论数量+1
         $av->increment('comment_count');
-
         //当有评论时，通知视频作者
         $av->user->notify(new \App\Notifications\Comment($comment));
     }

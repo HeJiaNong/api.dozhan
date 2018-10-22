@@ -193,6 +193,16 @@ $api->version('v1',[
         //==============================================================================================================
         //获取当前用户的所有通知
         $api->get('user/notifications','NotificationsController@index')->name('api.user.notifications.index');
+        //获取当前用户的未读通知
+        $api->get('user/unread/notifications','NotificationsController@unreadNotifications')->name('api.user.unread.notifications');
+        //获取当前用户的已读通知
+        $api->get('user/markread/notifications','NotificationsController@markReadNotifications')->name('api.user.markread.notifications');
+        //获取当前用户的未读通知统计
+        $api->get('user/notifications/stats','NotificationsController@stats')->name('api.user.notifications.stats');
+        //将当前用户所有通知设置为已读
+        $api->patch('user/read/notifications','NotificationsController@readAll')->name('api.user.read.notifications.all');
+        //将当前用户的某条通知设置为已读
+        $api->put('user/read/notifications/{notification}','NotificationsController@readSingle')->name('api.user.read.notifications.single');
     });
 
 });
