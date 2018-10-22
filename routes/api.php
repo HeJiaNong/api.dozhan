@@ -194,21 +194,32 @@ $api->version('v1',[
         $api->delete('comments/{comment}','CommentsController@destroy')->name('api.comments.destroy');
         //==============================================================================================================
         //获取当前用户的所有通知
-        $api->get('user/notifications','NotificationsController@index')->name('api.user.notifications.index');
+        $api->get('user/notifications','NotificationsController@index')->name('api.me.notifications.index');
         //获取当前用户的未读通知
-        $api->get('user/unread/notifications','NotificationsController@unreadNotifications')->name('api.user.notifications.unread');
+        $api->get('user/unread/notifications','NotificationsController@unreadNotifications')->name('api.me.notifications.unread');
         //获取当前用户的已读通知
-        $api->get('user/markread/notifications','NotificationsController@markReadNotifications')->name('api.user.notifications.markread');
+        $api->get('user/markread/notifications','NotificationsController@markReadNotifications')->name('api.me.notifications.markread');
         //获取当前用户的未读通知统计
-        $api->get('user/notifications/stats','NotificationsController@stats')->name('api.user.notifications.stats');
+        $api->get('user/notifications/stats','NotificationsController@stats')->name('api.me.notifications.stats');
         //将当前用户所有通知设置为已读
-        $api->patch('user/notifications','NotificationsController@readAll')->name('api.user.notifications.read');
+        $api->patch('user/notifications','NotificationsController@readAll')->name('api.me.notifications.read');
         //将当前用户的某条通知设置为已读
-        $api->put('user/notifications/{notification}','NotificationsController@readSingle')->name('api.user.notification.read');
+        $api->put('user/notifications/{notification}','NotificationsController@readSingle')->name('api.me.notification.read');
         //删除当前用户的某条通知
-        $api->delete('user/notifications/{notification}','NotificationsController@destroySingle')->name('api.user.notification.destroy');
+        $api->delete('user/notifications/{notification}','NotificationsController@destroySingle')->name('api.me.notification.destroy');
         //删除当前用户所有通知
-        $api->delete('user/notifications/','NotificationsController@destroyAll')->name('api.user.notifications.destroy');
+        $api->delete('user/notifications/','NotificationsController@destroyAll')->name('api.me.notifications.destroy');
+        //==============================================================================================================
+        //获取所有角色列表
+        $api->get('roles','RolesController@index')->name('api.roles.index');
+        //获取当前用户的角色
+        $api->get('user/roles','RolesController@me')->name('api.me.roles');
+
+        //获取所有权限列表
+        $api->get('permissions','PermissionsController@index')->name('api.permissions.index');
+        //获取当前用户的权限
+        $api->get('user/permissions','PermissionsController@me')->name('api.me.permissions');
+
     });
 
 });

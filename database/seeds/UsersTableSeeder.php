@@ -28,8 +28,6 @@ class UsersTableSeeder extends Seeder
         $user->qq_number = '405745000';
         $user->password = bcrypt('hejiang335200');
         $user->save();
-
-        //为用户添加角色
         $user->assignRole(['Founder']);
 
         $user = \App\Models\User::find(2);
@@ -39,9 +37,9 @@ class UsersTableSeeder extends Seeder
         $user->qq_number = '1451850833';
         $user->password = bcrypt('123456');
         $user->save();
+        $user->assignRole('Founder');
 
-        //为2号用户添加角色
-        $user = \App\Models\User::find(2);
+        $user = \App\Models\User::find(3);
         $user->assignRole('Maintainer');
     }
 }
