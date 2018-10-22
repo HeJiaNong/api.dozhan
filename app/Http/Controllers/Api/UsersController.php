@@ -45,7 +45,6 @@ class UsersController extends Controller
 
         //如果用户的邮箱与缓存邮箱不匹配或者验证码不正确
         if ($request->email !== $data['email'] || $request->code !== $data['code']){
-            Cache::forget($request->key);
             return $this->response->errorUnauthorized('验证码错误');
         }
 
