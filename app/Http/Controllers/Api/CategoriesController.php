@@ -26,7 +26,7 @@ class CategoriesController extends Controller
 
     //获取某分类下的所有专辑
     public function albumsIndex(Category $category){
-        return $this->response->paginator($category->album()->paginate(20),new AlbumTransformer());
+        return $this->response->paginator($category->albums()->paginate(20),new AlbumTransformer());
     }
 
     //获取某分类下的所有视频
