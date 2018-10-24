@@ -13,7 +13,7 @@ class ImagesTableSeeder extends Seeder
     {
         //获取当前时间并转换为字符串格式
         $now = \Carbon\Carbon::now()->toDateTimeString();
-        $bucket = config('qiniu.bucket');
+        $bucket = config('services.qiniu.bucket');
 
         //预设图片地址
         $keys = [

@@ -14,7 +14,7 @@ class VideosTableSeeder extends Seeder
 
         //获取当前时间并转换为字符串格式
         $now = \Carbon\Carbon::now()->toDateTimeString();
-        $bucket = config('qiniu.bucket');
+        $bucket = config('services.qiniu.bucket');
         $faker = app(\Faker\Generator::class);
 
         //用户id
