@@ -17,7 +17,7 @@ class AvsController extends Controller
 
     //发布视频
     public function store(AvRequest $request){
-        $data = $request->only(['name','description','album_id','video_id','image_id','category_id']);
+        $data = $request->only(['name','description','album_id','video_id','image_id']);
         $data['user_id'] = $this->user()->id;
 
         //获取标签信息
@@ -28,6 +28,7 @@ class AvsController extends Controller
 
         //多对多关联更新
         $av->tag()->attach(json_decode($tag_ids));
+        $av->category()->attach($request->category_id);
 
         return $this->response->created();
     }
@@ -37,7 +38,7 @@ class AvsController extends Controller
         //权限验证
         $this->authorize('update',$av);
 
-        $data = $request->only(['name','description','album_id','image_id','category_id']);
+        $data = $request->only(['name','description','album_id','image_id']);
         $tag_ids = json_decode($request->tag_ids);
 
         //更新
@@ -45,6 +46,7 @@ class AvsController extends Controller
 
         //同步标签
         $av->tag()->sync($tag_ids);
+        $av->category()->sync($request->category_id);
 
         return $this->response->item($av,new AvTransformer());
     }

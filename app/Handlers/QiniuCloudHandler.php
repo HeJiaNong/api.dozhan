@@ -36,12 +36,12 @@ class QiniuCloudHandler
      * 初始化配置信息
      */
     private function build(){
-        $this->qiniuDomain = \config('qiniu.qiniuDomain');
-        $this->bucket      = \config('qiniu.bucket');
-        $this->access_key  = \config('qiniu.access_key');
-        $this->secret_key  = \config('qiniu.secret_key');
-        $this->expires     = \config('qiniu.expires');
-        $this->pipeline    = \config('qiniu.pipeline');
+        $this->qiniuDomain = \config('services.qiniu.qiniuDomain');
+        $this->bucket      = \config('services.qiniu.bucket');
+        $this->access_key  = \config('services.qiniu.access_key');
+        $this->secret_key  = \config('services.qiniu.secret_key');
+        $this->expires     = \config('services.qiniu.expires');
+        $this->pipeline    = \config('services.qiniu.pipeline');
         $this->notify_url  = app('Dingo\Api\Routing\UrlGenerator')->version('v1')->route('api.resource.notification');
 //        $this->notify_url  = 'https://www.hjn.ink/api/resource/notification';
         $this->auth        = new Auth($this->access_key, $this->secret_key);   //定义鉴权对象Auth

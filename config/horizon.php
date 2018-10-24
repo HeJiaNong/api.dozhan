@@ -74,7 +74,7 @@ return [
         'production' => [
             'supervisor-1' => [
                 'connection' => 'redis',
-                'queue' => ['default'],
+                'queue' => ['default','email'], //队列名称
                 'balance' => 'simple',  //负载均衡配置:Horizon 有三种负载均衡策略：simple、auto、 和 false，默认策略是 simple，会将接收到的任务均分给队列进程
                 'processes' => 10,
                 'tries' => 3,
@@ -84,9 +84,9 @@ return [
         'local' => [
             'supervisor-1' => [
                 'connection' => 'redis',
-                'queue' => ['default'],
+                'queue' => ['default','email'],
                 'balance' => 'simple',
-                'processes' => 3,
+                'processes' => 10,
                 'tries' => 3,
             ],
         ],

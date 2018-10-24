@@ -2,13 +2,12 @@
 
 namespace App\Notifications;
 
-use Dingo\Api\Routing\UrlGenerator;
 use Illuminate\Bus\Queueable;
 use Illuminate\Notifications\Notification;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 
-class Comment extends Notification
+class Comment extends Notification implements ShouldQueue
 {
     use Queueable;
 
@@ -23,7 +22,7 @@ class Comment extends Notification
     public function via($notifiable)
     {
         // 开启通知的频道
-        return ['database'];
+        return ['database','mail'];
     }
 
     //这个返回的数组将被转成 JSON 格式并存储到通知数据表的 data 列
@@ -43,5 +42,14 @@ class Comment extends Notification
             'av_id' => $av->id,
             'av_name' => $av->name,
         ];
+    }
+
+    public function toMail($notifiable){
+        return (new MailMessage())
+            ->line('有新的评论:')
+            ->line($this->comment->comment)
+            ->action('点击链接查看',app('Dingo\Api\Routing\UrlGenerator')
+                ->version('v1')
+                ->route('api.avs.show',$this->comment->av->id));
     }
 }

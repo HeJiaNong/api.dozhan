@@ -47,7 +47,7 @@ use Illuminate\Http\Request;
 $api = app(\Dingo\Api\Routing\Router::class);
 
 $api->version('v1',[
-    'namespace' => 'App\Http\Controllers\Api',
+    'namespace' => 'App\Http\Controllers\Api',  //命名空间设置
     'middleware' => [
         'serializer',
         'bindings', //路由模型绑定
@@ -55,77 +55,79 @@ $api->version('v1',[
 
 ],function ($api){
     //游客可以访问的接口
+    //==============================================================================================================
+    //测试接口
+    $api->get('test',function (){
+        dd([
+            'APP_ENV' => env('APP_ENV'),
+            'APP_DEBUG' => env('APP_DEBUG'),
+            'API_DEBUG' => env('API_DEBUG'),
+            'Token过期时间:' => Auth::guard('api')->factory()->getTTL().'分钟',
+            '网站URL' => env('APP_URL'),
+        ]);
+    });
+    //==============================================================================================================
+    //七牛视频消息回调地址
+    $api->post('resource/notification','ResourcesController@notification')->name('api.resource.notification');
+    //==============================================================================================================
     $api->group([
         'middleware' => 'api.throttle', //DingoApi 已经为我们提供了调用频率限制的中间件 api.throttle
-        'limit' => config('api.rate_limits.sign.limit'),    //接口频率限制
-        'expires' => config('api.rate_limits.sign.expires'),
-    ], function ($api) {
-        //测试接口
-        $api->get('test',function (){
-            dd([
-                'APP_ENV' => env('APP_ENV'),
-                'APP_DEBUG' => env('APP_DEBUG'),
-                'API_DEBUG' => env('API_DEBUG'),
-                'Token过期时间:' => Auth::guard('api')->factory()->getTTL().'分钟',
-                '网站URL' => env('APP_URL'),
-            ]);
-        });
-        //七牛视频消息回调地址
-        $api->post('resource/notification','ResourcesController@notification')->name('api.resource.notification');
-
-        //==============================================================================================================
+        'limit' => config('api.rate_limits.sign.limit'),    //接口频率限制次数
+        'expires' => config('api.rate_limits.sign.expires'),    //接口频率限制过期时间
+    ],function ($api){
         //邮箱验证码
         $api->post('verificationCodes/email','VerificationCodesController@email')->name('api.verificationCodes.email');
         //用户注册
         $api->post('user','UsersController@store')->name('api.users.store');
         //用户登陆
         $api->post('authorizations','AuthorizationsController@store')->name('api.authorizations.store');
-        //获取指定用户发布的专辑
-        $api->get('users/{user}/albums','AlbumsController@userIndex')->name('api.users.albums.index');
-        //==============================================================================================================
-        //获取某用户的信息
-        $api->get('users/{user}','UsersController@show')->name('api.users.show');
-        //==============================================================================================================
-        //获取专辑信息
-        $api->get('albums/{album}','AlbumsController@show')->name('api.albums.index');
-        //获取专辑列表
-        $api->get('albums','AlbumsController@index')->name('api.albums.index');
-        //获取专辑下的所有视频
-        $api->get('albums/{album}/avs','AlbumsController@AvsIndex')->name('api.albums.avs.index');
-        //==============================================================================================================
-        //获取分类信息
-        $api->get('categories/{category}','CategoriesController@show')->name('api.categories.show');
-        //获取分类列表
-        $api->get('categories','CategoriesController@index')->name('api.categories.index');
-        //获取某分类下的所有专辑
-        $api->get('categories/{category}/albums','CategoriesController@albumsIndex')->name('api.categories.albums.index');
-        //获取某分类下的所有视频
-        $api->get('categories/{category}/avs','CategoriesController@avsIndex')->name('api.categories.avs.index');
-        //==============================================================================================================
-        //视频列表
-        $api->get('avs','AvsController@index')->name('api.avs.index');
-        //获取某用户的视频列表
-        $api->get('users/{user}/avs','AvsController@userIndex')->name('api.user.avs.index');
-        //视频信息
-        $api->get('avs/{av}','AvsController@show')->name('api.avs.show');
-        //==============================================================================================================
-        //获取所有标签
-        $api->get('tags','TagsController@index')->name('api.tags.index');
-        //标签信息
-        $api->get('tags/{tag}','TagsController@show')->name('api.tags.show');
-        //获取某标签下的所有视频
-        $api->get('tags/{tag}/avs','TagsController@avsIndex')->name('api.tags.avs.index');
-        //==============================================================================================================
-        //获取评论列表
-        $api->get('comments','CommentsController@index')->name('api.comments.index');
-        //获取某视频下的评论列表
-        $api->get('avs/{av}/comments','CommentsController@AvsIndex')->name('api.avs.comments.index');
-        //获取评论信息
-        $api->get('comments/{comment}','CommentsController@show')->name('api.comment.show');
-        //获取某评论的二级频率列表
-        $api->get('comments/{comment}/replies','CommentsController@replies')->name('api.comments.replies');
-
     });
+
+    //==============================================================================================================
+    //获取某用户的信息
+    $api->get('users/{user}','UsersController@show')->name('api.users.show');
+    //==============================================================================================================
+    //获取专辑信息
+    $api->get('albums/{album}','AlbumsController@show')->name('api.albums.index');
+    //获取专辑列表
+    $api->get('albums','AlbumsController@index')->name('api.albums.index');
+    //获取专辑下的所有视频
+    $api->get('albums/{album}/avs','AlbumsController@AvsIndex')->name('api.albums.avs.index');
+    //获取指定用户发布的专辑
+    $api->get('users/{user}/albums','AlbumsController@userIndex')->name('api.users.albums.index');
+    //==============================================================================================================
+    //获取分类信息
+    $api->get('categories/{category}','CategoriesController@show')->name('api.categories.show');
+    //获取分类列表
+    $api->get('categories','CategoriesController@index')->name('api.categories.index');
+    //获取某分类下的所有专辑
+    $api->get('categories/{category}/albums','CategoriesController@albumsIndex')->name('api.categories.albums.index');
+    //获取某分类下的所有视频
+    $api->get('categories/{category}/avs','CategoriesController@avsIndex')->name('api.categories.avs.index');
+    //==============================================================================================================
+    //视频列表
+    $api->get('avs','AvsController@index')->name('api.avs.index');
+    //获取某用户的视频列表
+    $api->get('users/{user}/avs','AvsController@userIndex')->name('api.user.avs.index');
+    //视频信息
+    $api->get('avs/{av}','AvsController@show')->name('api.avs.show');
+    //==============================================================================================================
+    //获取所有标签
+    $api->get('tags','TagsController@index')->name('api.tags.index');
+    //标签信息
+    $api->get('tags/{tag}','TagsController@show')->name('api.tags.show');
+    //获取某标签下的所有视频
+    $api->get('tags/{tag}/avs','TagsController@avsIndex')->name('api.tags.avs.index');
+    //==============================================================================================================
+    //获取评论列表
+    $api->get('comments','CommentsController@index')->name('api.comments.index');
+    //获取某视频下的评论列表
+    $api->get('avs/{av}/comments','CommentsController@AvsIndex')->name('api.avs.comments.index');
+    //获取评论信息
+    $api->get('comments/{comment}','CommentsController@show')->name('api.comment.show');
+    //获取某评论的二级频率列表
+    $api->get('comments/{comment}/replies','CommentsController@replies')->name('api.comments.replies');
+
 
     //需要token验证的接口
     $api->group(['middleware' => 'api.auth'],function ($api){
