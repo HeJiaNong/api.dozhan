@@ -18,7 +18,7 @@ class VideosTableSeeder extends Seeder
         $faker = app(\Faker\Generator::class);
 
         //用户id
-        $user_ids = \App\Models\User::all()->pluck('id')->toArray();
+        $user_ids = \App\Models\User::pluck('id')->toArray();
 
         //j假视频链接
         $forks = [

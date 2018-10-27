@@ -6,6 +6,7 @@ use App\Http\Requests\Api\TagRequest;
 use App\Models\Tag;
 use App\Transformers\AvTransformer;
 use App\Transformers\TagTransformer;
+use App\Transformers\WorkTransformer;
 use Illuminate\Http\Request;
 
 class TagsController extends Controller
@@ -44,8 +45,8 @@ class TagsController extends Controller
     }
 
     //获取某标签下的所有视频
-    public function avsIndex(Tag $tag){
-        return $this->response->paginator($tag->av()->paginate(20),new AvTransformer());
+    public function worksIndex(Tag $tag){
+        return $this->response->paginator($tag->works()->paginate(20),new WorkTransformer());
     }
 
     //标签信息

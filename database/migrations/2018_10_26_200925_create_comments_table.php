@@ -15,11 +15,12 @@ class CreateCommentsTable extends Migration
     {
         Schema::create('comments', function (Blueprint $table) {
             $table->increments('id');
-            $table->string('comment')->comment('评论');
-            $table->integer('user_id')->unsigned()->index()->comment('用户ID');
-            $table->integer('av_id')->unsigned()->index()->comment('视频ID');
-            $table->integer('parent_id')->nullable()->unsigned()->index()->comment('父级评论ID');
-            $table->integer('target_id')->nullable()->unsigned()->index()->comment('父级评论用户');
+            $table->string('content')->comment('评论内容');
+            $table->integer('favour_count')->unsigned()->default(0)->comment('点赞人数');
+            $table->integer('user_id')->unsigned()->comment('用户id');
+            $table->integer('parent_id')->unsigned()->nullable()->comment('父评论id');
+            $table->integer('target_id')->unsigned()->nullable()->comment('目标用户');
+            $table->morphs('commentable');
             $table->timestamps();
         });
     }

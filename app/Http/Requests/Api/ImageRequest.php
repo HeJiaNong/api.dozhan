@@ -45,6 +45,13 @@ class ImageRequest extends FormRequest
         return $rule;
     }
 
+    public function attributes()
+    {
+        return [
+            'image' => '图片'
+        ];
+    }
+
     public function messages()
     {
         return [

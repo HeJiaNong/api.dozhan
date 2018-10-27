@@ -57,17 +57,9 @@ $api->version('v1',[
     //游客可以访问的接口
     //==============================================================================================================
     //测试接口
-    $api->get('test',function (){
-        dd([
-            'APP_ENV' => env('APP_ENV'),
-            'APP_DEBUG' => env('APP_DEBUG'),
-            'API_DEBUG' => env('API_DEBUG'),
-            'Token过期时间:' => Auth::guard('api')->factory()->getTTL().'分钟',
-            '网站URL' => env('APP_URL'),
-        ]);
-    });
+    $api->get('test',function (){return $_SERVER;});
     //==============================================================================================================
-    //七牛视频消息回调地址
+    //七牛作品消息回调地址
     $api->post('resource/notification','ResourcesController@notification')->name('api.resource.notification');
     //==============================================================================================================
     $api->group([
@@ -87,46 +79,33 @@ $api->version('v1',[
     //获取某用户的信息
     $api->get('users/{user}','UsersController@show')->name('api.users.show');
     //==============================================================================================================
-    //获取专辑信息
-    $api->get('albums/{album}','AlbumsController@show')->name('api.albums.index');
-    //获取专辑列表
-    $api->get('albums','AlbumsController@index')->name('api.albums.index');
-    //获取专辑下的所有视频
-    $api->get('albums/{album}/avs','AlbumsController@AvsIndex')->name('api.albums.avs.index');
-    //获取指定用户发布的专辑
-    $api->get('users/{user}/albums','AlbumsController@userIndex')->name('api.users.albums.index');
-    //==============================================================================================================
     //获取分类信息
     $api->get('categories/{category}','CategoriesController@show')->name('api.categories.show');
     //获取分类列表
     $api->get('categories','CategoriesController@index')->name('api.categories.index');
-    //获取某分类下的所有专辑
-    $api->get('categories/{category}/albums','CategoriesController@albumsIndex')->name('api.categories.albums.index');
-    //获取某分类下的所有视频
-    $api->get('categories/{category}/avs','CategoriesController@avsIndex')->name('api.categories.avs.index');
+    //获取某分类下的所有作品
+    $api->get('categories/{category}/works','CategoriesController@worksIndex')->name('api.categories.works.index');
     //==============================================================================================================
-    //视频列表
-    $api->get('avs','AvsController@index')->name('api.avs.index');
-    //获取某用户的视频列表
-    $api->get('users/{user}/avs','AvsController@userIndex')->name('api.user.avs.index');
-    //视频信息
-    $api->get('avs/{av}','AvsController@show')->name('api.avs.show');
+    //作品列表
+    $api->get('works','WorksController@index')->name('api.works.index');
+    //获取某用户的作品列表
+    $api->get('users/{user}/works','WorksController@userIndex')->name('api.user.woks.index');
+    //作品信息
+    $api->get('works/{work}','WorksController@show')->name('api.work.show');
     //==============================================================================================================
     //获取所有标签
     $api->get('tags','TagsController@index')->name('api.tags.index');
     //标签信息
     $api->get('tags/{tag}','TagsController@show')->name('api.tags.show');
-    //获取某标签下的所有视频
-    $api->get('tags/{tag}/avs','TagsController@avsIndex')->name('api.tags.avs.index');
+    //获取某标签下的所有作品
+    $api->get('tags/{tag}/works','TagsController@worksIndex')->name('api.tags.works.index');
     //==============================================================================================================
     //获取评论列表
     $api->get('comments','CommentsController@index')->name('api.comments.index');
-    //获取某视频下的评论列表
-    $api->get('avs/{av}/comments','CommentsController@AvsIndex')->name('api.avs.comments.index');
+    //获取某作品下的评论列表
+    $api->get('works/{work}/comments','CommentsController@worksIndex')->name('api.works.comments.index');
     //获取评论信息
     $api->get('comments/{comment}','CommentsController@show')->name('api.comment.show');
-    //获取某评论的二级频率列表
-    $api->get('comments/{comment}/replies','CommentsController@replies')->name('api.comments.replies');
 
 
     //需要token验证的接口
@@ -149,23 +128,16 @@ $api->version('v1',[
         //==============================================================================================================
         //资源api
         $api->group(['prefix' => 'resource'],function ($api){
-            //获取视频上传凭证
+            //获取作品上传凭证
             $api->get('videos/token','ResourcesController@videoToken')->name('api.resource.videos.token');
             //获取图片上传凭证
             $api->get('images/token/{scene}','ResourcesController@imageToken')->name('api.resource.videos.token');
-            //上传视频
+            //上传作品
             $api->post('video','ResourcesController@video');
             //上传图片
             $api->post('image','ResourcesController@image');
         });
 
-        //==============================================================================================================
-        //发布专辑
-        $api->post('albums','AlbumsController@store')->name('api.albums.store');
-        //修改专辑
-        $api->patch('albums/{album}','AlbumsController@update')->name('api.albums.update');
-        //删除专辑
-        $api->delete('albums/{album}','AlbumsController@destroy')->name('api.albums.destroy');
         //==============================================================================================================
         //新建分类
         $api->post('categories','CategoriesController@store')->name('api.categories.store');
@@ -174,12 +146,18 @@ $api->version('v1',[
         //删除分类
         $api->delete('categories/{category}','CategoriesController@destroy')->name('api.categories.destroy');
         //==============================================================================================================
-        //发布视频
-        $api->post('avs','AvsController@store')->name('api.avs.store');
-        //编辑视频
-        $api->patch('avs/{av}','AvsController@update')->name('api.av.update');
-        //删除视频
-        $api->delete('avs/{av}','AvsController@destroy')->name('api.av.destroy');
+        //发布作品
+        $api->post('works','WorksController@store')->name('api.work.store');
+        //编辑作品
+        $api->patch('works/{work}','WorksController@update')->name('api.work.update');
+        //软删除作品
+        $api->delete('works/{work}','WorksController@destroy')->name('api.work.destroy');
+        //获取被软删除的作品
+        $api->get('destroys/works','WorksController@destroys')->name('api.work.destroys');
+        //恢复当前用户已软删除的作品
+        $api->put('works/{id}','WorksController@restore')->name('api.work.restore');
+        //彻底删除作品
+        $api->delete('works/{id}/force','WorksController@forceDestroy')->name('api.work.destroy.force');
         //==============================================================================================================
         //新增标签
         $api->post('tags','TagsController@store')->name('api.tags.store');

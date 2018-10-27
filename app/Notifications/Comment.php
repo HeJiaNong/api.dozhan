@@ -27,29 +27,19 @@ class Comment extends Notification implements ShouldQueue
 
     //这个返回的数组将被转成 JSON 格式并存储到通知数据表的 data 列
     public function toDatabase($notifiable){
-        $av = $this->comment->av;
-        $user = $this->comment->user;
-
         //存储在data字段中的值
         return [
-            'comment_id' => $this->comment->id,
-            'comment_content' => $this->comment->comment,
-            'comment_parent_id' => $this->comment->parent_id,
-            'comment_target_id' => $this->comment->target_id,
-            'user_id' => $user->id,
-            'user_name' => $user->name,
-            'user_avatar' => $user->avatar,
-            'av_id' => $av->id,
-            'av_name' => $av->name,
+            'comment' => $this->comment->toArray(),
         ];
     }
 
     public function toMail($notifiable){
         return (new MailMessage())
-            ->line('有新的评论:')
-            ->line($this->comment->comment)
+            ->line('有新的回复:')
+            ->line($this->comment->content)
             ->action('点击链接查看',app('Dingo\Api\Routing\UrlGenerator')
                 ->version('v1')
-                ->route('api.avs.show',$this->comment->av->id));
+                ->route('api.comment.show',$this->comment->id)
+            );
     }
 }

@@ -49,10 +49,9 @@ class UsersController extends Controller
         }
 
         //创建用户
-        $user = $user->create([
-            'email' => $request->email,
-            'password' => bcrypt($request->password),
-        ]);
+        $user->email = $request->email;
+        $user->password = bcrypt($request->email);
+        $user->save();
 
         //清除 此条验证码缓存
         Cache::forget($request->key);
@@ -75,7 +74,7 @@ class UsersController extends Controller
         $user = $this->user();
 
         //只取出请求中的一部分数据
-        $attributes = $request->only(['name','avatar','phone_number','qq_number']);
+        $attributes = $request->only(['name','avatar','introduction','phone','qq']);
 
         $user->update($attributes);
 

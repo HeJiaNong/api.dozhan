@@ -6,40 +6,42 @@ use League\Fractal\TransformerAbstract;
 
 class UserTransformer extends TransformerAbstract
 {
-    protected $availableIncludes = ['album','image','comment','video','av'];
+    //同模型关联
+    protected $availableIncludes = ['images','videos','comments','works','favours'];
 
     public function transform(User $user){
         return [
             'id' => $user->id,
             'do_id' => $user->do_id,
             'name' => $user->name,
+            'introduction' => $user->introduction,
             'avatar' => $user->avatar,
             'email' => $user->email,
-            'phone_number' => $user->phone_number ? true : false,
-            'qq_number' => $user->qq_number ? true : false,
+            'phone' => $user->phone ? substr_replace($user->phone,'****',3,4) : false,
+            'qq' => $user->qq ??false,
             'notification_count' => $user->notification_count,
             'created_at' => $user->created_at->toDateTimeString(),
             'updated_at' => $user->updated_at->toDateTimeString(),
         ];
     }
 
-    public function includeAlbum(User $user){
-        return $this->collection($user->album,new AlbumTransformer());
+    public function includeImages(User $user){
+        return $this->collection($user->images,new ImageTransformer());
     }
 
-    public function includeImage(User $user){
-        return $this->collection($user->image,new ImageTransformer());
+    public function includeVideos(User $user){
+        return $this->collection($user->videos,new VideoTransformer());
     }
 
-    public function includeComment(User $user){
-        return $this->collection($user->comment,new CommentTransformer());
+    public function includeComments(User $user){
+        return $this->collection($user->comments,new CommentTransformer());
     }
 
-    public function includeVideo(User $user){
-        return $this->collection($user->video,new VideoTransformer());
+    public function includeWorks(User $user){
+        return $this->collection($user->works,new WorkTransformer());
     }
 
-    public function includeAv(User $user){
-        return $this->collection($user->av,new AvTransformer());
+    public function includeFavours(User $user){
+        return $this->collection($user->favours,new FavourTransformer());
     }
 }

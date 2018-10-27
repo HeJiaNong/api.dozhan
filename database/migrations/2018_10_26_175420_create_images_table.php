@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateAlbumsTable extends Migration
+class CreateImagesTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,11 +13,12 @@ class CreateAlbumsTable extends Migration
      */
     public function up()
     {
-        Schema::create('albums', function (Blueprint $table) {
+        Schema::create('images', function (Blueprint $table) {
             $table->increments('id');
-            $table->string('name')->unique()->index()->comment('专辑名称');
-            $table->string('description')->index()->comment('专辑描述');
-            $table->integer('user_id')->index()->unsigned()->comment('用户id');
+            $table->integer('user_id')->unsigned()->index()->comment('用户');
+            $table->string('mime')->comment('mime');
+            $table->string('key')->comment('资源名');
+            $table->string('bucket')->comment('空间名');
             $table->timestamps();
         });
     }
@@ -29,6 +30,6 @@ class CreateAlbumsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('albums');
+        Schema::dropIfExists('images');
     }
 }

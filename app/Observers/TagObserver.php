@@ -8,14 +8,9 @@ use Illuminate\Support\Facades\DB;
 
 class TagObserver
 {
-    public function deleting(Tag $tag){
-        if ($tag->id == 1){
-            abort(401);
-        }
+    public function deleted(Tag $tag){
+        //标签删除后，在关联表中也一并删除
+        DB::table('tag_work')->where('tag_id',$tag->id)->delete();
     }
 
-    public function deleted(Tag $tag){
-        //分类删除后，该分类下所有的视频和专辑都会转移至id为1的分类下
-        DB::table('av_tag')->where('tag_id',$tag->id)->delete();
-    }
 }

@@ -12,9 +12,9 @@ class ImageTransformer extends TransformerAbstract
         return [
             'id' => $image->id,
             'user_id' => $image->user_id,
-            'scene' => $image->scene,
             'mime' => $image->mime,
             'key' => $image->key,
+            'bucket' => $image->bucket,
             'created_at' => $image->created_at->toDateTimeString(),
             'updated_at' => $image->updated_at->toDateTimeString(),
         ];

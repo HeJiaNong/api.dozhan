@@ -17,7 +17,9 @@ class User extends Authenticatable implements JWTSubject
     }
     use SoftDeletes;    //启用软删除
 
-    //对laravel消息通知的notify方法的优化
+    /*
+     * 对laravel消息通知的notify方法的优化
+     */
     public function notify($instance){
         //如果要通知的人是自己，就不用通知了
         if ($this->id == Auth::guard('api')->user()->id){
@@ -28,8 +30,6 @@ class User extends Authenticatable implements JWTSubject
         $this->laravelNotify($instance);
     }
 
-//    protected $guard_name = 'api';    //或者你想要使用的任何警卫
-
     /**
      * 需要被转换成日期的属性。
      *
@@ -37,57 +37,75 @@ class User extends Authenticatable implements JWTSubject
      */
     protected $dates = ['deleted_at'];
 
-    //可写入字段
-    protected $fillable = [
-        'do_id','name','avatar','email','phone_number','qq_number','password','notification_count'
-    ];
 
-    //隐藏字段
-    protected $hidden = [
-        'password', 'remember_token',
-    ];
+    /*
+     * 批量赋值允许字段
+     */
+    protected $fillable = ['name','avatar','introduction','phone','qq'];
 
-    //返回了 User 的 id
+
+    /*
+     * 隐藏字段
+     */
+    protected $hidden = ['password','auth_token',];
+
+    /*
+     * 返回了 User 的 id
+     */
     public function getJWTIdentifier()
     {
         return $this->getKey();
     }
 
-    //需要额外再 JWT 载荷中增加的自定义内容
+    /*
+     * 需要额外再 JWT 载荷中增加的自定义内容
+     */
     public function getJWTCustomClaims()
     {
         return [];
     }
 
-    //模型关联
-    public function album(){
-        return $this->hasMany(Album::class);
-    }
-
-    //模型关联
-    public function av(){
-        return $this->hasMany(Av::class);
-    }
-
-    //模型关联
-    public function image(){
-        return $this->hasMany(Image::class);
-    }
-
-    //模型关联
-    public function video(){
-        return $this->hasMany(Video::class);
-    }
-
-    //模型关联
-    public function comment(){
-        return $this->hasMany(Comment::class);
-    }
-
-    //验证模型的对应用户是否与当前登陆用户一致
+    /*
+     * 验证模型的对应用户是否与当前登陆用户一致
+     */
     public function isAuthOf($model)
     {
         return $model->user_id == $this->id;
+    }
+
+    /*
+     * 获取此用户下的所有图片资源
+     */
+    public function images(){
+        return $this->hasMany(Image::class);
+    }
+
+    /*
+     * 获取此用户下的所有视频资源
+     */
+    public function videos(){
+        return $this->hasMany(Video::class);
+    }
+
+    /*
+     * 获取此用户下的所有评论
+     */
+    public function comments(){
+        return $this->hasMany(Comment::class);
+    }
+
+    /*
+     * 获取此用户下的所有作品
+     */
+    public function works(){
+        return $this->hasMany(Work::class);
+    }
+
+    /*
+     * 获取此用户点过的赞
+     */
+    public function favours(){
+        return $this->hasMany(Favour::class);
     }
 
 }

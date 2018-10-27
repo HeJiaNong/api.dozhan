@@ -17,12 +17,14 @@ class CategoryRequest extends FormRequest
             case 'POST':
                 return [
                     'name' => 'required|string|unique:categories',
+                    'cover' => 'required|string',
                     'description' => 'required|string|max:255',
                 ];
                 break;
             case 'PATCH':
                 return [
                     'name' => 'string|unique:categories,name,' . $this->category->id,
+                    'cover' => 'string',
                     'description' => 'string|max:255',
                 ];
                 break;

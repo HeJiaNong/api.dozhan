@@ -9,6 +9,7 @@ use App\Models\Category;
 use App\Transformers\AlbumTransformer;
 use App\Transformers\AvTransformer;
 use App\Transformers\CategoryTransformer;
+use App\Transformers\WorkTransformer;
 use Illuminate\Http\Request;
 
 class CategoriesController extends Controller
@@ -18,14 +19,9 @@ class CategoriesController extends Controller
         return $this->response->collection(Category::all(),new CategoryTransformer());
     }
 
-    //获取某分类下的所有专辑
-    public function albumsIndex(Category $category){
-        return $this->response->paginator($category->albums()->paginate(20),new AlbumTransformer());
-    }
-
-    //获取某分类下的所有视频
-    public function avsIndex(Category $category){
-        return $this->response->paginator($category->avs()->paginate(20),new AvTransformer());
+    //获取某分类下的所有作品
+    public function worksIndex(Category $category){
+        return $this->response->paginator($category->works()->paginate(20),new WorkTransformer());
     }
 
     //新增分类
@@ -33,7 +29,7 @@ class CategoriesController extends Controller
         //权限验证
         $this->authorize('create',Category::class);
 
-        $categories = $request->only(['name','description']);
+        $categories = $request->only(['name','cover','description']);
 
         Category::create($categories);
 
@@ -57,7 +53,7 @@ class CategoriesController extends Controller
         //权限验证
         $this->authorize('update',Category::class);
 
-        $data = $request->only(['name','description']);
+        $data = $request->only(['name','cover','description']);
 
         $category->update($data);
 

@@ -39,13 +39,12 @@ class ImagesTableSeeder extends Seeder
         ];
 
         //用户id
-        $user_ids = \App\Models\User::all()->pluck('id')->toArray();
+        $user_ids = \App\Models\User::pluck('id')->toArray();
 
         $images = [];
 
         for ($i = 0;$i <= count($keys)-1;$i++){
             $images[$i]['user_id'] = array_random($user_ids);
-            $images[$i]['scene'] = $this->getScene($keys[$i]);
             $images[$i]['mime'] = "image/".substr($keys[$i],strpos($keys[$i],".")+1);
             $images[$i]['key'] = $keys[$i];
             $images[$i]['bucket'] = $bucket;
@@ -56,15 +55,6 @@ class ImagesTableSeeder extends Seeder
         \App\Models\Image::insert($images);
     }
 
-    public function getScene($key){
-        if (str_contains($key,'avatar')){
-            return 'avatar';
-        }elseif(str_contains($key,'banner')){
-            return 'banner';
-        }elseif (str_contains($key,'cover')){
-            return 'cover';
-        }
-    }
 }
 
 

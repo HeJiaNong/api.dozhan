@@ -20,4 +20,11 @@ class VideoRequest extends FormRequest
             ],
         ];
     }
+
+    public function attributes()
+    {
+        return [
+            'video' => '视频'
+        ];
+    }
 }

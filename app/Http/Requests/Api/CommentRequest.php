@@ -2,6 +2,8 @@
 
 namespace App\Http\Requests\Api;
 
+use Illuminate\Database\Eloquent\Relations\Relation;
+
 class CommentRequest extends FormRequest
 {
     /**
@@ -11,19 +13,24 @@ class CommentRequest extends FormRequest
      */
     public function rules()
     {
+        if (!$commentable_type = Relation::getMorphedModel($this->commentable_type)){
+            abort(422,'模型类型 错误');
+        }
+//        dd(2);
         switch ($this->method()){
+
             case 'POST' :
                 return [
-                    'comment' => 'required|string|max:255',
-                    'av_id' => 'required|integer|exists:avs,id',
+                    'content' => 'required|string|max:255',
+                    'commentable_id' => 'required|integer|exists:'.$this->commentable_type.',id',
+                    'commentable_type' => 'required|string',
                     'parent_id' => 'integer|exists:comments,id',
                     'target_id' => 'integer|exists:users,id',
                 ];
                 break;
             case 'PATCH':
                 return [
-                    'comment' => 'string|max:255',
-                    'target_id' => 'integer|exists:users,id',
+                    'content' => 'string|max:255',
                 ];
                 break;
         }
@@ -32,8 +39,8 @@ class CommentRequest extends FormRequest
 
     public function attributes(){
         return [
-            'comment' => '评论',
-            'av_id' => '视频',
+            'content' => '评论内容',
+            'commentable_id' => '模型id',
             'parent_id' => '父级评论',
             'target_id' => '目标用户',
         ];

@@ -5,7 +5,7 @@ namespace App\Http\Requests\Api;
 use App\Rules\JsontoArrExists;
 use Illuminate\Validation\Rule;
 
-class AvRequest extends FormRequest
+class WorkRequest extends FormRequest
 {
 
     /**
@@ -18,22 +18,20 @@ class AvRequest extends FormRequest
         switch ($this->method()){
             case 'POST':
                 return [
-                    'name' => 'required|string|unique:avs',
+                    'name' => 'required|string|unique:works',
                     'description' => 'required|string|max:255',
-                    'album_id' => 'string|exists:albums,id',
-                    'video_id' => 'required|integer|exists:videos,id',
-                    'image_id' => 'required|integer|exists:images,id',
                     'category_id' => 'required|integer|exists:categories,id',
-                    'tag_ids' => 'json',
+                    'url' => 'required|string',
+                    'cover' => 'required|string',
+                    'tag_ids' => ['json',new JsontoArrExists('tags')],
                 ];
                 break;
             case 'PATCH':
                 return [
-                    'name' => 'string|unique:avs,name,'.$this->av->id,
+                    'name' => 'string|unique:works,name,'.$this->work->id,
                     'description' => 'string|max:255',
-                    'album_id' => 'exists:albums,id',
-                    'image_id' => 'integer|exists:images,id',
                     'category_id' => 'integer|exists:categories,id',
+                    'cover' => 'string',
                     'tag_ids' => ['json',new JsontoArrExists('tags')],  //自己写的验证规则，反正json转数组后是否存在与某个表
                 ];
                 break;
@@ -42,11 +40,9 @@ class AvRequest extends FormRequest
 
     public function attributes(){
         return [
-            'album_id' => '专辑',
-            'video_id' => '视频资源',
-            'image_id' => '封面',
+            'url' => '视频链接',
+            'cover' => '封面链接',
             'category_id' => '分类',
-            'tag_ids' => '标签',
         ];
     }
 }

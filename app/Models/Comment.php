@@ -6,28 +6,39 @@ use Illuminate\Database\Eloquent\Model;
 
 class Comment extends Model
 {
+    protected $fillable = ['content'];
 
-    protected $fillable = ['comment','user_id','av_id','parent_id','target_id'];
+    /*
+     * 获取拥有此评论的模型
+     */
+    public function commentable(){
+        return $this->morphTo();
+    }
 
-    //模型关联
+    /*
+     * 获取此评论对应的用户
+     */
     public function user(){
         return $this->belongsTo(User::class);
     }
 
-    //模型关联
-    public function av(){
-        return $this->belongsTo(Av::class);
+    /*
+     * 获取此评论的所有点赞
+     */
+    public function favours(){
+        return $this->morphMany(Favour::class,'favourable');
     }
 
-    //二级评论回复列表
-    public function replies()
-    {
-        return $this->hasMany(Comment::class, 'parent_id');
+    /*
+     * 获取此评论的回复
+     */
+    public function replies(){
+        return $this->hasMany(Comment::class,'parent_id');
     }
 
-    //目标用户
     public function target(){
         return $this->belongsTo(User::class,'target_id');
     }
-
 }
+
+

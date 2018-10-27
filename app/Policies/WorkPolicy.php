@@ -2,11 +2,11 @@
 
 namespace App\Policies;
 
-use App\Models\Av;
+use App\Models\Work;
 use App\Models\User;
 use Illuminate\Auth\Access\HandlesAuthorization;
 
-class AvPolicy
+class WorkPolicy
 {
     use HandlesAuthorization;
 
@@ -23,18 +23,18 @@ class AvPolicy
     //过滤器
     public function before($user, $ability)
     {
-        if ($user->hasPermissionTo('manage_avs')) {
+        if ($user->hasPermissionTo('manage_works')) {
             return true;
         }
     }
 
     //更新权限
-    public function update(User $user,Av $av){
-        return $user->isAuthOf($av);
+    public function update(User $user,Work $work){
+        return $user->isAuthOf($work);
     }
 
     //删除权限
-    public function destroy(User $user,Av $av){
-        return $user->isAuthOf($av);
+    public function destroy(User $user,Work $work){
+        return $user->isAuthOf($work);
     }
 }

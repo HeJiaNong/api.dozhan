@@ -22,7 +22,7 @@ class PermissionPolicy
     //过滤器
     public function before($user,$ability)
     {
-        if ($user->hasRole(['Founder','Maintainer'])) {
+        if ($user->hasPermissionTo('manage_permissions')) {
             return true;
         }
     }

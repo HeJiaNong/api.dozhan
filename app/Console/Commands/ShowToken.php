@@ -6,14 +6,14 @@ use App\Models\User;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Auth;
 
-class GetUserToken extends Command
+class ShowToken extends Command
 {
     /**
      * The name and signature of the console command.
      *
      * @var string
      */
-    protected $signature = 'dozhan:get-user-token {user_id?}';
+    protected $signature = 'dozhan:showtoken {user_id?}';
 
     /**
      * The console command description.

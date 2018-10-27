@@ -6,16 +6,12 @@ use Illuminate\Database\Eloquent\Model;
 
 class Category extends Model
 {
-    protected $fillable = ['name','description'];
+    protected $fillable = ['name','cover','description'];
 
-    //模型关联
-    public function albums(){
-        return $this->morphedByMany(Album::class, 'categorygable');
+    /*
+     * 获取此分类下的所有作品
+     */
+    public function works(){
+        return $this->hasMany(Work::class);
     }
-
-    //模型关联
-    public function avs(){
-        return $this->morphedByMany(Av::class, 'categorygable');
-    }
-
 }

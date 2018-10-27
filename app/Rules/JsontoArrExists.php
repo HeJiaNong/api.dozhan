@@ -30,7 +30,7 @@ class JsontoArrExists implements Rule
      */
     public function passes($attribute, $value)
     {
-        $this->attribute = $attribute;
+        $this->attribute = '标签';
         $arr = json_decode($value,true);
 
         //获取指定表所有指定字段

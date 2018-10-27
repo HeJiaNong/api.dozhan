@@ -26,17 +26,15 @@ class UserRequest extends FormRequest
             case 'PATCH':
                 $userId = $this->user()->id;
                 if ($this->user){
+                    //管理员操作
                     $userId = $this->user->id;
                 }
                 return [
                     'name' => 'between:3,25|unique:users,name,' .$userId,    //unique:table,column,except,idColumn
                     'avatar' => 'string',   //图片链接地址
-                    'phone_number' => 'integer|unique:users,phone_number,' .$userId,    //强迫 Unique 规则忽略指定 ID
-                    'qq_number' => 'integer|unique:users,qq_number,' .$userId,    //强迫 Unique 规则忽略指定 ID
+                    'phone' => 'integer|unique:users,phone,' .$userId,    //强迫 Unique 规则忽略指定 ID
+                    'qq' => 'integer|unique:users,qq,' .$userId,    //强迫 Unique 规则忽略指定 ID
                 ];
-                break;
-            default :
-                return [];
                 break;
         }
 
@@ -47,8 +45,8 @@ class UserRequest extends FormRequest
     {
         return [
             'name.unique.unique' => '名称不能重复',
-            'phone_number.unique' => '手机号码不能重复',
-            'qq_number.unique' => 'QQ号码不能重复',
+            'phone.unique' => '手机号码不能重复',
+            'qq.unique' => 'QQ号码不能重复',
         ];
     }
 }
