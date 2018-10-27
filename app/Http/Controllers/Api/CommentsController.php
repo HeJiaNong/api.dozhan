@@ -59,8 +59,10 @@ class CommentsController extends Controller
             }
 
             //如果有回复用户，那么回复的用户必须也是此父级评论的回复
-            if ($comment->target_id = $request->target_id && !in_array($request->target_id,$parent->replies()->pluck('user_id')->toArray())){
-                return $this->response->error('参数错误',422);
+            if ($comment->target_id = $request->target_id){
+                if (!in_array($request->target_id,$parent->replies()->pluck('user_id')->toArray())){
+                    return $this->response->error('参数错误',422);
+                }
             }
         }
 

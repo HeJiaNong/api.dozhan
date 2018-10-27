@@ -14,7 +14,7 @@ class CommentRequest extends FormRequest
     public function rules()
     {
         if (!$commentable_type = Relation::getMorphedModel($this->commentable_type)){
-            abort(422,'模型类型 错误');
+            abort(422,'模型名 错误');
         }
 //        dd(2);
         switch ($this->method()){
@@ -24,7 +24,7 @@ class CommentRequest extends FormRequest
                     'content' => 'required|string|max:255',
                     'commentable_id' => 'required|integer|exists:'.$this->commentable_type.',id',
                     'commentable_type' => 'required|string',
-                    'parent_id' => 'integer|exists:comments,id',
+                    'parent_id' => 'required_with:target_id|integer|exists:comments,id',
                     'target_id' => 'integer|exists:users,id',
                 ];
                 break;
