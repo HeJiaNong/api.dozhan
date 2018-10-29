@@ -5,12 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Handlers\QiniuCloudHandler;
 use App\Http\Requests\Api\ImageRequest;
 use App\Http\Requests\Api\VideoRequest;
-use App\Models\Image;
-use App\Models\Video;
-use App\Transformers\ImageTransformer;
-use App\Transformers\VideoTransformer;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 use function Qiniu\base64_urlSafeEncode as s;
 
 class ResourcesController extends Controller
@@ -60,7 +55,7 @@ class ResourcesController extends Controller
 
     //生成图片上传凭证
     public function imageToken($scene,$mimeType = 'image/*',QiniuCloudHandler $qiniu){
-        $prefix = 'video/';
+        $prefix = "image/$scene/";
         $newType = 'webp';
 
         $key = $qiniu->makeFileNameByTime($prefix,$newType);
