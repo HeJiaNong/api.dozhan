@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Requests\Api\WorkRequest;
+use App\Models\Tag;
 use App\Models\User;
 use App\Models\Work;
 use App\Transformers\WorkTransformer;
@@ -21,19 +22,29 @@ class WorksController extends Controller
      * 发布作品
      */
     public function store(WorkRequest $request,Work $work){
-        $work->fill($request->only(['name','description','category_id','url','cover','tag_ids']));
+        //接收作品相关数据
+        $work->fill($request->only(['name','description','category_id','url','cover']));
+
+        //写入用户id
         $work->user_id = $this->user()->id;
 
         //入库
         $work->save();
 
-        //更新标签数据
-        if ($tag_ids = json_decode($request->tag_ids)){
-            $work->tags()->sync($tag_ids);
-            //更新标签使用数量
-            foreach ($work->tags as $tag){
-                $tag->increment('use_count');
+        //标签数据
+        if ($request->tags = json_decode($request->tags,true)){
+            //进行一次数据过滤格式转换
+            foreach ($request->tags as $k => $v){
+                $request->tags[$k] = trim($v);
             }
+
+            $tag_ids = [];
+
+            foreach ($request->tags as $tag){
+                $tag_ids[] = Tag::firstOrCreate(['name' => $tag])->toArray()['id'];
+            }
+
+            $work->tags()->sync($tag_ids);
         }
 
         return $this->response->created();
@@ -49,8 +60,19 @@ class WorksController extends Controller
         //更新作品数据
         $work->update($request->only(['name','description','category_id','cover']));
 
-        //更新标签数据
-        if ($tag_ids = json_decode($request->tag_ids)){
+        //标签数据
+        if ($request->tags = json_decode($request->tags,true)){
+            //进行一次数据过滤格式转换
+            foreach ($request->tags as $k => $v){
+                $request->tags[$k] = trim($v);
+            }
+
+            $tag_ids = [];
+
+            foreach ($request->tags as $tag){
+                $tag_ids[] = Tag::firstOrCreate(['name' => $tag])->toArray()['id'];
+            }
+
             $work->tags()->sync($tag_ids);
         }
 

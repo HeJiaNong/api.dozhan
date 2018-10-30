@@ -15,6 +15,7 @@ class WorkRequest extends FormRequest
      */
     public function rules()
     {
+
         switch ($this->method()){
             case 'POST':
                 return [
@@ -23,7 +24,7 @@ class WorkRequest extends FormRequest
                     'category_id' => 'required|integer|exists:categories,id',
                     'url' => 'required|string',
                     'cover' => 'required|string',
-                    'tag_ids' => ['json',new JsontoArrExists('tags')],
+                    'tags' => 'json',
                 ];
                 break;
             case 'PATCH':
@@ -32,7 +33,7 @@ class WorkRequest extends FormRequest
                     'description' => 'string|max:255',
                     'category_id' => 'integer|exists:categories,id',
                     'cover' => 'string',
-                    'tag_ids' => ['json',new JsontoArrExists('tags')],  //自己写的验证规则，反正json转数组后是否存在与某个表
+                    'tags' => 'json',
                 ];
                 break;
         }
@@ -43,6 +44,7 @@ class WorkRequest extends FormRequest
             'url' => '视频链接',
             'cover' => '封面链接',
             'category_id' => '分类',
+            'tags' => '标签',
         ];
     }
 }
