@@ -17,6 +17,7 @@ class WorkTransformer extends TransformerAbstract
             'description' => $work->description,
             'url' => $work->url,
             'cover' => $work->cover,
+            'page_view' => $work->page_view,
             'comment_count' => $work->comment_count,
             'favour_count' => $work->favour_count,
             'created_at' => $work->created_at->toDateTimeString(),

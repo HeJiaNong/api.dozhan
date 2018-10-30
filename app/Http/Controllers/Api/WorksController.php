@@ -14,8 +14,20 @@ class WorksController extends Controller
     /*
      * 获取作品列表
      */
-    public function index(){
-        return $this->response->paginator(Work::paginate(20),new WorkTransformer());
+    public function index(Request $request,Work $work){
+        //分页携带参数
+        $appends['limit'] = (int)$request->limit ?? 20;
+
+        //如果传递的作用域有效
+        if (($scope = $request->scope) && (in_array($request->scope,$work->scopes))){
+            $work = $work->$scope();
+            //分页携带参数加上作用域
+            $appends['scope'] = $scope;
+        }
+
+        $paginates = $work->paginate($appends['limit'])->appends($appends);
+        //返回数据
+        return $this->response->paginator($paginates,new WorkTransformer());
     }
 
     /*
@@ -148,7 +160,21 @@ class WorksController extends Controller
     /*
      * 获取某用户发布的作品列表
      */
-    public function userIndex(User $user){
-        return $this->response->paginator($user->works()->paginate(20),new WorkTransformer());
+    public function userIndex(User $user,Request $request){
+
+        //分页携带参数
+        $appends['limit'] = (int)$request->limit ?? 20;
+
+        $work = $user->works();
+        //如果传递的作用域有效
+        if (($scope = $request->scope) && (in_array($request->scope,$work->first()->scopes))){
+            $work = $work->$scope();
+            //分页携带参数加上作用域
+            $appends['scope'] = $scope;
+        }
+
+        $paginates = $work->paginate($appends['limit'])->appends($appends);
+
+        return $this->response->paginator($paginates,new WorkTransformer());
     }
 }

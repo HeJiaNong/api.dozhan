@@ -21,6 +21,7 @@ class CreateWorksTable extends Migration
             $table->string('description')->comment('作品描述');
             $table->string('url')->comment('作品资源链接');
             $table->string('cover')->comment('作品封面链接');
+            $table->integer('page_view')->unsigned()->default(0)->comment('作品浏览次数/PV');
             $table->integer('comment_count')->unsigned()->default(0)->comment('作品评论数量');
             $table->integer('favour_count')->unsigned()->default(0)->comment('作品点赞数量');
             $table->timestamps();

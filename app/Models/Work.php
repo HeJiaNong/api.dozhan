@@ -11,12 +11,29 @@ class Work extends Model
 
     protected $fillable = ['name','description','category_id','url','cover'];
 
+    //本地可用作用域列表
+    public $scopes = ['recent','popular'];
     /**
      * 需要被转换成日期的属性。
      *
      * @var array
      */
     protected $dates = ['deleted_at'];
+
+    /*
+     * 最近发布作品排序
+     */
+    public function scopeRecent($query){
+        return $query->orderBy('created_at','desc');
+    }
+
+    /*
+     * 浏览量最高作品排序
+     */
+    public function scopePopular($query){
+        return $query->orderBy('page_view','desc');
+    }
+
 
     /*
      * 获取此作品的标签

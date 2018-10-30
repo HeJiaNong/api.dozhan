@@ -7,6 +7,7 @@ $factory->define(\App\Models\Work::class, function (Faker $faker) {
     return [
         'name' => $faker->sentence,
         'description' => $faker->realText(),
+        'page_view' => mt_rand(0,99999),
 //        'comment_count' => mt_rand(0,999),
 //        'favour_count' => mt_rand(0,99999),
         'created_at' => $time,
