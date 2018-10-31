@@ -74,7 +74,9 @@ $api->version('v1',[
         //用户登陆
         $api->post('authorizations','AuthorizationsController@store')->name('api.authorizations.store');
     });
-
+    //==============================================================================================================
+    //获取Banner
+    $api->get('sites/banners','SitesController@banners')->name('api.sites.banners');
     //==============================================================================================================
     //获取某用户的信息
     $api->get('users/{user}','UsersController@show')->name('api.users.show');
