@@ -17,98 +17,83 @@ use Qiniu\Storage\UploadManager;
  */
 class QiniuCloudHandler
 {
-    public $qiniuDomain; //你的七牛域名
-    public $bucket;        //对象存储空间名
     private $access_key;    //AK
     private $secret_key;    //SK
-    private $expires;       //自定义凭证有效期（expires单位为秒，为上传凭证的有效时间）
+    public $domain; //你的七牛域名
+    public $bucket;        //对象存储空间名
+    public $expires;       //自定义凭证有效期（expires单位为秒，为上传凭证的有效时间）
     public $pipeline;      //队列名
     public $notify_url;    //持久化处理回调地址
-    private $auth;          //鉴权对象Auth
 
     public function __construct()
     {
         //初始化配置
-        $this->build();
+        $this->buildConfig();
     }
 
     /**
      * 初始化配置信息
      */
-    private function build(){
-        $this->qiniuDomain = \config('services.qiniu.qiniuDomain');
+    private function buildConfig(){
+        $this->domain      = \config('services.qiniu.domain');
         $this->bucket      = \config('services.qiniu.bucket');
         $this->access_key  = \config('services.qiniu.access_key');
         $this->secret_key  = \config('services.qiniu.secret_key');
         $this->expires     = \config('services.qiniu.expires');
         $this->pipeline    = \config('services.qiniu.pipeline');
         $this->notify_url  = app('Dingo\Api\Routing\UrlGenerator')->version('v1')->route('api.resource.notification');
-//        $this->notify_url  = 'https://www.hjn.ink/api/resource/notification';
-        $this->auth        = new Auth($this->access_key, $this->secret_key);   //定义鉴权对象Auth
     }
 
     /**
-     * 上传文件
-     * @param $file resource 文件对象
-     * @param string $persistentOps 上传策略
-     * @param string $filename 自定义上传后的名称
-     * @return mixed
-     * @throws \Exception
+     * 上传文件到七牛
+     *
+     * @param string $upToken    上传凭证
+     * @param string $key        上传到七牛后保存的文件名
+     * @param string $filePath   要上传文件的本地路径
+     * @param string $params     自定义变量，规格参考
+     *                    http://developer.qiniu.com/docs/v6/api/overview/up/response/vars.html#xvar
+     * @param string $mime       上传数据的mimeType
+     * @param bool $checkCrc     是否校验crc32
+     *
+     * @return array    包含已上传文件的信息，类似：
+     *                                              [
+     *                                                  "hash" => "<Hash string>",
+     *                                                  "key" => "<Key string>"
+     *                                              ]
      */
-    public function uploadFile(string $filePath,string $key,string $token)
+    public function putFile($upToken,$key,$filePath,$params = null,$mime = 'application/octet-stream',$checkCrc = false)
     {
-        //获取空间名
-//        $bucket = empty($bucket) ? $this->bucket : $bucket;
-//        //
-//        $policy = [
-//            'scope' => $bucket,
-//            'deadline' => $this->expires,
-//
-//            //持久化处理
-//            'persistentOps' => $persistentOps,          //持久化处理指令列表
-//            'persistentNotifyUrl' => $this->notify_url, //接收持久化处理结果通知的 URL
-//            'persistentPipeline' => $this->pipeline,    //转码队列名
-//
-//            //自定义返回内容
-//            'returnBody' => '{"bucket":"$(bucket)","key":"$(key)","mimeType":$(mimeType),"hash":"$(etag)","persistentId":"$(persistentId)"}',
-//        ];
-//
-//        dd($this->auth->uploadToken($bucket,null,$this->expires,$policy,true));
-
-
         // 调用 UploadManager 的 putFile 方法进行文件的上传。
-        $res = (new UploadManager())->putFile(
-            //生成上传凭证
-            $token,
-            //上传至七牛的文件名
-            $key,
-            //本地文件的路径
-            $filePath
-        );
+        $uploader = new UploadManager();
+        $res = $uploader->putFile($upToken,$key,$filePath,$params,$mime,$checkCrc);
 
         dd($res);
         //解析后，返回上传结果
         return $this->parseRes($res);
     }
 
-    /**
+    /*
      * 生成上传凭证
-     * @param $key string   覆盖上传名称
-     * @param $bucket string    空间名称
-     * @param $expires integer 自定义凭证有效期,单位秒
-     * @param $policy string 上传策略
-     * @param $strictPolicy
-     * @return array
      */
-    public function makeUploadToken($key,$policy){
-//        dd($policy);
-        $token = $this->auth->uploadToken($this->bucket,$key,$this->expires,$policy,true);
+    public function uploadToken($bucket, $key = null, $expires = 3600, $policy = null, $strictPolicy = true){
+        $auth = new Auth($this->access_key, $this->secret_key);
 
-        return [
-            $key,
-            $token,
-        ];
+        $token = $auth->uploadToken($bucket, $key, $expires, $policy, $strictPolicy);
+
+        return $token;
     }
+
+    /*
+     * 生成上传策略
+     *
+     * 上传策略是资源上传时附带的一组配置设定。通过这组配置信息，七牛云存储可以了解用户上传的需求：它将上传什么资源，
+     * 上传到哪个空间，上传结果是回调通知还是使用重定向跳转，是否需要设置反馈信息的内容，以及授权上传的截止时间等等
+     */
+    public function uploadPolicy(){
+        //
+    }
+
+
 
     //生成上传策略
     public function makeUploadPolicy($key,$ops,$mimeType){

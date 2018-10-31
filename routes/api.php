@@ -61,6 +61,8 @@ $api->version('v1',[
     //==============================================================================================================
     //七牛作品消息回调地址
     $api->post('resource/notification','ResourcesController@notification')->name('api.resource.notification');
+    //七牛callbackUrl地址
+    $api->post('resources/qiniu/callback','ResourcesController@qiniuCallbak')->name('api.resources.qiniu.callback');
     //==============================================================================================================
     $api->group([
         'middleware' => 'api.throttle', //DingoApi 已经为我们提供了调用频率限制的中间件 api.throttle

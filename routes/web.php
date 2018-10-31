@@ -19,7 +19,7 @@ Route::view('/','home')->name('home');
 //登陆注册
 Route::view('/login_register','auth.login_and_register')->name('login');
 
-
+Route::view('play','play');
 //用户登陆
 //Auth::routes();
 
