@@ -110,7 +110,7 @@ class WorksController extends Controller
      */
     public function destroys(){
         //权限验证
-        $this->authorize('destroy',$work);
+        $this->authorize('destroy',Work::class);
 
         return $this->response->paginator($this->user()->works()->withTrashed()->where('deleted_at','!=',null)->paginate(20),new WorkTransformer());
     }

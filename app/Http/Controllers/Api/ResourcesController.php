@@ -5,20 +5,105 @@ namespace App\Http\Controllers\Api;
 use App\Handlers\QiniuCloudHandler;
 use App\Http\Requests\Api\ImageRequest;
 use App\Http\Requests\Api\VideoRequest;
+use Dingo\Api\Routing\UrlGenerator;
 use Illuminate\Http\Request;
-use function Qiniu\base64_urlSafeEncode as s;
+
+use Qiniu\Auth;
+use function Qiniu\base64_urlSafeEncode;
+use Qiniu\Config;
+use Qiniu\Processing\PersistentFop;
+use Qiniu\Storage\BucketManager;
+use Qiniu\Storage\UploadManager;
 
 class ResourcesController extends Controller
 {
+    public function qiniuCallbak(Request $request,QiniuCloudHandler $handler){
+        logger('================七牛CallbackURL================');
+        logger($request->all());
+        logger('================七牛CallbackURL================');
+        $url = "http://$handler->domain/$request->key";
+        return $this->response->array(compact('url'))->header('Content-Type','application/json');
+        /*
+  'url' => '{"original":"http:\\/\\/phcczptg4.bkt.clouddn.com\\/5bd9c6fb3bc3e"}',
+  'bucket' => 'dozhan',
+  'key' => '5bd9c6fb3bc3e',
+  'etag' => 'FqgLGY7h2wu-gcQ8GX1o0GBouL-p',
+  'fsize' => 2378354,
+  'mimeType' => 'video/mp4',
+  'endUser' => NULL,
+  'persistentId' => 'z2.5bd9c70ce3d00409792e3f80',
+  'imageAve' => NULL,
+  'ext' => '.mp4',
+  'exif' => NULL,
+  'imageInfo' => NULL,
+  'avinfo' =>
+         */
+    }
+
     //上传视频
     public function video(VideoRequest $request,QiniuCloudHandler $qiniu){
-        $mimeType = 'video/*';
+        //文件名
+        $key = uniqid();
 
-        list($key,$token) = $this->videoToken($mimeType,$qiniu);
+        //文件本地路径
+        $filepath = $request->file('video')->getRealPath();
 
-        $res = $qiniu->uploadFile($request->file('video')->getRealPath(),$key,$token);
+        //自定义变量
+        $params = [
+//            'x:url' => json_encode(["original" => "http://$qiniu->domain/$key"]),
+//            'x:user_id' => $this->user->id,
+        ];
 
-        dd($res);
+        //水印文件另存编码
+        $saveWmEntry = base64_urlSafeEncode($qiniu->bucket . ":$key" . '[mp4,wm]');
+        //切片文件另存编码
+        $saveHlsEntry = base64_urlSafeEncode($qiniu->bucket . ":$key" . '[hls,wm]');
+        //切片ts文件名称前缀
+        $hlsName = base64_urlSafeEncode("$key"."[hls,wm]"."($(count))");
+        //水印文字
+        $wmText = base64_urlSafeEncode('Dozhan');
+        //水印颜色
+        $wmColor = base64_urlSafeEncode('white');
+
+        //转码MP4+水印
+        $avthumbWmFop = "avthumb/mp4/wmText/$wmText/wmGravityText/NorthWest/wmFontColor/$wmColor/wmFontSize/50|saveas/" . $saveWmEntry;
+        //转码HLS+水印
+        $avthumbHlsFop = "avthumb/m3u8/noDomain/1/segtime/20/vb/5m/pattern/$hlsName/r/60/wmText/$wmText/wmGravityText/NorthWest/wmFontColor/$wmColor/wmFontSize/50|saveas/" . $saveHlsEntry;
+
+        //上传策略
+        $policy = [
+            'endUser' => (string)$this->user->id,
+            'callbackUrl' => app(UrlGenerator::class)->version('v1')->route('api.resources.qiniu.callback'),
+            'callbackBody' => '{
+                "url"           : $(x:url),
+                "bucket"        : $(bucket),
+                "key"           : $(key),
+                "etag"          : $(etag),
+                "fsize"         : $(fsize),
+                "mimeType"      : $(mimeType),
+                "endUser"       : $(endUser),
+                "user_id"       : $(x:user_id),
+                "persistentId"  : $(persistentId),
+                "imageAve"      : $(imageAve),
+                "ext"           : $(ext),
+                "exif"          : $(exif),
+                "imageInfo"     : $(imageInfo),
+                "avinfo"        : $(avinfo)
+            }',
+            'callbackBodyType' => 'application/json',
+
+            'persistentOps' => "$avthumbWmFop;$avthumbHlsFop",
+            'persistentPipeline' => $qiniu->pipeline,
+            'persistentNotifyUrl' => $qiniu->notify_url,
+        ];
+
+        //生成上传凭证
+        $token = $qiniu->uploadToken($qiniu->bucket,$key,$qiniu->expires,$policy);
+
+        //上传文件
+        $res = $qiniu->putFile($token,$key,$filepath,$params);
+
+        return $this->response->array($res);
     }
 
     //上传图片
