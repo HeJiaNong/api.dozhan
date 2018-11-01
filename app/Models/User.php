@@ -41,7 +41,7 @@ class User extends Authenticatable implements JWTSubject
     /*
      * 批量赋值允许字段
      */
-    protected $fillable = ['name','avatar','introduction','phone','qq'];
+    protected $fillable = ['name','avatar_url','introduction','phone','qq'];
 
 
     /*
@@ -74,17 +74,10 @@ class User extends Authenticatable implements JWTSubject
     }
 
     /*
-     * 获取此用户下的所有图片资源
+     * 获取此用户的所有资源文件
      */
-    public function images(){
-        return $this->hasMany(Image::class);
-    }
-
-    /*
-     * 获取此用户下的所有视频资源
-     */
-    public function videos(){
-        return $this->hasMany(Video::class);
+    public function qiniuResources(){
+        return $this->hasMany(QiniuResource::class);
     }
 
     /*

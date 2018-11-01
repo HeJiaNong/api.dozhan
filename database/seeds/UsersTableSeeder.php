@@ -16,6 +16,7 @@ class UsersTableSeeder extends Seeder
             //遍历进行调整
         });
 
+
         //使隐藏字段可见，并将数据集合转换为数组
         $user_array = $users->makeVisible(['password','auth_token'])->toArray();
 
@@ -41,5 +42,6 @@ class UsersTableSeeder extends Seeder
 
         $user = \App\Models\User::find(3);
         $user->assignRole('Maintainer');
+
     }
 }

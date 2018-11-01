@@ -17,26 +17,38 @@ use Qiniu\Storage\UploadManager;
 
 class ResourcesController extends Controller
 {
-    public function qiniuCallbak(Request $request,QiniuCloudHandler $handler){
+
+    //七牛持久化处理状态通知回调地址
+    public function notification(Request $request){
+
+        logger('================七牛持久化处理状态通知回调地址================');
+        logger($request->all());
+        logger('================七牛持久化处理状态通知回调地址================');
+    }
+
+    /*
+     * 七牛文件上传回调地址
+     */
+    public function qiniuCallback(Request $request,QiniuCloudHandler $handler){
         logger('================七牛CallbackURL================');
         logger($request->all());
         logger('================七牛CallbackURL================');
-        $url = "http://$handler->domain/$request->key";
+        $url = "$handler->domain/$request->key";
         return $this->response->array(compact('url'))->header('Content-Type','application/json');
-        /*
-  'url' => '{"original":"http:\\/\\/phcczptg4.bkt.clouddn.com\\/5bd9c6fb3bc3e"}',
-  'bucket' => 'dozhan',
-  'key' => '5bd9c6fb3bc3e',
-  'etag' => 'FqgLGY7h2wu-gcQ8GX1o0GBouL-p',
-  'fsize' => 2378354,
-  'mimeType' => 'video/mp4',
-  'endUser' => NULL,
-  'persistentId' => 'z2.5bd9c70ce3d00409792e3f80',
-  'imageAve' => NULL,
-  'ext' => '.mp4',
-  'exif' => NULL,
-  'imageInfo' => NULL,
-  'avinfo' =>
+        /*返回结果字段如下：
+          'uuid' => '9bc16085-cfa7-495c-9bd7-6e4a6fe48f82',
+          'endUser' => '5',
+          'persistentId' => 'z2.5bda5e94e3d00409792f6102',
+          'bucket' => 'dozhan',
+          'key' => '5bda5e8381acd',
+          'etag' => 'FqgLGY7h2wu-gcQ8GX1o0GBouL-p',
+          'fsize' => 2378354,
+          'mimeType' => 'video/mp4',
+          'imageAve' => NULL,
+          'ext' => '.mp4',
+          'exif' => NULL,
+          'imageInfo' => NULL,
+          'avinfo' =>
          */
     }
 
@@ -49,10 +61,7 @@ class ResourcesController extends Controller
         $filepath = $request->file('video')->getRealPath();
 
         //自定义变量
-        $params = [
-//            'x:url' => json_encode(["original" => "http://$qiniu->domain/$key"]),
-//            'x:user_id' => $this->user->id,
-        ];
+        $params = [];
 
         //水印文件另存编码
         $saveWmEntry = base64_urlSafeEncode($qiniu->bucket . ":$key" . '[mp4,wm]');
@@ -75,15 +84,14 @@ class ResourcesController extends Controller
             'endUser' => (string)$this->user->id,
             'callbackUrl' => app(UrlGenerator::class)->version('v1')->route('api.resources.qiniu.callback'),
             'callbackBody' => '{
-                "url"           : $(x:url),
+                "uuid"          : $(uuid),
+                "endUser"       : $(endUser),
+                "persistentId"  : $(persistentId),
                 "bucket"        : $(bucket),
                 "key"           : $(key),
                 "etag"          : $(etag),
                 "fsize"         : $(fsize),
                 "mimeType"      : $(mimeType),
-                "endUser"       : $(endUser),
-                "user_id"       : $(x:user_id),
-                "persistentId"  : $(persistentId),
                 "imageAve"      : $(imageAve),
                 "ext"           : $(ext),
                 "exif"          : $(exif),
@@ -109,15 +117,57 @@ class ResourcesController extends Controller
     //上传图片
     public function image(ImageRequest $request,QiniuCloudHandler $qiniu){
 
-        $scene = $request->scene;
+        //图片缩放尺寸
+        $size = $this->getStandardImageSize($request->scene);
 
-        $mimeType = 'image/*';
+        //文件名
+        $key = uniqid();
 
-        list($key,$token) = $this->imageToken($scene,$mimeType,$qiniu);
-//        dd($request->file('image')->getMimeType());
-        $res = $qiniu->uploadFile($request->file('image')->getRealPath(),$key,$token);
+        //文件本地路径
+        $filepath = $request->file('image')->getRealPath();
 
-        dd($res);
+        //自定义变量
+        $params = [];
+
+        //水印文件另存编码
+        $saveWmEntry = base64_urlSafeEncode($qiniu->bucket . ":$key" . '[webp,thumbnail]');
+
+        //转码webp+缩放
+        $imageMogr2WebpFop = "imageMogr2/auto-orient/thumbnail/$size!/format/webp"."|saveas/$saveWmEntry";
+
+        //上传策略
+        $policy = [
+            'endUser' => (string)$this->user->id,
+            'callbackUrl' => app(UrlGenerator::class)->version('v1')->route('api.resources.qiniu.callback'),
+            'callbackBody' => '{
+                "uuid"          : $(uuid),
+                "endUser"       : $(endUser),
+                "persistentId"  : $(persistentId),
+                "bucket"        : $(bucket),
+                "key"           : $(key),
+                "etag"          : $(etag),
+                "fsize"         : $(fsize),
+                "mimeType"      : $(mimeType),
+                "imageAve"      : $(imageAve),
+                "ext"           : $(ext),
+                "exif"          : $(exif),
+                "imageInfo"     : $(imageInfo),
+                "avinfo"        : $(avinfo)
+            }',
+            'callbackBodyType' => 'application/json',
+
+            'persistentOps' => "$imageMogr2WebpFop",
+            'persistentPipeline' => $qiniu->pipeline,
+            'persistentNotifyUrl' => $qiniu->notify_url,
+        ];
+
+        //生成上传凭证
+        $token = $qiniu->uploadToken($qiniu->bucket,$key,$qiniu->expires,$policy);
+
+        //上传文件
+        $res = $qiniu->putFile($token,$key,$filepath,$params);
+
+        return $this->response->array($res);
     }
 
     //生成视频上传凭证
@@ -157,61 +207,7 @@ class ResourcesController extends Controller
         return $qiniu->makeUploadToken($key,$policy);
     }
 
-    //七牛持久化处理接口通知回调地址
-    public function notification(Request $request){
 
-        logger('七牛处理回调地址>>>>>>>>>>>>>>>>>>>>');
-        logger($request->all());
-        logger('七牛处理回调地址<<<<<<<<<<<<<<<<<<<<');
-//图片
-//[2018-10-20 17:05:23] testing.DEBUG: 七牛处理回调地址>>>>>>>>>>>>>>>>>>>>
-//[2018-10-20 17:05:23] testing.DEBUG: array (
-//    'id' => 'z2.5bcaefd0e3d0040979f7c756',
-//    'pipeline' => '1381556928.dozhan',
-//    'code' => 0,
-//    'desc' => 'The fop was completed successfully',
-//    'reqid' => 'HG0AAAKbB8_HRV8V',
-//    'inputBucket' => 'dozhan-testing',
-//    'inputKey' => 'video/2018-10-20-17:05:20-5bcaefd026e0d.webp',
-//    'items' =>
-//        array (
-//            0 =>
-//                array (
-//                    'cmd' => 'imageMogr2/auto-orient/thumbnail/200x200!/format/webp|saveas/ZG96aGFuLXRlc3Rpbmc6dmlkZW8vMjAxOC0xMC0yMC0xNzowNToyMC01YmNhZWZkMDI2ZTBkLndlYnA=',
-//                    'code' => 0,
-//                    'desc' => 'The fop was completed successfully',
-//                    'hash' => 'FpWo79X2867BjOhP9lo2KllOpjQz',
-//                    'key' => 'video/2018-10-20-17:05:20-5bcaefd026e0d.webp',
-//                    'returnOld' => 0,
-//                ),
-//        ),
-//)
-//[2018-10-20 17:05:23] testing.DEBUG: 七牛处理回调地址<<<<<<<<<<<<<<<<<<<<
-//视频
-//[2018-10-20 17:07:35] testing.DEBUG: 七牛处理回调地址>>>>>>>>>>>>>>>>>>>>
-//[2018-10-20 17:07:35] testing.DEBUG: array (
-//    'id' => 'z2.5bcaf053e3d0040979f7c881',
-//    'pipeline' => '1381556928.dozhan',
-//    'code' => 0,
-//    'desc' => 'The fop was completed successfully',
-//    'reqid' => 'fCQAAEa-tSfmRV8V',
-//    'inputBucket' => 'dozhan-testing',
-//    'inputKey' => 'video/2018-10-20-17:07:14-5bcaf0421e197.mp4',
-//    'items' =>
-//        array (
-//            0 =>
-//                array (
-//                    'cmd' => 'avthumb/mp4/wmText/RG96aGFu/wmFontSize/40/wmFontColor/I2ZmZmZmZg==/wmGravityText/NorthWest|saveas/ZG96aGFuLXRlc3Rpbmc6dmlkZW8vMjAxOC0xMC0yMC0xNzowNzoxNC01YmNhZjA0MjFlMTk3Lm1wNA==',
-//                    'code' => 0,
-//                    'desc' => 'The fop was completed successfully',
-//                    'hash' => 'Fhu8guKbeQXTTrGyCrNelz-GRZSL',
-//                    'key' => 'video/2018-10-20-17:07:14-5bcaf0421e197.mp4',
-//                    'returnOld' => 0,
-//                ),
-//        ),
-//)
-//[2018-10-20 17:07:35] testing.DEBUG: 七牛处理回调地址<<<<<<<<<<<<<<<<<<<<
-    }
 
 
     //获取不同理想对应的不同的标准尺寸

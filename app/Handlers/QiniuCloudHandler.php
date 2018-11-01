@@ -276,15 +276,4 @@ class QiniuCloudHandler
         return $this->parseRes($res);
     }
 
-    /**
-     * 拼接空间文件的url链接
-     * @param $key string 空间文件名
-     * @param string $domain 域名
-     * @return string
-     */
-    public function getFileUrl($key,$domain = ''){
-        $domain = empty($domain)?$this->qiniuDomain:$domain;
-        return $domain . '/' . $key;
-    }
-
 }

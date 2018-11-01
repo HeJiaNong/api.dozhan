@@ -34,6 +34,28 @@ class Work extends Model
         return $query->orderBy('page_view','desc');
     }
 
+    /**
+     * 设定url为json格式。
+     *
+     * @param  string  $value
+     * @return void
+     */
+    public function setResourceUrlAttribute($value)
+    {
+        $this->attributes['resource_url'] = json_encode($value);
+    }
+
+    /**
+     * 获取url。
+     *
+     * @param  string  $value
+     * @return string
+     */
+    public function getResourceUrlAttribute($value)
+    {
+        return json_decode($value,true);
+    }
+
 
     /*
      * 获取此作品的标签

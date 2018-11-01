@@ -18,7 +18,7 @@ class CreateUsersTable extends Migration
             $table->string('do_id')->unique()->index()->comment('Dozhan提供的唯一ID');
             $table->string('name')->unique()->index()->comment('名称');
             $table->string('introduction')->nullable()->comment('简介');
-            $table->string('avatar')->comment('头像链接');
+            $table->string('avatar_url')->comment('头像链接');
             $table->string('email')->unique()->comment('邮箱');
             $table->string('phone')->nullable()->comment('手机号码');
             $table->string('qq')->nullable()->comment('QQ号码');
