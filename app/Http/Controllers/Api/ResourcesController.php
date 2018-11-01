@@ -230,7 +230,7 @@ class ResourcesController extends Controller
                 abort(422);
                 break;
         }
-        }
+    }
 
 
 }
