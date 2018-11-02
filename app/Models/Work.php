@@ -9,7 +9,7 @@ class Work extends Model
 {
     use SoftDeletes;    //启用软删除
 
-    protected $fillable = ['name','description','category_id','url','cover'];
+    protected $fillable = ['name','description','category_id','resource_url','cover_url'];
 
     //本地可用作用域列表
     public $scopes = ['recent','popular'];
@@ -34,28 +34,40 @@ class Work extends Model
         return $query->orderBy('page_view','desc');
     }
 
-    /**
-     * 设定url为json格式。
-     *
-     * @param  string  $value
-     * @return void
+    /*
+     * 获取 resource_url 属性
      */
-    public function setResourceUrlAttribute($value)
-    {
-        $this->attributes['resource_url'] = json_encode($value);
+    public function getResourceUrlAttribute($value){
+        return $this->resourceLink($value);
     }
 
-    /**
-     * 获取url。
-     *
-     * @param  string  $value
-     * @return string
-     */
-    public function getResourceUrlAttribute($value)
-    {
-        return json_decode($value,true);
+    public function getCoverUrlAttribute($value){
+        return $this->resourceLink($value);
     }
 
+    /*
+     * 通过资源uuid获取此资源的所有链接
+     */
+    public function resourceLink($uuid){
+        //TODO 根据资源id查询是否有合适的切片 资源或者转码资源，并且分配链接
+        $link = '#';
+
+        $domain = config('services.qiniu.domain').'/';
+
+        if ($resource = QiniuResource::find($uuid)){
+            $link = $domain.$resource->key;
+            //如果该资源有持久化处理
+            if (($items = collect($resource->persistent['items'])->pluck('key')->toArray()) && ($wis = json_decode($resource->params,true)['wi'])){
+                foreach ($wis as $wi){
+                    if (in_array($wi,$items)){
+                        $link = $domain.$wi;
+                        break;
+                    }
+                }
+            }
+        }
+        return $link;
+    }
 
     /*
      * 获取此作品的标签

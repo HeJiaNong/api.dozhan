@@ -4,10 +4,16 @@ namespace App\Http\Controllers\Api;
 
 use App\Handlers\QiniuCloudHandler;
 use App\Http\Requests\Api\ImageRequest;
+use App\Http\Requests\Api\QiniuResourceRequest;
 use App\Http\Requests\Api\VideoRequest;
+use App\Models\QiniuPersistent;
+use App\Models\QiniuResource;
+use App\Models\User;
 use Dingo\Api\Routing\UrlGenerator;
 use Illuminate\Http\Request;
 
+use Illuminate\Support\Facades\Log;
+use Mockery\Exception;
 use Qiniu\Auth;
 use function Qiniu\base64_urlSafeEncode;
 use Qiniu\Config;
@@ -17,39 +23,44 @@ use Qiniu\Storage\UploadManager;
 
 class ResourcesController extends Controller
 {
-
-    //七牛持久化处理状态通知回调地址
-    public function notification(Request $request){
-
-        logger('================七牛持久化处理状态通知回调地址================');
-        logger($request->all());
-        logger('================七牛持久化处理状态通知回调地址================');
-    }
-
     /*
      * 七牛文件上传回调地址
      */
-    public function qiniuCallback(Request $request,QiniuCloudHandler $handler){
-        logger('================七牛CallbackURL================');
-        logger($request->all());
-        logger('================七牛CallbackURL================');
-        $url = "$handler->domain/$request->key";
-        return $this->response->array(compact('url'))->header('Content-Type','application/json');
-        /*返回结果字段如下：
-          'uuid' => '9bc16085-cfa7-495c-9bd7-6e4a6fe48f82',
-          'endUser' => '5',
-          'persistentId' => 'z2.5bda5e94e3d00409792f6102',
-          'bucket' => 'dozhan',
-          'key' => '5bda5e8381acd',
-          'etag' => 'FqgLGY7h2wu-gcQ8GX1o0GBouL-p',
-          'fsize' => 2378354,
-          'mimeType' => 'video/mp4',
-          'imageAve' => NULL,
-          'ext' => '.mp4',
-          'exif' => NULL,
-          'imageInfo' => NULL,
-          'avinfo' =>
-         */
+    public function qiniuCallback(Request $request,QiniuResource $qiniuResource){
+        Log::info('>>>>>>>>>>>>>>>>>>>>七牛回调请求进入>>>>>>>>>>>>>>>>>>>>');
+
+        //接收数据
+        $data = $request->only(['params','uuid', 'endUser', 'persistentId', 'bucket', 'key', 'etag', 'fsize', 'mimeType', 'imageAve', 'ext', 'exif', 'imageInfo','avinfo']);
+
+        logger($data);
+
+
+        $uuid = $data['uuid'];
+
+
+        //入库
+        $qiniuResource->fill($data)->save();
+
+
+
+        Log::info('<<<<<<<<<<<<<<<<<<<<七牛回调请求成功<<<<<<<<<<<<<<<<<<<<');
+
+        //返回响应
+        return $this->response->array(compact('uuid'))->header('Content-Type','application/json');
+    }
+
+    //七牛持久化处理状态通知回调地址
+    public function notification(Request $request,QiniuPersistent $qiniuPersistent){
+        Log::info('>>>>>>>>>>>>>>>>>>>>七牛持久化处理状态通知回调地址请求>>>>>>>>>>>>>>>>>>>>');
+        //接收数据
+        $data = $request->only(['id', 'pipeline', 'code', 'desc', 'reqid', 'inputBucket', 'inputKey', 'items']);
+
+        //入库
+        $qiniuPersistent->fill($data)->save();
+
+        Log::info('<<<<<<<<<<<<<<<<<<<<七牛持久化处理状态通知回调地址成功<<<<<<<<<<<<<<<<<<<<');
+
+        return $this->response->noContent();
     }
 
     //上传视频
@@ -60,30 +71,49 @@ class ResourcesController extends Controller
         //文件本地路径
         $filepath = $request->file('video')->getRealPath();
 
-        //自定义变量
-        $params = [];
 
-        //水印文件另存编码
-        $saveWmEntry = base64_urlSafeEncode($qiniu->bucket . ":$key" . '[mp4,wm]');
-        //切片文件另存编码
-        $saveHlsEntry = base64_urlSafeEncode($qiniu->bucket . ":$key" . '[hls,wm]');
+
+
+        //文件处理标记
+        $mp4 = '';
+        $hls = '';
+        $wm = '';
+
+
+        //转码MP4+水印 文件名
+        $ops1SaveName = base64_urlSafeEncode($qiniu->bucket.':'.$key.'[mp4,wm]');
+        //转码HLS+水印 文件名
+        $ops2SaveName = base64_urlSafeEncode($qiniu->bucket . ':'.$key. '[hls,wm]');
         //切片ts文件名称前缀
-        $hlsName = base64_urlSafeEncode("$key"."[hls,wm]"."($(count))");
+        $hlsName = base64_urlSafeEncode($key."[hls,wm]"."($(count))");
+
         //水印文字
         $wmText = base64_urlSafeEncode('Dozhan');
         //水印颜色
         $wmColor = base64_urlSafeEncode('white');
 
-        //转码MP4+水印
-        $avthumbWmFop = "avthumb/mp4/wmText/$wmText/wmGravityText/NorthWest/wmFontColor/$wmColor/wmFontSize/50|saveas/" . $saveWmEntry;
-        //转码HLS+水印
-        $avthumbHlsFop = "avthumb/m3u8/noDomain/1/segtime/20/vb/5m/pattern/$hlsName/r/60/wmText/$wmText/wmGravityText/NorthWest/wmFontColor/$wmColor/wmFontSize/50|saveas/" . $saveHlsEntry;
+        //转码MP4+水印指令
+        $ops1 = "avthumb/mp4/wmText/$wmText/wmGravityText/NorthWest/wmFontColor/$wmColor/wmFontSize/50|saveas/$ops1SaveName";
+        //转码HLS+水印指令
+        $ops2 = "avthumb/m3u8/noDomain/1/segtime/20/vb/5m/pattern/$hlsName/r/60/wmText/$wmText/wmGravityText/NorthWest/wmFontColor/$wmColor/wmFontSize/50|saveas/$ops2SaveName";
+
+        //自定义变量
+        $params = [
+            'x:params' => json_encode([
+                //权重排序
+                'wi' => [
+                    $key. '[hls,wm]',
+                    $key.'[mp4,wm]',
+                ],
+            ]),
+        ];
 
         //上传策略
         $policy = [
             'endUser' => (string)$this->user->id,
             'callbackUrl' => app(UrlGenerator::class)->version('v1')->route('api.resources.qiniu.callback'),
             'callbackBody' => '{
+                "params"        : $(x:params),
                 "uuid"          : $(uuid),
                 "endUser"       : $(endUser),
                 "persistentId"  : $(persistentId),
@@ -100,7 +130,7 @@ class ResourcesController extends Controller
             }',
             'callbackBodyType' => 'application/json',
 
-            'persistentOps' => "$avthumbWmFop;$avthumbHlsFop",
+            'persistentOps' => "$ops1;$ops2",
             'persistentPipeline' => $qiniu->pipeline,
             'persistentNotifyUrl' => $qiniu->notify_url,
         ];
@@ -116,7 +146,6 @@ class ResourcesController extends Controller
 
     //上传图片
     public function image(ImageRequest $request,QiniuCloudHandler $qiniu){
-
         //图片缩放尺寸
         $size = $this->getStandardImageSize($request->scene);
 

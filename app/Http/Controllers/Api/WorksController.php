@@ -35,7 +35,7 @@ class WorksController extends Controller
      */
     public function store(WorkRequest $request,Work $work){
         //接收作品相关数据
-        $work->fill($request->only(['name','description','category_id','url','cover']));
+        $work->fill($request->only(['name','description','category_id','resource_url','cover_url']));
 
         //写入用户id
         $work->user_id = $this->user()->id;
@@ -70,7 +70,7 @@ class WorksController extends Controller
         $this->authorize('update',$work);
 
         //更新作品数据
-        $work->update($request->only(['name','description','category_id','cover']));
+        $work->update($request->only(['name','description','category_id','cover_url']));
 
         //标签数据
         if ($request->tags = json_decode($request->tags,true)){

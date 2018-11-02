@@ -58,8 +58,8 @@ class QiniuResourcesTableSeeder extends Seeder
             $images[$i]['etag'] = str_random('10');
             $images[$i]['fsize'] = 6666;
             $images[$i]['ext'] = '.webp';
-            $images[$i]['end_user'] = array_random($user_ids);
-            $images[$i]['mime_type'] = "image/".substr($keys[$i],strpos($keys[$i],".")+1);
+            $images[$i]['endUser'] = array_random($user_ids);
+            $images[$i]['mimeType'] = "image/".substr($keys[$i],strpos($keys[$i],".")+1);
             $images[$i]['key'] = $keys[$i];
             $images[$i]['bucket'] = $bucket;
             $images[$i]['created_at'] = $now;
@@ -100,8 +100,8 @@ class QiniuResourcesTableSeeder extends Seeder
             $videos[$i]['etag'] = str_random('10');
             $videos[$i]['fsize'] = 6666;
             $videos[$i]['ext'] = '.mp4';
-            $videos[$i]['end_user'] = array_random($user_ids);
-            $videos[$i]['mime_type'] = "video/".substr($forks[$i],strpos($forks[$i],".")+1);
+            $videos[$i]['endUser'] = array_random($user_ids);
+            $videos[$i]['mimeType'] = "video/".substr($forks[$i],strpos($forks[$i],".")+1);
             $videos[$i]['key'] = $forks[$i];
             $videos[$i]['bucket'] = $bucket;
             $videos[$i]['created_at'] = $now;

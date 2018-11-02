@@ -59,8 +59,8 @@ $api->version('v1',[
     //测试接口
     $api->get('test',function (){phpinfo();});
     //==============================================================================================================
-    //七牛作品消息回调地址
-    $api->post('resource/notification','ResourcesController@notification')->name('api.resource.notification');
+    //七牛持久化处理状态通知回调地址
+    $api->post('resources/qiniu/notification','ResourcesController@notification')->name('api.resource.notification');
     //七牛callbackUrl地址
     $api->post('resources/qiniu/callback','ResourcesController@qiniuCallback')->name('api.resources.qiniu.callback');
     //==============================================================================================================

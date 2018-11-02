@@ -6,7 +6,8 @@ use League\Fractal\TransformerAbstract;
 
 class WorkTransformer extends TransformerAbstract
 {
-    protected $availableIncludes = ['tags','category','comments','user','favours'];
+    protected $availableIncludes = ['tags','category','comments','user','favours',];
+
 
     public function transform(Work $work){
         return [
@@ -15,8 +16,8 @@ class WorkTransformer extends TransformerAbstract
             'category_id' => $work->category_id,
             'name' => $work->name,
             'description' => $work->description,
-            'url' => $work->url,
-            'cover' => $work->cover,
+            'resource_url' => $work->resource_url,
+            'cover_url' => $work->cover_url,
             'page_view' => $work->page_view,
             'comment_count' => $work->comment_count,
             'favour_count' => $work->favour_count,

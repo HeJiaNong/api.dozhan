@@ -22,8 +22,8 @@ class WorkRequest extends FormRequest
                     'name' => 'required|string|unique:works',
                     'description' => 'required|string|max:255',
                     'category_id' => 'required|integer|exists:categories,id',
-                    'url' => 'required|string',
-                    'cover' => 'required|string',
+                    'resource_url' => 'required|string',
+                    'cover_url' => 'required|string',
                     'tags' => 'json',
                 ];
                 break;
@@ -32,7 +32,7 @@ class WorkRequest extends FormRequest
                     'name' => 'string|unique:works,name,'.$this->work->id,
                     'description' => 'string|max:255',
                     'category_id' => 'integer|exists:categories,id',
-                    'cover' => 'string',
+                    'cover_url' => 'string',
                     'tags' => 'json',
                 ];
                 break;
@@ -41,8 +41,8 @@ class WorkRequest extends FormRequest
 
     public function attributes(){
         return [
-            'url' => '视频链接',
-            'cover' => '封面链接',
+            'resource_url' => '视频',
+            'cover_url' => '封面',
             'category_id' => '分类',
             'tags' => '标签',
         ];
