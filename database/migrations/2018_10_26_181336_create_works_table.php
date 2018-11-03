@@ -19,8 +19,8 @@ class CreateWorksTable extends Migration
             $table->integer('category_id')->unsigned()->comment('分类id');
             $table->string('name')->comment('作品名称');
             $table->string('description')->comment('作品描述');
-            $table->string('resource_url')->comment('作品视频资源链接');
-            $table->string('cover_url')->comment('作品封面图片链接');
+            $table->string('video_id')->unique()->comment('视频资源');
+            $table->string('cover_id')->unique()->comment('封面资源');
             $table->integer('page_view')->unsigned()->default(0)->comment('作品浏览次数/PV');
             $table->integer('comment_count')->unsigned()->default(0)->comment('作品评论数量');
             $table->integer('favour_count')->unsigned()->default(0)->comment('作品点赞数量');

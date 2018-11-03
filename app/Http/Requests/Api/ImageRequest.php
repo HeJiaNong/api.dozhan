@@ -13,7 +13,6 @@ class ImageRequest extends FormRequest
      */
     public function rules()
     {
-
         $rule = [
             'scene' => 'required|string|in:avatar,banner,cover',
         ];
@@ -23,24 +22,27 @@ class ImageRequest extends FormRequest
                 $rule['image'] = [
                     'required',
                     'dimensions:width=200,height=200',  //限制图片分辨率
-                    'mimes:psd,jpeg,png,gif,webp,tiff,bmp',   //限制图片类型
+                    'mimetypes:image/*',   //限制图片类型
                 ];
                 break;
             case 'banner':
                 $rule['image'] = [
                     'required',
                     'dimensions:width=1024,height=400',  //限制图片分辨率
-                    'mimes:psd,jpeg,png,gif,webp,tiff,bmp',   //限制图片类型
+                    'mimetypes:image/*',   //限制图片类型
                 ];
                 break;
             case 'cover':
                 $rule['image'] = [
                     'required',
                     'dimensions:width=480,height=300',  //限制图片分辨率
-                    'mimes:psd,jpeg,png,gif,webp,tiff,bmp',   //限制图片类型
+                    'mimetypes:image/*',   //限制图片类型
                 ];
                 break;
         }
+
+//        dd($this->file('image'));
+//        dd($rule);
 
         return $rule;
     }
@@ -55,7 +57,7 @@ class ImageRequest extends FormRequest
     public function messages()
     {
         return [
-//            'image.dimensions' => '图片分辨率必须为200*200',
+            'image.mimetypes' => '图片分辨率必须为200*200',
         ];
     }
 }

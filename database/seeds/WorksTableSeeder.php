@@ -13,6 +13,8 @@ class WorksTableSeeder extends Seeder
     {
         //todo 获取用户id，专辑id，视频id...
 
+        $faker = app(Faker\Generator::class);
+
         //用户id
         $user_ids = \App\Models\User::pluck('id')->toArray();
 
@@ -24,24 +26,27 @@ class WorksTableSeeder extends Seeder
 
 
         //视频url
-        $video_urls = \App\Models\QiniuResource::where('mimeType','video/mp4')->pluck('uuid')->toArray();
+        $video_ids = \App\Models\QiniuResource::where('mimeType','video/mp4')->pluck('id')->toArray();
 
         //图片url
-        $image_urls = \App\Models\QiniuResource::where('mimeType','image/webp')->pluck('uuid')->toArray();
+        $image_ids = \App\Models\QiniuResource::where('mimeType','image/webp')->pluck('id')->toArray();
 
-        $works = factory(\App\Models\Work::class)->times(50)->make()->each(function ($model,$index)use($user_ids,$video_urls,$image_urls,$category_ids){
+        $works = factory(\App\Models\Work::class)->times(50)->make()->each(function ($model,$index)use($faker,$user_ids,$video_ids,$image_ids,$category_ids){
             $model->user_id = array_random($user_ids);
             $model->category_id = array_random($category_ids);
-            $model->resource_url = array_random($video_urls);
-            $model->cover_url = array_random($image_urls);
+            $model->video_id = $faker->unique()->randomElement($video_ids);
+            $model->cover_id = $faker->unique()->randomElement($image_ids);
         });
 
+        //插入数据
         \App\Models\Work::insert($works->toArray());
 
+        //生成标签数据
         \App\Models\Work::all()->each(function ($model,$index)use($tag_ids){
             $model->tags()->attach(array_random($tag_ids,mt_rand(1,count($tag_ids))));
         });
 
+        //为标签数据添加use_count字段统计
         \App\Models\Tag::all()->each(function ($model,$index){
             $model->use_count = $model->works()->count();
             $model->save();

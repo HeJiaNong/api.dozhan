@@ -26,6 +26,7 @@ class WorksController extends Controller
         }
 
         $paginates = $work->paginate($appends['limit'])->appends($appends);
+
         //返回数据
         return $this->response->paginator($paginates,new WorkTransformer());
     }

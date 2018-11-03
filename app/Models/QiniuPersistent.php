@@ -6,32 +6,35 @@ use Illuminate\Database\Eloquent\Model;
 
 class QiniuPersistent extends Model
 {
-    protected $fillable = [
-        'id',
-        'pipeline',
-        'code',
-        'desc',
-        'reqid',
-        'inputBucket',
-        'inputKey',
-        'items',
-    ];
+    protected $fillable = ['id', 'pipeline', 'code', 'desc', 'reqid', 'inputBucket', 'inputKey', 'items',];
 
-//    protected $primaryKey = 'id';
+    protected $primaryKey = 'id';
 
     protected $keyType = 'string';
 
     /*
-     * 访问器
+     * 将值json化
      */
     public function setItemsAttribute($value)
     {
         $this->attributes['items'] = json_encode($value);
     }
 
+    /*
+     * 将json解析为数组
+     */
     public function getItemsAttribute($value)
     {
-        return json_decode($value,true);
+        $value = json_decode($value,true);
+
+        foreach ($value as &$item){
+            //限制展示字段
+            $item = array_intersect_key($item,array_flip(['cmd','key']));
+            //将key拼接成链接
+            $item['key'] = config('services.qiniu.domain').'/'.$item['key'];
+        }
+
+        return $value;
     }
 
     /*

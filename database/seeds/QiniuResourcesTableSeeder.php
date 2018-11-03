@@ -11,65 +11,30 @@ class QiniuResourcesTableSeeder extends Seeder
      */
     public function run()
     {
-        $images = $this->images();
-        $videos = $this->videos();
 
-        \App\Models\QiniuResource::insert($images);
-        \App\Models\QiniuResource::insert($videos);
-//        dd(\App\Models\QiniuResource::all());
+        $images = $this->uploadImages();
+//        $videos = $this->uploadVideos();
     }
 
-    public function images(){
-        //获取当前时间并转换为字符串格式
-        $now = \Carbon\Carbon::now()->toDateTimeString();
-        //获取七牛空间名
-        $bucket = config('services.qiniu.bucket');
+    public function uploadImages(){
+        //执行本地文件上传
+        $dispatcher = app(\Dingo\Api\Dispatcher::class);
 
-        //预设图片地址
-        $keys = [
-            'image/avatar/1.webp',
-            'image/avatar/2.webp',
-            'image/avatar/3.webp',
-            'image/avatar/4.webp',
-            'image/avatar/5.webp',
-            'image/avatar/6.webp',
-            'image/avatar/7.webp',
-            'image/avatar/8.webp',
-            'image/avatar/9.webp',
-            'image/banner/1.webp',
-            'image/banner/2.webp',
-            'image/banner/3.webp',
-            'image/banner/4.webp',
-            'image/banner/5.webp',
-            'image/cover/1.webp',
-            'image/cover/2.webp',
-            'image/cover/3.webp',
-            'image/cover/4.webp',
-            'image/cover/5.webp',
-        ];
-
-        //用户id
-        $user_ids = \App\Models\User::pluck('id')->toArray();
-
-        $images = [];
-
-        for ($i = 0;$i <= count($keys)-1;$i++){
-            $images[$i]['uuid'] = str_random('10');
-            $images[$i]['etag'] = str_random('10');
-            $images[$i]['fsize'] = 6666;
-            $images[$i]['ext'] = '.webp';
-            $images[$i]['endUser'] = array_random($user_ids);
-            $images[$i]['mimeType'] = "image/".substr($keys[$i],strpos($keys[$i],".")+1);
-            $images[$i]['key'] = $keys[$i];
-            $images[$i]['bucket'] = $bucket;
-            $images[$i]['created_at'] = $now;
-            $images[$i]['updated_at'] = $now;
+        try {
+            $res = $dispatcher
+                ->be(\App\Models\User::find(1))
+                ->attach(['image' => './public/default/avatar/1.jpg'])
+                ->post('api/resource/image',['scene' => 'avatar']);
+        } catch (Dingo\Api\Exception\InternalHttpException $e) {
+            //上传出错，记录日志
+            \Illuminate\Support\Facades\Log::error('图片数据填充上传出错:'.json_encode($e->getResponse()));
+            dd('上传出错');
         }
 
-        return $images;
+        dd($res);
     }
 
-    public function videos(){
+    public function uploadVideos(){
         //获取当前时间并转换为字符串格式
         $now = \Carbon\Carbon::now()->toDateTimeString();
         $bucket = config('services.qiniu.bucket');
@@ -96,8 +61,8 @@ class QiniuResourcesTableSeeder extends Seeder
         $videos = [];
 
         for ($i = 0;$i <= count($forks)-1;$i++){
-            $videos[$i]['uuid'] = str_random('10');
-            $videos[$i]['etag'] = str_random('10');
+            $videos[$i]['id'] = uniqid('test');
+            $videos[$i]['etag'] = uniqid('test');
             $videos[$i]['fsize'] = 6666;
             $videos[$i]['ext'] = '.mp4';
             $videos[$i]['endUser'] = array_random($user_ids);

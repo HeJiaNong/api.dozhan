@@ -133,9 +133,9 @@ $api->version('v1',[
         //资源api
         $api->group(['prefix' => 'resource'],function ($api){
             //获取作品上传凭证
-            $api->get('videos/token','ResourcesController@videoToken')->name('api.resource.videos.token');
+            $api->get('video/token','ResourcesController@videoToken')->name('api.resource.videos.token');
             //获取图片上传凭证
-            $api->get('images/token/{scene}','ResourcesController@imageToken')->name('api.resource.videos.token');
+            $api->get('image/token','ResourcesController@imageToken')->name('api.resource.videos.token');
             //上传作品
             $api->post('video','ResourcesController@video');
             //上传图片

@@ -7,13 +7,13 @@ use Illuminate\Database\Eloquent\Model;
 class QiniuResource extends Model
 {
     //设置主键
-    protected $primaryKey = 'uuid';
+    protected $primaryKey = 'id';
 
     protected $keyType = 'string';
 
     protected $fillable = [
         'params',
-        'uuid',
+        'id',
         'endUser',
         'persistentId',
         'bucket',
@@ -29,7 +29,14 @@ class QiniuResource extends Model
     ];
 
     /*
-     * 修改器
+     * 访问器，拼接 key 为链接地址
+     */
+    public function getKeyAttribute($value){
+        return config('services.qiniu.domain').'/'.$value;
+    }
+
+    /*
+     * 修改器,将值转换为json格式
      */
     public function setExifAttribute($value)
     {
@@ -37,7 +44,7 @@ class QiniuResource extends Model
     }
 
     /*
-     * 修改器
+     * 修改器,将值转换为json格式
      */
     public function setImageAveAttribute($value)
     {
@@ -45,7 +52,7 @@ class QiniuResource extends Model
     }
 
     /*
-     * 修改器
+     * 修改器,将值转换为json格式
      */
     public function setImageInfoAttribute($value)
     {
@@ -53,7 +60,7 @@ class QiniuResource extends Model
     }
 
     /*
-     * 修改器
+     * 修改器,将值转换为json格式
      */
     public function setAvinfoAttribute($value)
     {

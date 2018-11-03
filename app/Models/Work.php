@@ -9,10 +9,11 @@ class Work extends Model
 {
     use SoftDeletes;    //启用软删除
 
-    protected $fillable = ['name','description','category_id','resource_url','cover_url'];
+    protected $fillable = ['name','description','category_id','video_id','cover_id'];
 
-    //本地可用作用域列表
+    //todo 本地可用作用域列表,此方案有待优化
     public $scopes = ['recent','popular'];
+
     /**
      * 需要被转换成日期的属性。
      *
@@ -35,38 +36,17 @@ class Work extends Model
     }
 
     /*
-     * 获取 resource_url 属性
+     * 获取作品的视频信息
      */
-    public function getResourceUrlAttribute($value){
-        return $this->resourceLink($value);
-    }
-
-    public function getCoverUrlAttribute($value){
-        return $this->resourceLink($value);
+    public function video(){
+        return $this->belongsTo(QiniuResource::class,'video_id');
     }
 
     /*
-     * 通过资源uuid获取此资源的所有链接
+     * 获取作品的封面信息
      */
-    public function resourceLink($uuid){
-        //TODO 根据资源id查询是否有合适的切片 资源或者转码资源，并且分配链接
-        $link = '#';
-
-        $domain = config('services.qiniu.domain').'/';
-
-        if ($resource = QiniuResource::find($uuid)){
-            $link = $domain.$resource->key;
-            //如果该资源有持久化处理
-            if (($items = collect($resource->persistent['items'])->pluck('key')->toArray()) && ($wis = json_decode($resource->params,true)['wi'])){
-                foreach ($wis as $wi){
-                    if (in_array($wi,$items)){
-                        $link = $domain.$wi;
-                        break;
-                    }
-                }
-            }
-        }
-        return $link;
+    public function cover(){
+        return $this->belongsTo(QiniuResource::class,'cover_id');
     }
 
     /*

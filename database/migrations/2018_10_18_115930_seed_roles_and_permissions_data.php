@@ -22,8 +22,7 @@ class SeedRolesAndPermissionsData extends Migration
         //创建权限
         //模型权限
         Permission::create(['name' => 'manage_users']);
-        Permission::create(['name' => 'manage_images']);
-        Permission::create(['name' => 'manage_videos']);
+        Permission::create(['name' => 'manage_resources']);
         Permission::create(['name' => 'manage_comments']);
         Permission::create(['name' => 'manage_categories']);
         Permission::create(['name' => 'manage_works']);
@@ -37,8 +36,7 @@ class SeedRolesAndPermissionsData extends Migration
         //管理员角色,赋予权限
         $maintainer = Role::create(['name' => 'Maintainer']);
         $maintainer->givePermissionTo('manage_users');
-        $maintainer->givePermissionTo('manage_images');
-        $maintainer->givePermissionTo('manage_videos');
+        $maintainer->givePermissionTo('manage_resources');
         $maintainer->givePermissionTo('manage_comments');
         $maintainer->givePermissionTo('manage_categories');
         $maintainer->givePermissionTo('manage_works');
@@ -48,8 +46,7 @@ class SeedRolesAndPermissionsData extends Migration
         //站长角色
         $founder = Role::create(['name' => 'Founder']);
         $founder->givePermissionTo('manage_users');
-        $founder->givePermissionTo('manage_images');
-        $founder->givePermissionTo('manage_videos');
+        $founder->givePermissionTo('manage_resources');
         $founder->givePermissionTo('manage_comments');
         $founder->givePermissionTo('manage_categories');
         $founder->givePermissionTo('manage_works');

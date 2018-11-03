@@ -6,12 +6,20 @@ use League\Fractal\TransformerAbstract;
 
 class QiniuResourceTransformer extends TransformerAbstract
 {
-    protected $availableIncludes = ['user','persistents'];
-    protected $defaultIncludes = ['persistents'];
+    protected $availableIncludes = ['user','persistent'];
+    protected $defaultIncludes = ['persistent'];
+
+    //限制展示字段
+    protected $only = [];
+
+    public function __construct(array $only = [])
+    {
+        $this->only = $only;
+    }
 
     public function transform(QiniuResource $model){
-        return [
-            'uuid' => $model->uuid,
+        $transform = [
+            'id' => $model->id,
             'endUser' => $model->endUser,
             'persistentId' => $model->persistentId,
             'bucket' => $model->bucket,
@@ -26,10 +34,18 @@ class QiniuResourceTransformer extends TransformerAbstract
             'created_at' => $model->created_at->toDateTimeString(),
             'updated_at' => $model->updated_at->toDateTimeString(),
         ];
+
+        if ($this->only){
+            $transform = array_intersect_key($transform,array_flip($this->only));
+        }
+
+        return $transform;
     }
 
-    public function includePersistents(QiniuResource $model){
-        return $this->collection($model->qiniuPersistents,new QiniuPersistentTransformer());
+    public function includePersistent(QiniuResource $model){
+        if ($model->persistent){
+            return $this->item($model->persistent,new QiniuPersistentTransformer(['items']));
+        }
     }
 
 }

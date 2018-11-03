@@ -6,8 +6,9 @@ use League\Fractal\TransformerAbstract;
 
 class WorkTransformer extends TransformerAbstract
 {
-    protected $availableIncludes = ['tags','category','comments','user','favours',];
+    protected $availableIncludes = ['tags','category','comments','user','favours','video','cover'];
 
+    protected $defaultIncludes = ['video','cover'];
 
     public function transform(Work $work){
         return [
@@ -16,8 +17,8 @@ class WorkTransformer extends TransformerAbstract
             'category_id' => $work->category_id,
             'name' => $work->name,
             'description' => $work->description,
-            'resource_url' => $work->resource_url,
-            'cover_url' => $work->cover_url,
+            'video_id' => $work->video_id,
+            'cover_id' => $work->cover_id,
             'page_view' => $work->page_view,
             'comment_count' => $work->comment_count,
             'favour_count' => $work->favour_count,
@@ -44,6 +45,14 @@ class WorkTransformer extends TransformerAbstract
 
     public function includeFavours(Work $work){
         return $this->collection($work->favours,new FavourTransformer());
+    }
+
+    public function includeVideo(Work $work){
+        return $this->item($work->video,new QiniuResourceTransformer(['key']));
+    }
+
+    public function includeCover(Work $work){
+        return $this->item($work->cover,new QiniuResourceTransformer(['key']));
     }
 
 }

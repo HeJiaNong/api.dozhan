@@ -13,10 +13,10 @@ class DatabaseSeeder extends Seeder
     {
          $this->call(UsersTableSeeder::class);
          $this->call(QiniuResourcesTableSeeder::class);
-         $this->call(TagsTableSeeder::class);
-         $this->call(CategoriesTableSeeder::class);
-         $this->call(WorksTableSeeder::class);
-         $this->call(CommentsTableSeeder::class);
-         $this->call(FavoursTableSeeder::class);
+//         $this->call(TagsTableSeeder::class);
+//         $this->call(CategoriesTableSeeder::class);
+//         $this->call(WorksTableSeeder::class);
+//         $this->call(CommentsTableSeeder::class);
+//         $this->call(FavoursTableSeeder::class);
     }
 }

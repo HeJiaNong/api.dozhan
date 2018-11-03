@@ -38,17 +38,33 @@ return [
     //七牛服务配置
     'qiniu' => [
         //AK
-        'access_key'    => '7jLUeoq1Un9H5fJjTid-kNwva3x2uAASEsD3DXyd',
+        'access_key' => '7jLUeoq1Un9H5fJjTid-kNwva3x2uAASEsD3DXyd',
         //SK
-        'secret_key'    => '07HYzerzkxElZyPgnShHn9luffNPNuKwegpE16oY',
+        'secret_key' => '07HYzerzkxElZyPgnShHn9luffNPNuKwegpE16oY',
         //七牛默认域名
         'domain'   => 'phcczptg4.bkt.clouddn.com',
         //对象存储空间默认名
-        'bucket'        => 'dozhan',
+        'bucket' => 'dozhan',
         //自定义凭证有效期（expires单位为秒，为上传凭证的有效时间）
-        'expires'       => time()+ 60*60,
+        'expires' => time()+ 60*60,
         //队列名
-        'pipeline'      => 'dozhan',
+        'pipeline' => 'dozhan',
+        //上传配置
+        'upload' => [
+            'video' => [
+                'prefix' => 'video/',
+                'mimeType' => 'video/*',
+            ],
+            'image' => [
+                'prefix' => 'image/',
+                'mimeType' => 'image/*',
+            ],
+            'other' => [
+                'prefix' => 'other/',
+                'mimeType' => null,
+            ],
+        ],
+
     ],
 
 ];
