@@ -156,7 +156,7 @@ class ResourcesController extends Controller
      */
     public function videoToken(QiniuCloudHandler $qiniu){
         /*
-         * todo 前端上传文件参数列表：(file, key, token, putExtra, config)
+         * 前端上传文件参数列表：(file, key, token, putExtra, config)
          * file : Blob 对象，上传的文件
          * key:文件资源名
          * token:上传验证信息，前端通过接口请求后端获得
