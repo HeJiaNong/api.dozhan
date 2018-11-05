@@ -57,7 +57,10 @@ $api->version('v1',[
     //游客可以访问的接口
     //==============================================================================================================
     //测试接口
-    $api->get('test',function (){phpinfo();});
+    $api->get('test',function (){
+        dump('uuid:'.(string)\Webpatser\Uuid\Uuid::generate(4));
+        phpinfo();
+    });
     //==============================================================================================================
     //七牛持久化处理状态通知回调地址
     $api->post('resources/qiniu/notification','ResourcesController@notification')->name('api.resource.notification');

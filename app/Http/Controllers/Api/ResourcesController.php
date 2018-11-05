@@ -14,6 +14,7 @@ use Dingo\Api\Routing\UrlGenerator;
 
 use Illuminate\Support\Facades\Log;
 use function Qiniu\base64_urlSafeEncode;
+use Webpatser\Uuid\Uuid;
 
 class ResourcesController extends Controller
 {
@@ -98,7 +99,7 @@ class ResourcesController extends Controller
             }',
             'callbackBodyType' => 'application/json',
 
-            'mimeLimit' => \config('services.qiniu.upload.image.mimeType',null),
+            'mimeLimit' => \config('services.qiniu.upload.other.mimeType',null),
         ];
 
         //生成上传凭证
@@ -116,16 +117,15 @@ class ResourcesController extends Controller
 
         $filepath = $request->file('file')->getRealPath();
 
-        if ($info = $qiniu->fileExists($qiniu->bucket,$res['key'])){
+        if ($info = $qiniu->fileExists($qiniu->bucket,$res['key'])[0]){
             $resource = QiniuResource::where([['bucket','=',$qiniu->bucket],['key','=',$res['key']]])->first();
-//            dd($resource);
             //如果数据库有值
             if ($resource){
                 $id = $resource->id;
                 $res = compact('id');
             }else{
                 $resource = [
-                    'id' => uuid_create(),
+                    'id' => (string)Uuid::generate(4),
                     'bucket' => $qiniu->bucket,
                     'key' => $res['key'],
                     'ext' => '',
@@ -140,7 +140,12 @@ class ResourcesController extends Controller
             }
         }else{
             //上传文件
-            $res = $qiniu->putFile($res['token'],$res['key'],$filepath);
+            list($ret,$err) = $qiniu->putFile($res['token'],$res['key'],$filepath);
+//            dd($ret,$err);
+            if ($err){
+                return $this->response->errorForbidden();
+            }
+            $res = $ret;
         }
 
         return $this->response->array($res);
