@@ -310,16 +310,20 @@ class ResourcesController extends Controller
     /*
      * 表单上传视频
      */
-    public function video(VideoRequest $request,QiniuCloudHandler $qiniu){
+    public function video(ResourceRequest $request,QiniuCloudHandler $qiniu){
         //内部请求视频token接口，获取视频上传token
         $res = $this->api->be($this->user)->get('api/resource/video/token');
 
         $filepath = $request->file('video')->getRealPath();
 
         //上传文件
-        $res = $qiniu->putFile($res['token'],$res['key'],$filepath,$res['putExtra']['params']);
+        list($ret,$err) = $qiniu->putFile($res['token'],$res['key'],$filepath,$res['putExtra']['params']);
 
-        return $this->response->array($res);
+        if ($err){
+            return $this->response->errorForbidden();
+        }
+
+        return $this->response->array($ret);
     }
 
     /*
