@@ -132,11 +132,15 @@ $api->version('v1',[
         //==============================================================================================================
         //资源api
         $api->group(['prefix' => 'resource'],function ($api){
+            //获取文件上传凭证
+            $api->get('token','ResourcesController@token')->name('api.resources.token');
             //获取作品上传凭证
             $api->get('video/token','ResourcesController@videoToken')->name('api.resource.videos.token');
             //获取图片上传凭证
             $api->get('image/token','ResourcesController@imageToken')->name('api.resource.videos.token');
-            //上传作品
+            //上传文件
+            $api->post('file','ResourcesController@store');
+            //上传视频
             $api->post('video','ResourcesController@video');
             //上传图片
             $api->post('image','ResourcesController@image');

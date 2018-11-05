@@ -11,6 +11,9 @@ class QiniuResource extends Model
 
     protected $keyType = 'string';
 
+    //因为id是uuid，所以这个自增要设置为false，不然id查询出来是0
+    public $incrementing = false;
+
     protected $fillable = [
         'params',
         'id',

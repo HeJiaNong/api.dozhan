@@ -2,6 +2,7 @@
 
 namespace App\Handlers;
 
+use App\Models\QiniuResource;
 use Qiniu\Auth;
 use function Qiniu\base64_urlSafeEncode as s;
 use Qiniu\Config;
@@ -24,6 +25,7 @@ class QiniuCloudHandler
     public $expires;       //自定义凭证有效期（expires单位为秒，为上传凭证的有效时间）
     public $pipeline;      //队列名
     public $notify_url;    //持久化处理回调地址
+    public $auth;
 
     public function __construct()
     {
@@ -42,6 +44,7 @@ class QiniuCloudHandler
         $this->expires     = \config('services.qiniu.expires');
         $this->pipeline    = \config('services.qiniu.pipeline');
         $this->notify_url  = app('Dingo\Api\Routing\UrlGenerator')->version('v1')->route('api.resource.notification');
+        $this->auth = new Auth($this->access_key, $this->secret_key);
     }
 
     /**
@@ -67,18 +70,15 @@ class QiniuCloudHandler
         $uploader = new UploadManager();
         $res = $uploader->putFile($upToken,$key,$filePath,$params,$mime,$checkCrc);
 
-        dd($res);
-        //解析后，返回上传结果
-        return $this->parseRes($res);
+        return $res;
     }
 
     /*
      * 生成上传凭证
      */
     public function uploadToken($bucket, $key = null, $expires = 3600, $policy = null, $strictPolicy = true){
-        $auth = new Auth($this->access_key, $this->secret_key);
 
-        $token = $auth->uploadToken($bucket, $key, $expires, $policy, $strictPolicy);
+        $token = $this->auth->uploadToken($bucket, $key, $expires, $policy, $strictPolicy);
 
         return $token;
     }
@@ -89,10 +89,11 @@ class QiniuCloudHandler
      * @param $bucket string 空间名
      * @return mixed
      */
-    public function getFileInfo($key,$bucket){
-        $res = $this->getBucketManagerObject()->stat($bucket, $key);
+    public function fileExists($bucket,$key){
 
-        return $this->parseRes($res);
+        $res = $this->getBucketManagerObject()->stat($bucket,$key);
+
+        return $res;
     }
 
     /**
@@ -164,7 +165,7 @@ class QiniuCloudHandler
      * @param $res array 七牛返回的数据
      * @return mixed
      */
-    private function parseRes($res){
+    public function parseRes($res){
 
         // 列举文件
         list($ret, $err) = $res;

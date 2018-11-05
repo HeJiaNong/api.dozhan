@@ -12,6 +12,8 @@ class QiniuPersistent extends Model
 
     protected $keyType = 'string';
 
+    public $incrementing = false;
+
     /*
      * 将值json化
      */
@@ -32,6 +34,19 @@ class QiniuPersistent extends Model
             $item = array_intersect_key($item,array_flip(['cmd','key']));
             //将key拼接成链接
             $item['key'] = config('services.qiniu.domain').'/'.$item['key'];
+            //添加前端格式区分
+
+            $format = 'other';
+
+            if (strpos($item['cmd'],'avthumb/mp4') !== false){
+                $format = 'mp4';
+            }elseif (strpos($item['cmd'],'avthumb/m3u8') !== false){
+                $format = 'm3u8';
+            }elseif (strpos($item['cmd'],'format/webp') !== false){
+                $format = 'webp';
+            }
+
+            $item['format'] = $format;
         }
 
         return $value;

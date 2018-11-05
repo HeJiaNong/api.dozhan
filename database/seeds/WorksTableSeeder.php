@@ -11,8 +11,6 @@ class WorksTableSeeder extends Seeder
      */
     public function run()
     {
-        //todo 获取用户id，专辑id，视频id...
-
         $faker = app(Faker\Generator::class);
 
         //用户id
@@ -24,18 +22,17 @@ class WorksTableSeeder extends Seeder
         //标签id
         $tag_ids = \App\Models\Tag::pluck('id')->toArray();
 
-
-        //视频url
+        //视频资源id
         $video_ids = \App\Models\QiniuResource::where('mimeType','video/mp4')->pluck('id')->toArray();
 
-        //图片url
-        $image_ids = \App\Models\QiniuResource::where('mimeType','image/webp')->pluck('id')->toArray();
+        //图片资源id
+        $cover_ids = \App\Models\QiniuResource::where('key', 'like', '%cover%')->limit(count($video_ids))->pluck('id')->toArray();
 
-        $works = factory(\App\Models\Work::class)->times(50)->make()->each(function ($model,$index)use($faker,$user_ids,$video_ids,$image_ids,$category_ids){
+        $works = factory(\App\Models\Work::class)->times(count($video_ids))->make()->each(function ($model,$index)use($faker,$user_ids,$video_ids,$cover_ids,$category_ids){
             $model->user_id = array_random($user_ids);
             $model->category_id = array_random($category_ids);
             $model->video_id = $faker->unique()->randomElement($video_ids);
-            $model->cover_id = $faker->unique()->randomElement($image_ids);
+            $model->cover_id = $faker->unique()->randomElement($cover_ids);
         });
 
         //插入数据
