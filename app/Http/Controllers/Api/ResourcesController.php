@@ -6,8 +6,8 @@ use App\Handlers\QiniuCloudHandler;
 use App\Http\Requests\Api\ImageRequest;
 use App\Http\Requests\Api\ResourceRequest;
 use App\Http\Requests\Api\VideoRequest;
-use App\Models\QiniuPersistent;
-use App\Models\QiniuResource;
+use App\Models\ResourceQiniuPersistent;
+use App\Models\ResourceQiniu;
 use App\Models\User;
 use Carbon\Carbon;
 use Dingo\Api\Routing\UrlGenerator;
@@ -21,7 +21,7 @@ class ResourcesController extends Controller
     /*
      * 七牛文件上传回调地址
      */
-    public function qiniuCallback(ResourceRequest $request,QiniuResource $qiniuResource,QiniuCloudHandler $handler){
+    public function qiniuCallback(ResourceRequest $request, ResourceQiniu $qiniuResource, QiniuCloudHandler $handler){
         Log::info('>>>>>>>>>>>>>>>>>>>>七牛回调请求进入>>>>>>>>>>>>>>>>>>>>');
 
         //接收数据
@@ -54,7 +54,7 @@ class ResourcesController extends Controller
     /*
      * 七牛持久化处理状态通知回调地址
      */
-    public function notification(ResourceRequest $request,QiniuPersistent $qiniuPersistent){
+    public function notification(ResourceRequest $request, ResourceQiniuPersistent $qiniuPersistent){
         Log::info('>>>>>>>>>>>>>>>>>>>>七牛持久化处理状态通知回调地址请求>>>>>>>>>>>>>>>>>>>>');
         //接收数据
         $data = $request->only(['id', 'pipeline', 'code', 'desc', 'reqid', 'inputBucket', 'inputKey', 'items']);
@@ -118,14 +118,13 @@ class ResourcesController extends Controller
         $filepath = $request->file('file')->getRealPath();
 
         if ($info = $qiniu->fileExists($qiniu->bucket,$res['key'])[0]){
-            $resource = QiniuResource::where([['bucket','=',$qiniu->bucket],['key','=',$res['key']]])->first();
+            $resource = ResourceQiniu::where([['bucket','=',$qiniu->bucket],['key','=',$res['key']]])->first();
             //如果数据库有值
             if ($resource){
                 $id = $resource->id;
                 $res = compact('id');
             }else{
                 $resource = [
-                    'id' => (string)Uuid::generate(4),
                     'bucket' => $qiniu->bucket,
                     'key' => $res['key'],
                     'ext' => '',
@@ -134,7 +133,7 @@ class ResourcesController extends Controller
                     'etag' => $info['hash'],
                     'mimeType' => $info['mimeType'],
                 ];
-                $resource = QiniuResource::create($resource);
+                $resource = ResourceQiniu::create($resource);
                 $id = $resource->id;
                 $res = compact('id');
             }

@@ -1,7 +1,7 @@
 <?php
 namespace App\Transformers;
 
-use App\Models\QiniuResource;
+use App\Models\ResourceQiniu;
 use League\Fractal\TransformerAbstract;
 
 class QiniuResourceTransformer extends TransformerAbstract
@@ -17,7 +17,7 @@ class QiniuResourceTransformer extends TransformerAbstract
         $this->only = $only;
     }
 
-    public function transform(QiniuResource $model){
+    public function transform(ResourceQiniu $model){
         $transform = [
             'id' => $model->id,
             'endUser' => $model->endUser,
@@ -42,7 +42,7 @@ class QiniuResourceTransformer extends TransformerAbstract
         return $transform;
     }
 
-    public function includePersistent(QiniuResource $model){
+    public function includePersistent(ResourceQiniu $model){
         if ($model->persistent){
             return $this->item($model->persistent,new QiniuPersistentTransformer(['items']));
         }

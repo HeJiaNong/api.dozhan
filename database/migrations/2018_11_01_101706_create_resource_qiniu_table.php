@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateQiniuResourcesTable extends Migration
+class CreateResourceQiniuTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,8 +13,8 @@ class CreateQiniuResourcesTable extends Migration
      */
     public function up()
     {
-        Schema::create('qiniu_resources', function (Blueprint $table) {
-            $table->uuid('id')->comment('uuid');
+        Schema::create('resources_qiniu', function (Blueprint $table) {
+            $table->increments('id');
             $table->json('params')->nullable()->comment('自定义参数');
             $table->string('endUser')->comment('上传时指定的endUser字段，通常用于区分不同终端用户的请求');
             $table->string('persistentId')->nullable()->comment('音视频转码持久化的进度查询ID');
@@ -29,7 +29,6 @@ class CreateQiniuResourcesTable extends Migration
             $table->json('imageInfo')->nullable()->comment('获取所上传图片的基本信息');
             $table->json('avinfo')->nullable()->comment('音视频资源的元信息');
             $table->timestamps();
-            $table->primary('id');
         });
     }
 
@@ -40,6 +39,6 @@ class CreateQiniuResourcesTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('qiniu_resources');
+        Schema::dropIfExists('resources_qiniu');
     }
 }

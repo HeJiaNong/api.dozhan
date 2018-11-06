@@ -4,8 +4,10 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class QiniuPersistent extends Model
+class ResourceQiniuPersistent extends Model
 {
+    protected $table = 'resources_qiniu_persistent';
+
     protected $fillable = ['id', 'pipeline', 'code', 'desc', 'reqid', 'inputBucket', 'inputKey', 'items',];
 
     protected $primaryKey = 'id';
@@ -55,7 +57,7 @@ class QiniuPersistent extends Model
     /*
      * 获取此持久化处理资源所属的原资源
      */
-    public function qiniuResource(){
-        return $this->belongsTo(QiniuResource::class,'id','persistent_id');
+    public function resource(){
+        return $this->belongsTo(ResourceQiniu::class,'id','persistent_id');
     }
 }

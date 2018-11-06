@@ -12,7 +12,7 @@ class DatabaseSeeder extends Seeder
     public function run()
     {
          $this->call(UsersTableSeeder::class);
-         $this->call(QiniuResourcesTableSeeder::class);
+         $this->call(ResourcesQiniuTableSeeder::class);
          $this->call(TagsTableSeeder::class);
          $this->call(CategoriesTableSeeder::class);
          $this->call(WorksTableSeeder::class);

@@ -2,7 +2,7 @@
 
 namespace App\Handlers;
 
-use App\Models\QiniuResource;
+use App\Models\ResourceQiniu;
 use Qiniu\Auth;
 use function Qiniu\base64_urlSafeEncode as s;
 use Qiniu\Config;

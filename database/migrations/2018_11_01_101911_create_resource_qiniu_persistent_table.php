@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateQiniuPersistentsTable extends Migration
+class CreateResourceQiniuPersistentTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,7 +13,7 @@ class CreateQiniuPersistentsTable extends Migration
      */
     public function up()
     {
-        Schema::create('qiniu_persistents', function (Blueprint $table) {
+        Schema::create('resources_qiniu_persistent', function (Blueprint $table) {
             $table->string('id')->comment('持久化处理的进程ID，即persistent_id');
             $table->integer('code')->comment('状态码0成功，1等待处理，2正在处理，3处理失败，4通知提交失败');
             $table->string('desc')->comment('与状态码相对应的详细描述');
@@ -34,6 +34,6 @@ class CreateQiniuPersistentsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('qiniu_persistents');
+        Schema::dropIfExists('resources_qiniu_persistent');
     }
 }

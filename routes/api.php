@@ -51,7 +51,7 @@ $api->version('v1',[
     'middleware' => [
         'serializer',
         'bindings', //路由模型绑定
-        'cors'
+        'cors'  //CORS跨域问题解决方案
     ],
 
 ],function ($api){
@@ -59,7 +59,13 @@ $api->version('v1',[
     //==============================================================================================================
     //测试接口
     $api->get('test',function (){
-        dump('uuid:'.(string)\Webpatser\Uuid\Uuid::generate(4));
+        $user = \App\Models\User::first();
+
+        $resources = $user->resources->first();
+
+        $resource = $resources->resourceable;
+
+        dd($resource->toArray());
         phpinfo();
     });
     //==============================================================================================================
@@ -91,8 +97,6 @@ $api->version('v1',[
     $api->get('categories/{category}','CategoriesController@show')->name('api.categories.show');
     //获取分类列表
     $api->get('categories','CategoriesController@index')->name('api.categories.index');
-    //获取某分类下的所有作品
-    $api->get('categories/{category}/works','CategoriesController@worksIndex')->name('api.categories.works.index');
     //==============================================================================================================
     //作品列表
     $api->get('works','WorksController@index')->name('api.works.index');
@@ -100,6 +104,8 @@ $api->version('v1',[
     $api->get('users/{user}/works','WorksController@userIndex')->name('api.user.woks.index');
     //作品信息
     $api->get('works/{work}','WorksController@show')->name('api.work.show');
+    //获取某分类下的所有作品
+    $api->get('categories/{category}/works','CategoriesController@worksIndex')->name('api.categories.works.index');
     //==============================================================================================================
     //获取所有标签
     $api->get('tags','TagsController@index')->name('api.tags.index');

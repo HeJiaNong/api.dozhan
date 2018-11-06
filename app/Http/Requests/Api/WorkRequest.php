@@ -2,7 +2,7 @@
 
 namespace App\Http\Requests\Api;
 
-use App\Models\QiniuResource;
+use App\Models\ResourceQiniu;
 use App\Rules\JsontoArrExists;
 use Illuminate\Validation\Rule;
 
@@ -57,8 +57,8 @@ class WorkRequest extends FormRequest
                         if ($validator->attributes()['video_id'] == $validator->attributes()['cover_id']) {
                             $validator->errors()->add('resource', '资源重复');
                         }
-                        $video = QiniuResource::find($validator->attributes()['video_id']);
-                        $cover = QiniuResource::find($validator->attributes()['cover_id']);
+                        $video = ResourceQiniu::find($validator->attributes()['video_id']);
+                        $cover = ResourceQiniu::find($validator->attributes()['cover_id']);
 
                         //资源的所属用户必须是自己
                         if ((int)$video->endUser !== $this->user()->id) {
@@ -85,7 +85,7 @@ class WorkRequest extends FormRequest
                 if ($validator->errors()->count() == 0) {
                     //验证后钩子
                     $validator->after(function ($validator) {
-                        $cover = QiniuResource::find($validator->attributes()['cover_id']);
+                        $cover = ResourceQiniu::find($validator->attributes()['cover_id']);
                         //资源的所属用户必须是自己
                         if ((int)$cover->endUser !== $this->user()->id) {
                             $validator->errors()->add('cover', '这是别人的资源');

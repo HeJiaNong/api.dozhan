@@ -4,19 +4,12 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class QiniuResource extends Model
+class ResourceQiniu extends Model
 {
-    //设置主键
-    protected $primaryKey = 'id';
-
-    protected $keyType = 'string';
-
-    //因为id是uuid，所以这个自增要设置为false，不然id查询出来是0
-    public $incrementing = false;
+    protected $table = 'resources_qiniu';
 
     protected $fillable = [
         'params',
-        'id',
         'endUser',
         'persistentId',
         'bucket',
@@ -78,10 +71,17 @@ class QiniuResource extends Model
     }
 
     /*
-     * 获取此资源的持久化处理资源
+     * 获取七牛资源的持久化处理资源
      */
     public function persistent(){
-        return $this->belongsTo(QiniuPersistent::class,'persistentId');
+        return $this->belongsTo(ResourceQiniuPersistent::class,'persistentId');
+    }
+
+    /*
+     * 中继器
+     */
+    public function resource(){
+        return $this->morphOne(Resource::class,'resourceable');
     }
 
 }

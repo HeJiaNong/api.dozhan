@@ -76,8 +76,8 @@ class User extends Authenticatable implements JWTSubject
     /*
      * 获取此用户的所有资源文件
      */
-    public function qiniuResources(){
-        return $this->hasMany(QiniuResource::class);
+    public function resources(){
+        return $this->hasMany(Resource::class);
     }
 
     /*

@@ -39,14 +39,14 @@ class Work extends Model
      * 获取作品的视频信息
      */
     public function video(){
-        return $this->belongsTo(QiniuResource::class,'video_id');
+        return $this->belongsTo(Resource::class,'video_id');
     }
 
     /*
      * 获取作品的封面信息
      */
     public function cover(){
-        return $this->belongsTo(QiniuResource::class,'cover_id');
+        return $this->belongsTo(Resource::class,'cover_id');
     }
 
     /*
