@@ -51,6 +51,7 @@ $api->version('v1',[
     'middleware' => [
         'serializer',
         'bindings', //路由模型绑定
+        'cors'
     ],
 
 ],function ($api){
