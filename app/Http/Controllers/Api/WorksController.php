@@ -3,18 +3,18 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Requests\Api\WorkRequest;
+use App\Models\Resource;
 use App\Models\Tag;
 use App\Models\User;
 use App\Models\Work;
 use App\Transformers\WorkTransformer;
-use Illuminate\Http\Request;
 
 class WorksController extends Controller
 {
     /*
      * 获取作品列表
      */
-    public function index(Request $request,Work $work){
+    public function index(WorkRequest $request,Work $work){
         //分页携带参数
         $appends['limit'] = (int)$request->limit ?? 20;
 
@@ -35,6 +35,8 @@ class WorksController extends Controller
      * 发布作品
      */
     public function store(WorkRequest $request,Work $work){
+        //todo 由于更新了资源表的多态关联，这里需要在入库前赋值多态关联表数据
+//        return '数据验证成功';
         //接收作品相关数据
         $work->fill($request->validated());
 
@@ -43,6 +45,12 @@ class WorksController extends Controller
 
         //入库
         $work->save();
+
+        //这样做的目的就是为了填充modelable_id和modelable_type字段
+        $work->resources()->saveMany([
+            Resource::find($request->video_id),
+            Resource::find($request->cover_id),
+        ]);
 
         //标签数据
         if ($request->tags = json_decode($request->tags,true)){
@@ -72,6 +80,13 @@ class WorksController extends Controller
 
         //更新作品数据
         $work->update(collect($request->validated())->only(['name','description','category_id','cover_id'])->toArray());
+
+        //这样做的目的就是为了填充modelable_id和modelable_type字段
+        if ($request->has('cover_id')){
+            $work->resources()->saveMany([
+                Resource::find($request->cover_id),
+            ]);
+        }
 
         //标签数据
         if ($request->tags = json_decode($request->tags,true)){
@@ -161,7 +176,7 @@ class WorksController extends Controller
     /*
      * 获取某用户发布的作品列表
      */
-    public function userIndex(User $user,Request $request){
+    public function userIndex(User $user,WorkRequest $request){
 
         //分页携带参数
         $appends['limit'] = (int)$request->limit ?? 20;

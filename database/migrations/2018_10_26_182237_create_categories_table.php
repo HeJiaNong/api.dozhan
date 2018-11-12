@@ -16,7 +16,7 @@ class CreateCategoriesTable extends Migration
         Schema::create('categories', function (Blueprint $table) {
             $table->increments('id');
             $table->string('name')->index()->comment('分类名');
-            $table->string('cover_url')->comment('分类图标链接');
+            $table->string('icon')->comment('图标资源');
             $table->string('description')->comment('分类描述');
             $table->timestamps();
         });

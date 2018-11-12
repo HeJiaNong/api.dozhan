@@ -16,7 +16,9 @@ class CreateResourcesTable extends Migration
         Schema::create('resources', function (Blueprint $table) {
             $table->uuid('id');
             $table->integer('user_id')->unsigned()->comment('资源所属用户id');
+            $table->string('mime')->comment('资源文件mime类型');
             $table->morphs('resourceable');
+            $table->nullableMorphs('modelable');
             $table->timestamps();
         });
     }

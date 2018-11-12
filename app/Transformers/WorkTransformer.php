@@ -47,12 +47,18 @@ class WorkTransformer extends TransformerAbstract
         return $this->collection($work->favours,new FavourTransformer());
     }
 
+    /*
+     * 获取视频资源
+     */
     public function includeVideo(Work $work){
-        return $this->item($work->video,new QiniuResourceTransformer(['key']));
+        return $this->item($work->video,new ResourceTransformer(false));
     }
 
+    /*
+     * 获取封面资源
+     */
     public function includeCover(Work $work){
-        return $this->item($work->cover,new QiniuResourceTransformer(['key']));
+        return $this->item($work->cover,new ResourceTransformer(true));
     }
 
 }

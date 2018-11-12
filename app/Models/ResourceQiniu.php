@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class ResourceQiniu extends Model
 {
+    //声明表名
     protected $table = 'resources_qiniu';
 
     protected $fillable = [
@@ -25,10 +26,42 @@ class ResourceQiniu extends Model
     ];
 
     /*
+     * 获取此资源的展示链接
+     */
+    public function showUrl(ResourceQiniu $resourceQiniu){
+
+        //默认为原文件url
+        $url = $resourceQiniu->key;
+
+        //如果该资源有持久化处理资源
+        if ($persistent = $resourceQiniu->persistent);{
+            foreach ($persistent->items as $item){
+                if ($item['code'] == 0){
+                    //对每个item进行筛选
+                    //todo 这里暂时没有pick
+                    $url = $item['key'];
+                }
+            }
+        }
+
+        return compact('url');
+    }
+
+
+
+
+    /*
      * 访问器，拼接 key 为链接地址
      */
     public function getKeyAttribute($value){
         return config('services.qiniu.domain').'/'.$value;
+    }
+
+    /*
+     * 将参数转为数组
+     */
+    public function getParamsAttribute($value){
+        return json_decode($value,true);
     }
 
     /*

@@ -6,6 +6,7 @@ use App\Http\Requests\Api\CategoryRequest;
 use App\Models\Album;
 use App\Models\Av;
 use App\Models\Category;
+use App\Models\Resource;
 use App\Transformers\AlbumTransformer;
 use App\Transformers\AvTransformer;
 use App\Transformers\CategoryTransformer;
@@ -25,13 +26,15 @@ class CategoriesController extends Controller
     }
 
     //新增分类
-    public function store(CategoryRequest $request){
+    public function store(CategoryRequest $request,Category $category){
         //权限验证
         $this->authorize('create',Category::class);
 
-        $categories = $request->only(['name','cover','description']);
+        $category->fill($request->all())->save();
 
-        Category::create($categories);
+        $category->resources()->saveMany([
+            Resource::find($request->cover_id),
+        ]);
 
         return $this->response->created();
     }
@@ -56,6 +59,12 @@ class CategoriesController extends Controller
         $data = $request->only(['name','cover','description']);
 
         $category->update($data);
+
+        if ($request->has('cover_id')){
+            $category->resources()->saveMany([
+                Resource::find($request->cover_id),
+            ]);
+        }
 
         return $this->response->item($category,new CategoryTransformer());
     }

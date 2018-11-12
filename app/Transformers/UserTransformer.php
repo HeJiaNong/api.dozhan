@@ -7,7 +7,7 @@ use League\Fractal\TransformerAbstract;
 class UserTransformer extends TransformerAbstract
 {
     //同模型关联
-    protected $availableIncludes = ['images','videos','comments','works','favours'];
+    protected $availableIncludes = ['resources','comments','works','favours'];
 
     public function transform(User $user){
         return [
@@ -25,12 +25,8 @@ class UserTransformer extends TransformerAbstract
         ];
     }
 
-    public function includeImages(User $user){
-        return $this->collection($user->images,new ImageTransformer());
-    }
-
-    public function includeVideos(User $user){
-        return $this->collection($user->videos,new VideoTransformer());
+    public function includeResources(User $user){
+        return $this->collection($user->resources,new ResourceTransformer());
     }
 
     public function includeComments(User $user){
@@ -44,4 +40,5 @@ class UserTransformer extends TransformerAbstract
     public function includeFavours(User $user){
         return $this->collection($user->favours,new FavourTransformer());
     }
+
 }

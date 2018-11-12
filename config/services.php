@@ -47,24 +47,25 @@ return [
         'bucket' => 'dozhan',
         //自定义凭证有效期（expires单位为秒，为上传凭证的有效时间）
         'expires' => time()+ 60*60,
-        //队列名
-        'pipeline' => 'dozhan',
-        //上传配置
-        'upload' => [
-            'video' => [
-                'prefix' => 'video/',
-                'mimeType' => 'video/*',
-            ],
-            'image' => [
-                'prefix' => 'image/',
-                'mimeType' => 'image/*',
-            ],
-            'other' => [
-                'prefix' => 'other/',
-                'mimeType' => null,
-            ],
-        ],
 
+        //上传策略
+        'policy' => [
+            //七牛callbackUrl回调地址
+            'callbackUrl' => function(){
+                return (string)app(\Dingo\Api\Routing\UrlGenerator::class)->version('v1')->route('api.resources.qiniu.callback');
+            },
+
+            //回调数据类型
+            'callbackBodyType' => 'application/json',
+
+            //持久化处理队列选择
+            'persistentPipeline' => 'dozhan',
+
+            //七牛持久化处理结果消息通知地址
+            'persistentNotifyUrl' => function(){
+                return (string)app(\Dingo\Api\Routing\UrlGenerator::class)->version('v1')->route('api.resource.qiniu.notification');
+            },
+        ],
     ],
 
 ];

@@ -2,7 +2,9 @@
 
 namespace App\Providers;
 
+use App\Models\Category;
 use App\Models\Comment;
+use App\Models\ResourceQiniu;
 use App\Models\Video;
 use App\Models\Work;
 use Carbon\Carbon;
@@ -58,8 +60,11 @@ class AppServiceProvider extends ServiceProvider
          * 注册「多态映射表」
          */
         Relation::morphMap([
+            //将表名作为映射
             (new Work())->getTable() => Work::class,
             (new Comment())->getTable() => Comment::class,
+            (new ResourceQiniu())->getTable() => ResourceQiniu::class,
+            (new Category())->getTable() => Category::class,
         ]);
     }
 }

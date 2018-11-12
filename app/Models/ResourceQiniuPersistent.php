@@ -25,7 +25,7 @@ class ResourceQiniuPersistent extends Model
     }
 
     /*
-     * 将json解析为数组
+     * 对items属性做过滤显示
      */
     public function getItemsAttribute($value)
     {
@@ -33,22 +33,24 @@ class ResourceQiniuPersistent extends Model
 
         foreach ($value as &$item){
             //限制展示字段
-            $item = array_intersect_key($item,array_flip(['cmd','key']));
+//            $item = array_intersect_key($item,array_flip(['key']));
             //将key拼接成链接
             $item['key'] = config('services.qiniu.domain').'/'.$item['key'];
             //添加前端格式区分
 
-            $format = 'other';
-
-            if (strpos($item['cmd'],'avthumb/mp4') !== false){
-                $format = 'mp4';
-            }elseif (strpos($item['cmd'],'avthumb/m3u8') !== false){
-                $format = 'm3u8';
-            }elseif (strpos($item['cmd'],'format/webp') !== false){
-                $format = 'webp';
-            }
-
-            $item['format'] = $format;
+//            $format = 'other';
+//
+//            //todo 这种判断方式不太灵活
+//            //通过cmd为资源打上format格式说明
+//            if (strpos($item['cmd'],'avthumb/mp4') !== false){
+//                $format = 'mp4';
+//            }elseif (strpos($item['cmd'],'avthumb/m3u8') !== false){
+//                $format = 'm3u8';
+//            }elseif (strpos($item['cmd'],'format/webp') !== false){
+//                $format = 'webp';
+//            }
+//
+//            $item['format'] = $format;
         }
 
         return $value;
@@ -60,4 +62,5 @@ class ResourceQiniuPersistent extends Model
     public function resource(){
         return $this->belongsTo(ResourceQiniu::class,'id','persistent_id');
     }
+
 }

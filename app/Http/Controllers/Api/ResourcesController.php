@@ -3,16 +3,13 @@
 namespace App\Http\Controllers\Api;
 
 use App\Handlers\QiniuCloudHandler;
-use App\Http\Requests\Api\ImageRequest;
 use App\Http\Requests\Api\ResourceRequest;
-use App\Http\Requests\Api\VideoRequest;
+use App\Models\Resource;
 use App\Models\ResourceQiniuPersistent;
 use App\Models\ResourceQiniu;
-use App\Models\User;
-use Carbon\Carbon;
-use Dingo\Api\Routing\UrlGenerator;
 
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Validator;
 use function Qiniu\base64_urlSafeEncode;
 use Webpatser\Uuid\Uuid;
 
@@ -21,48 +18,46 @@ class ResourcesController extends Controller
     /*
      * 七牛文件上传回调地址
      */
-    public function qiniuCallback(ResourceRequest $request, ResourceQiniu $qiniuResource, QiniuCloudHandler $handler){
-        Log::info('>>>>>>>>>>>>>>>>>>>>七牛回调请求进入>>>>>>>>>>>>>>>>>>>>');
+    public function qiniuCallback(ResourceRequest $request,ResourceQiniu $resourceQiniu, QiniuCloudHandler $handler,Resource $resource){
+        Log::info('=======================七牛回调=======================');
 
-        //接收数据
-        $data = $request->only(['params','id', 'endUser', 'persistentId', 'bucket', 'key', 'etag', 'fsize', 'mimeType', 'imageAve', 'ext', 'exif', 'imageInfo','avinfo']);
-
-        //七牛回调的url，具体可以参考：http://developer.qiniu.com/docs/v6/api/reference/security/put-policy.html
-        $url = app(UrlGenerator::class)->version('v1')->route('api.resources.qiniu.callback');
-
-        if (!isset($_SERVER['HTTP_AUTHORIZATION'])){
+        //验证回调是否是七牛发送
+        if (!$handler->verifyCallback($request->all())){
             return $this->response->errorBadRequest();
         }
+        Log::info('校验成功');
 
-        //检测是否是七牛返回的回调
-        $isQiniuCallback = $handler->auth->verifyCallback('application/json', $_SERVER['HTTP_AUTHORIZATION'], $url,$data);
+        $id = (string)Uuid::generate(4);
 
-        if ($isQiniuCallback){
-            $id = $data['id'];
-            //入库
-            $qiniuResource->fill($data)->save();
+        //入库
+        $resource->id = $id;
+        $resource->user_id = $request->endUser;
+        $resource->mime = $request->mimeType;
+        $resourceQiniu->fill($request->all())->save();
+        $resourceQiniu->resource()->save($resource);    //写入中间表
 
-            Log::info('<<<<<<<<<<<<<<<<<<<<七牛回调请求成功<<<<<<<<<<<<<<<<<<<<');
+        Log::info('入库成功');
 
-            //返回响应
-            return $this->response->array(compact('id'))->setStatusCode(200);
-        }else{
-            return $this->response->errorBadRequest();
-        }
+        Log::info('=======================七牛回调=======================');
+
+        //返回响应
+        return $this->response->array(compact('id'))->setStatusCode(200);
     }
 
     /*
      * 七牛持久化处理状态通知回调地址
      */
     public function notification(ResourceRequest $request, ResourceQiniuPersistent $qiniuPersistent){
-        Log::info('>>>>>>>>>>>>>>>>>>>>七牛持久化处理状态通知回调地址请求>>>>>>>>>>>>>>>>>>>>');
-        //接收数据
-        $data = $request->only(['id', 'pipeline', 'code', 'desc', 'reqid', 'inputBucket', 'inputKey', 'items']);
+        Log::info('=======================七牛持久化处理状态通知=======================');
+        //验证id必须存在与七牛资源表中并且在七牛持久化处理资源表中唯一
+        Validator::make($request->all(), [
+            'id' => 'exists:resources_qiniu,persistentId|unique:resources_qiniu_persistent,id'
+        ])->validate();
 
         //入库
-        $qiniuPersistent->fill($data)->save();
+        $qiniuPersistent->fill($request->all())->save();
 
-        Log::info('<<<<<<<<<<<<<<<<<<<<七牛持久化处理状态通知回调地址成功<<<<<<<<<<<<<<<<<<<<');
+        Log::info('=======================七牛持久化处理状态通知=======================');
 
         return $this->response->noContent();
     }
@@ -71,19 +66,16 @@ class ResourcesController extends Controller
      * 上传文件token
      */
     public function token(ResourceRequest $request,QiniuCloudHandler $qiniu){
+        //todo 这里是否允许自定义文件名
         //文件名
-        if ($request->key && !is_null($request->key)){
-            $key = utf8_encode($request->key);
-        }else{
-            $key = utf8_encode(config('services.qiniu.upload.other.prefix').uniqid());
-        }
+        $key = utf8_encode(config('services.qiniu.upload.other.prefix').uniqid());
 
         //上传策略
         $policy = [
             'endUser' => (string)$this->user->id,
-            'callbackUrl' => app(UrlGenerator::class)->version('v1')->route('api.resources.qiniu.callback'),
+            'callbackUrl' => $qiniu->policy['callbackUrl'],
             'callbackBody' => '{
-                "id"            : $(uuid),
+                "params"        : $(x:params),
                 "endUser"       : $(endUser),
                 "persistentId"  : $(persistentId),
                 "bucket"        : $(bucket),
@@ -97,57 +89,23 @@ class ResourcesController extends Controller
                 "imageInfo"     : $(imageInfo),
                 "avinfo"        : $(avinfo)
             }',
-            'callbackBodyType' => 'application/json',
-
-            'mimeLimit' => \config('services.qiniu.upload.other.mimeType',null),
+            'callbackBodyType' => $qiniu->policy['callbackBodyType'],
         ];
 
         //生成上传凭证
         $token = $qiniu->uploadToken($qiniu->bucket,$key,$qiniu->expires,$policy);
 
-        return compact('key','token');
-    }
+        //前端需求的上传参数
+        $putExtra = [
+            //自定义变量
+            'params' => [
+                'x:params' => json_encode([
+                    'user_id' => $this->user->id,
+                ]),
+            ],
+        ];
 
-    /*
-     * 表单上传文件
-     */
-    public function store(ResourceRequest $request,QiniuCloudHandler $qiniu){
-        //内部请求视频token接口，获取视频上传token
-        $res = $this->api->be($this->user)->get('api/resource/token',['key' => $request->key]);
-
-        $filepath = $request->file('file')->getRealPath();
-
-        if ($info = $qiniu->fileExists($qiniu->bucket,$res['key'])[0]){
-            $resource = ResourceQiniu::where([['bucket','=',$qiniu->bucket],['key','=',$res['key']]])->first();
-            //如果数据库有值
-            if ($resource){
-                $id = $resource->id;
-                $res = compact('id');
-            }else{
-                $resource = [
-                    'bucket' => $qiniu->bucket,
-                    'key' => $res['key'],
-                    'ext' => '',
-                    'endUser' => $info['endUser'],
-                    'fsize' => $info['fsize'],
-                    'etag' => $info['hash'],
-                    'mimeType' => $info['mimeType'],
-                ];
-                $resource = ResourceQiniu::create($resource);
-                $id = $resource->id;
-                $res = compact('id');
-            }
-        }else{
-            //上传文件
-            list($ret,$err) = $qiniu->putFile($res['token'],$res['key'],$filepath);
-//            dd($ret,$err);
-            if ($err){
-                return $this->response->errorForbidden();
-            }
-            $res = $ret;
-        }
-
-        return $this->response->array($res);
+        return compact('key','token','putExtra');
     }
 
     /*
@@ -197,10 +155,9 @@ class ResourcesController extends Controller
         //上传策略
         $policy = [
             'endUser' => (string)$this->user->id,
-            'callbackUrl' => app(UrlGenerator::class)->version('v1')->route('api.resources.qiniu.callback'),
+            'callbackUrl' => $qiniu->policy['callbackUrl'],
             'callbackBody' => '{
                 "params"        : $(x:params),
-                "id"            : $(uuid),
                 "endUser"       : $(endUser),
                 "persistentId"  : $(persistentId),
                 "bucket"        : $(bucket),
@@ -214,32 +171,29 @@ class ResourcesController extends Controller
                 "imageInfo"     : $(imageInfo),
                 "avinfo"        : $(avinfo)
             }',
-            'callbackBodyType' => 'application/json',
+            'callbackBodyType' => $qiniu->policy['callbackBodyType'],
 
             'persistentOps' => "$ops1;$ops2",
-            'persistentPipeline' => $qiniu->pipeline,
-            'persistentNotifyUrl' => $qiniu->notify_url,
+            'persistentPipeline' => $qiniu->policy['persistentPipeline'],
+            'persistentNotifyUrl' => $qiniu->policy['persistentNotifyUrl'],
 
-            'mimeLimit' => \config('services.qiniu.upload.video.mimeType',null),
+            'mimeLimit' => 'video/*',
         ];
+
+        //生成上传凭证
+        $token = $qiniu->uploadToken($qiniu->bucket,$key,$qiniu->expires,$policy);
 
         //前端需求的上传参数
         $putExtra = [
             //自定义变量
             'params' => [
                 'x:params' => json_encode([
-                    //todo 权重排序,此方案有待优化 eg:用tag来表示呢？
-                    'wi' => [
-                        $key. '[hls,wm]',
-                        $key.'[mp4,wm]',
-                    ],
+                    'user_id' => $this->user->id,
+                    'persistent' => [$ops1,$ops2],
                 ]),
             ],
-            'mimeType' => \config('services.qiniu.upload.video.mimeType',null),
+            'mimeType' => 'video/*',
         ];
-
-        //生成上传凭证
-        $token = $qiniu->uploadToken($qiniu->bucket,$key,$qiniu->expires,$policy);
 
         return $this->response->array(compact('key','token','putExtra'));
     }
@@ -247,23 +201,22 @@ class ResourcesController extends Controller
     /*
      * 图片token
      */
-    public function imageToken(ResourceRequest $request,QiniuCloudHandler $qiniu){
+    public function imageToken(QiniuCloudHandler $qiniu){
         //文件名
         $key = utf8_encode(config('services.qiniu.upload.image.prefix').uniqid());
 
         //水印文件另存编码
-        $saveWmEntry = base64_urlSafeEncode($qiniu->bucket . ":$key" . '[webp,thumbnail]');
+        $ops1SaveName = base64_urlSafeEncode($qiniu->bucket . ":" .$key. '[webp,thumbnail]');
 
         //转码webp+缩放
-        $imageMogr2WebpFop = "imageMogr2/auto-orient/format/webp"."|saveas/$saveWmEntry";
+        $ops1 = "imageMogr2/auto-orient/format/webp"."|saveas/$ops1SaveName";
 
         //上传策略
         $policy = [
             'endUser' => (string)$this->user->id,
-            'callbackUrl' => app(UrlGenerator::class)->version('v1')->route('api.resources.qiniu.callback'),
+            'callbackUrl' => $qiniu->policy['callbackUrl'],
             'callbackBody' => '{
                 "params"        : $(x:params),
-                "id"            : $(uuid),
                 "endUser"       : $(endUser),
                 "persistentId"  : $(persistentId),
                 "bucket"        : $(bucket),
@@ -277,13 +230,14 @@ class ResourcesController extends Controller
                 "imageInfo"     : $(imageInfo),
                 "avinfo"        : $(avinfo)
             }',
-            'callbackBodyType' => 'application/json',
+            'callbackBodyType' => $qiniu->policy['callbackBodyType'],
 
-            'persistentOps' => "$imageMogr2WebpFop",
-            'persistentPipeline' => $qiniu->pipeline,
-            'persistentNotifyUrl' => $qiniu->notify_url,
+            'persistentOps' => "$ops1",
+            'persistentPipeline' => $qiniu->policy['persistentPipeline'],
+            'persistentNotifyUrl' => $qiniu->policy['persistentNotifyUrl'],
 
-            'mimeLimit' => \config('services.qiniu.upload.image.mimeType',null),
+            //限制上传文件类型
+            'mimeLimit' => 'image/*',
         ];
 
         //前端需求的上传参数
@@ -291,19 +245,36 @@ class ResourcesController extends Controller
             //自定义变量
             'params' => [
                 'x:params' => json_encode([
-                    //权重排序
-                    'wi' => [
-                        $key. '[webp,thumbnail]',
-                    ],
+                    'user_id' => $this->user->id,
+                    'persistent' => [$ops1],
                 ]),
             ],
-            'mimeType' => config('services.qiniu.upload.image.mimeType',null),
+            'mimeType' => 'image/*',
         ];
 
         //生成上传凭证
         $token = $qiniu->uploadToken($qiniu->bucket,$key,$qiniu->expires,$policy);
 
         return compact('key','token','putExtra');
+    }
+
+    /*
+     * 表单上传文件
+     */
+    public function store(ResourceRequest $request,QiniuCloudHandler $qiniu,Resource $resource){
+        //内部请求token接口
+        $res = $this->api->be($this->user)->get('api/resource/token',['key' => $request->key]);
+
+        $filepath = $request->file('file')->getRealPath();
+
+        //上传文件
+        list($ret,$err) = $qiniu->putFile($res['token'],$res['key'],$filepath,$res['putExtra']['params']);
+
+        if ($err){
+            return $this->response->errorForbidden();
+        }
+
+        return $this->response->array($ret);
     }
 
     /*
@@ -362,6 +333,68 @@ class ResourcesController extends Controller
             default:
                 abort(422);
                 break;
+        }
+    }
+
+    //todo 这里需要一个专门为seeder准备的方法，用于上传文件，如果上传的文件已经存在，则读取文件信息，存入数据库
+    public function uploadOfSeeder(ResourceRequest $request,QiniuCloudHandler $handler,ResourceQiniu $qiniu,Resource $resource){
+        $file = $request->file('file')->getRealPath();
+        if ($info = $handler->fileInfo($handler->bucket,$file)[0]){
+            //入库，上传成功
+            $qiniu->bucket = $handler->bucket;
+            $qiniu->key = $file;
+            $qiniu->endUser = $info['endUser'];
+            $qiniu->fsize = $info['fsize'];
+            $qiniu->etag = $info['hash'];
+            $qiniu->mimeType = $info['mimeType'];
+//            $qiniu->type = $info['type'];
+            $qiniu->save();
+            $resource->id = Uuid::generate(4);
+            $resource->user_id = 1;
+            $resource->mime = $info['mimeType'];
+            $qiniu->resource()->save($resource);
+        }else{
+            //上传策略
+            $policy = [
+                'endUser' => '1',
+                'callbackUrl' => $handler->policy['callbackUrl'],
+                'callbackBody' => '{
+                    "params"        : $(x:params),
+                    "endUser"       : $(endUser),
+                    "persistentId"  : $(persistentId),
+                    "bucket"        : $(bucket),
+                    "key"           : $(key),
+                    "etag"          : $(etag),
+                    "fsize"         : $(fsize),
+                    "mimeType"      : $(mimeType),
+                    "imageAve"      : $(imageAve),
+                    "ext"           : $(ext),
+                    "exif"          : $(exif),
+                    "imageInfo"     : $(imageInfo),
+                    "avinfo"        : $(avinfo)
+                }',
+                'callbackBodyType' => $handler->policy['callbackBodyType'],
+            ];
+
+            //生成上传凭证
+            $token = $handler->uploadToken($handler->bucket,$file,$handler->expires,$policy);
+
+            //上传参数
+            $putExtra = [
+                //自定义变量
+                'params' => [
+                    'x:params' => json_encode([
+                        'user_id' => 1,
+                    ]),
+                ],
+            ];
+            list($ret,$err) = $handler->putFile($token,$file,$file,$putExtra['params']);
+
+            if ($err){
+                return $this->response->errorForbidden();
+            }
+
+            return $this->response->array($ret);
         }
     }
 }

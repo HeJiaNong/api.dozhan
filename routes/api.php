@@ -49,7 +49,7 @@ $api = app(\Dingo\Api\Routing\Router::class);
 $api->version('v1',[
     'namespace' => 'App\Http\Controllers\Api',  //命名空间设置
     'middleware' => [
-        'serializer',
+        'serializer:array',
         'bindings', //路由模型绑定
         'cors'  //CORS跨域问题解决方案
     ],
@@ -58,7 +58,10 @@ $api->version('v1',[
     //游客可以访问的接口
     //==============================================================================================================
     //测试接口
-    $api->get('test',function (){
+    $api->get('test',function (\App\Handlers\QiniuCloudHandler $handler){
+
+        dd($handler->policy['callbackUrl'],$handler->policy['persistentNotifyUrl']);
+
         $user = \App\Models\User::first();
 
         $resources = $user->resources->first();
@@ -70,9 +73,11 @@ $api->version('v1',[
     });
     //==============================================================================================================
     //七牛持久化处理状态通知回调地址
-    $api->post('resources/qiniu/notification','ResourcesController@notification')->name('api.resource.notification');
+    $api->post('resources/qiniu/notification','ResourcesController@notification')->name('api.resource.qiniu.notification');
     //七牛callbackUrl地址
     $api->post('resources/qiniu/callback','ResourcesController@qiniuCallback')->name('api.resources.qiniu.callback');
+    //seeder填充文件
+    $api->post('resources/seeder','ResourcesController@uploadOfSeeder');
     //==============================================================================================================
     $api->group([
         'middleware' => 'api.throttle', //DingoApi 已经为我们提供了调用频率限制的中间件 api.throttle
@@ -154,6 +159,7 @@ $api->version('v1',[
             $api->post('video','ResourcesController@video');
             //上传图片
             $api->post('image','ResourcesController@image');
+
         });
 
         //==============================================================================================================

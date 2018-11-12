@@ -23,9 +23,9 @@ class UserObserver
     }
 
     public function saving(User $user){
-        if (!$user->avatar_url){
+        if (!$user->avatar){
             //为未设置头像的用户添加默认头像
-            $user->avatar_url = 'http://pglgpkuzs.bkt.clouddn.com/image/avatar/dozhan%E9%BB%98%E8%AE%A4%E5%A4%B4%E5%83%8F.webp';
+            $user->avatar = 'http://phcczptg4.bkt.clouddn.com/seeder/avatar/1.jpg';
         }
     }
 

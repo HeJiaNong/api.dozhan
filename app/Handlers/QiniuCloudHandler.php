@@ -20,11 +20,10 @@ class QiniuCloudHandler
 {
     private $access_key;    //AK
     private $secret_key;    //SK
-    public $domain; //你的七牛域名
-    public $bucket;        //对象存储空间名
-    public $expires;       //自定义凭证有效期（expires单位为秒，为上传凭证的有效时间）
-    public $pipeline;      //队列名
-    public $notify_url;    //持久化处理回调地址
+    public $domain;         //空间域名
+    public $bucket;         //对象存储空间名
+    public $expires;        //自定义凭证有效期（expires单位为秒，为上传凭证的有效时间）
+    public $policy = [];    //上传policy
     public $auth;
 
     public function __construct()
@@ -37,14 +36,18 @@ class QiniuCloudHandler
      * 初始化配置信息
      */
     private function buildConfig(){
-        $this->domain      = \config('services.qiniu.domain');
-        $this->bucket      = \config('services.qiniu.bucket');
-        $this->access_key  = \config('services.qiniu.access_key');
-        $this->secret_key  = \config('services.qiniu.secret_key');
-        $this->expires     = \config('services.qiniu.expires');
-        $this->pipeline    = \config('services.qiniu.pipeline');
-        $this->notify_url  = app('Dingo\Api\Routing\UrlGenerator')->version('v1')->route('api.resource.notification');
-        $this->auth = new Auth($this->access_key, $this->secret_key);
+        $this->domain       = \config('services.qiniu.domain');
+        $this->bucket       = \config('services.qiniu.bucket');
+        $this->access_key   = \config('services.qiniu.access_key');
+        $this->secret_key   = \config('services.qiniu.secret_key');
+        $this->expires      = \config('services.qiniu.expires');
+
+        $this->policy['callbackUrl'] = \config('services.qiniu.policy.callbackUrl')();
+        $this->policy['callbackBodyType'] = \config('services.qiniu.policy.callbackBodyType');
+        $this->policy['persistentPipeline'] = \config('services.qiniu.policy.persistentPipeline');
+        $this->policy['persistentNotifyUrl'] = \config('services.qiniu.policy.persistentNotifyUrl')();
+
+        $this->auth         = new Auth($this->access_key, $this->secret_key);
     }
 
     /**
@@ -77,11 +80,24 @@ class QiniuCloudHandler
      * 生成上传凭证
      */
     public function uploadToken($bucket, $key = null, $expires = 3600, $policy = null, $strictPolicy = true){
-
+        //todo 这里做一下上传策略验证，配置文件中的策略值大于自己配置的值
         $token = $this->auth->uploadToken($bucket, $key, $expires, $policy, $strictPolicy);
 
         return $token;
     }
+
+    /**
+     * 验证回调是否来自七牛
+     * @param $data
+     */
+    public function verifyCallback($data){
+        if (!isset($_SERVER['HTTP_AUTHORIZATION'])){
+            return false;
+        }
+
+        return $this->auth->verifyCallback($this->policy['callbackBodyType'], $_SERVER['HTTP_AUTHORIZATION'], $this->policy['callbackUrl'],$data);
+    }
+
 
     /**
      * 获取文件信息
@@ -89,12 +105,15 @@ class QiniuCloudHandler
      * @param $bucket string 空间名
      * @return mixed
      */
-    public function fileExists($bucket,$key){
+    public function fileInfo($bucket,$key){
 
         $res = $this->getBucketManagerObject()->stat($bucket,$key);
 
         return $res;
     }
+
+    //================================================
+
 
     /**
      * 设置或更新文件的生存时间

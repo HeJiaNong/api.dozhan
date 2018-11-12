@@ -11,6 +11,7 @@ class ResourceRequest extends FormRequest
      */
     public function rules()
     {
+        //todo 这里做复杂的数据进入验证
         return [
             //
         ];

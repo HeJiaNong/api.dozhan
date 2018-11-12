@@ -41,7 +41,7 @@ class User extends Authenticatable implements JWTSubject
     /*
      * 批量赋值允许字段
      */
-    protected $fillable = ['name','avatar_url','introduction','phone','qq'];
+    protected $fillable = ['name','avatar_id','introduction','phone','qq'];
 
 
     /*
@@ -99,6 +99,10 @@ class User extends Authenticatable implements JWTSubject
      */
     public function favours(){
         return $this->hasMany(Favour::class);
+    }
+
+    public function avatar(){
+        return $this->belongsTo(Resource::class,'avatar_id');
     }
 
 }

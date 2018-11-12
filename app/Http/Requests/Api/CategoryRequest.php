@@ -3,6 +3,10 @@
 namespace App\Http\Requests\Api;
 
 
+use App\Rules\ResourceAuthor;
+use App\Rules\ResourceMime;
+use App\Rules\ResourceSingle;
+
 class CategoryRequest extends FormRequest
 {
 
@@ -29,6 +33,12 @@ class CategoryRequest extends FormRequest
                 ];
                 break;
         }
+    }
 
+    public function messages()
+    {
+        return [
+            'cover' => '图标'
+        ];
     }
 }

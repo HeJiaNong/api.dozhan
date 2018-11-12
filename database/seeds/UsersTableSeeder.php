@@ -12,16 +12,14 @@ class UsersTableSeeder extends Seeder
     public function run()
     {
         //生成假数据
-        $users = factory(\App\Models\User::class)->times(10)->make()->each(function ($u) {
+        $users = factory(\App\Models\User::class)->times(10)->make()->each(function ($model,$index) {
             //遍历进行调整
         });
-
 
         //使隐藏字段可见，并将数据集合转换为数组
         $user_array = $users->makeVisible(['password','auth_token'])->toArray();
 
         \App\Models\User::insert($user_array);
-
         $user = \App\Models\User::find(1);
         $user->name = '何大大';
         $user->email = '405745000@qq.com';

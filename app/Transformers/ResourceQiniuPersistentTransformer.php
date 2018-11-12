@@ -4,7 +4,7 @@ namespace App\Transformers;
 use App\Models\ResourceQiniuPersistent;
 use League\Fractal\TransformerAbstract;
 
-class QiniuPersistentTransformer extends TransformerAbstract
+class ResourceQiniuPersistentTransformer extends TransformerAbstract
 {
     protected $availableIncludes = ['qiniuResource'];
 
@@ -34,6 +34,8 @@ class QiniuPersistentTransformer extends TransformerAbstract
         if ($this->only){
             $transform = array_intersect_key($transform,array_flip($this->only));
         }
+
+
 
         return $transform;
     }
