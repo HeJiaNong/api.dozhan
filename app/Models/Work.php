@@ -36,13 +36,6 @@ class Work extends Model
     }
 
     /*
-     * testing获取此模型的资源文件
-     */
-    public function resources(){
-        return $this->morphMany(Resource::class,'modelable');
-    }
-
-    /*
      * 获取作品的视频信息
      */
     public function video(){

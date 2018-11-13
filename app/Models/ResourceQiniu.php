@@ -34,7 +34,7 @@ class ResourceQiniu extends Model
         $url = $resourceQiniu->key;
 
         //如果该资源有持久化处理资源
-        if ($persistent = $resourceQiniu->persistent);{
+        if ($persistent = $resourceQiniu->persistent){
             foreach ($persistent->items as $item){
                 if ($item['code'] == 0){
                     //对每个item进行筛选
@@ -44,7 +44,7 @@ class ResourceQiniu extends Model
             }
         }
 
-        return compact('url');
+        return $url;
     }
 
 

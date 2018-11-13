@@ -23,10 +23,11 @@ class UserObserver
     }
 
     public function saving(User $user){
-        if (!$user->avatar){
-            //为未设置头像的用户添加默认头像
-            $user->avatar = 'http://phcczptg4.bkt.clouddn.com/seeder/avatar/1.jpg';
-        }
+        //todo 用户默认头像
+//        if (!$user->avatar_id){
+//            //为未设置头像的用户添加默认头像
+//            $user->avatar_id = 'http://phcczptg4.bkt.clouddn.com/seeder/avatar/1.jpg';
+//        }
     }
 
 }

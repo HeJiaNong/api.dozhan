@@ -26,5 +26,4 @@ return [
     'exposedHeaders' => [],
     //预检请求的有效期
     'maxAge' => 0,
-
 ];

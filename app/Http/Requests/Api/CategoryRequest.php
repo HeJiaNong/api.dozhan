@@ -21,14 +21,25 @@ class CategoryRequest extends FormRequest
             case 'POST':
                 return [
                     'name' => 'required|string|unique:categories',
-                    'cover' => 'required|string',
+                    'icon_id' => [
+                        'required',                         //字段必须
+                        'uuid',                             //值必须是uuid格式
+                        'unique:works,cover_id',
+                        new ResourceAuthor(),               //资源用户必须和当前用户一致
+                        new ResourceMime('image/*'), //资源类型限制
+                    ],
                     'description' => 'required|string|max:255',
                 ];
                 break;
             case 'PATCH':
                 return [
                     'name' => 'string|unique:categories,name,' . $this->category->id,
-                    'cover' => 'string',
+                    'icon_id' => [
+                        'uuid',                             //值必须是uuid格式
+                        'unique:works,cover_id,'.$this->category->id,
+                        new ResourceAuthor(),               //资源用户必须和当前用户一致
+                        new ResourceMime('image/*'), //资源类型限制
+                    ],
                     'description' => 'string|max:255',
                 ];
                 break;

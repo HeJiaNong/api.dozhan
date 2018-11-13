@@ -30,17 +30,17 @@ class WorkRequest extends FormRequest
                         'required',                         //字段必须
                         'uuid',                             //值必须是uuid格式
                         'different:cover_id',               //与cover_id字段值不同
+                        'unique:works,video_id',
                         new ResourceAuthor(),               //资源用户必须和当前用户一致
                         new ResourceMime('video/*'), //资源类型限制
-                        new ResourceSingle(),               //该资源没有被其他模型所使用过
                     ],
                     'cover_id' => [
                         'required',                         //字段必须
                         'uuid',                             //值必须是uuid格式
                         'different:video_id',               //与cover_id字段值不同
+                        'unique:works,cover_id',
                         new ResourceAuthor(),               //资源用户必须和当前用户一致
                         new ResourceMime('image/*'), //资源类型限制
-                        new ResourceSingle(),               //该资源没有被其他模型所使用过
                     ],
                     'tags' => 'json',
                 ];
@@ -52,9 +52,9 @@ class WorkRequest extends FormRequest
                     'category_id' => 'integer|exists:categories,id',
                     'cover_id' => [
                         'uuid',                             //值必须是uuid格式
+                        'unique:works,cover_id,'.$this->work->id,
                         new ResourceAuthor(),               //资源用户必须和当前用户一致
                         new ResourceMime('image/*'), //资源类型限制
-                        new ResourceSingle($this->work->id,$this->work->getTable()),    //该资源没有被其他模型所使用过
                     ],
                     'tags' => 'json',
                 ];

@@ -18,7 +18,6 @@ class CreateResourcesTable extends Migration
             $table->integer('user_id')->unsigned()->comment('资源所属用户id');
             $table->string('mime')->comment('资源文件mime类型');
             $table->morphs('resourceable');
-            $table->nullableMorphs('modelable');
             $table->timestamps();
         });
     }

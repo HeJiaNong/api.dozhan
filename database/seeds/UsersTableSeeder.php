@@ -11,9 +11,17 @@ class UsersTableSeeder extends Seeder
      */
     public function run()
     {
+        $avatar_ids = [];
+
+        \App\Models\ResourceQiniu::where('key','like','seeder/avatar/%')->get()->each(function ($model,$index)use(&$avatar_ids){
+            $avatar_ids[] = $model->resource->id;
+        });
+
+
         //生成假数据
-        $users = factory(\App\Models\User::class)->times(10)->make()->each(function ($model,$index) {
+        $users = factory(\App\Models\User::class)->times(10)->make()->each(function ($model,$index)use($avatar_ids){
             //遍历进行调整
+            $model->avatar_id = array_random($avatar_ids);
         });
 
         //使隐藏字段可见，并将数据集合转换为数组

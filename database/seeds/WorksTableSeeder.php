@@ -23,10 +23,19 @@ class WorksTableSeeder extends Seeder
         $tag_ids = \App\Models\Tag::pluck('id')->toArray();
 
         //视频资源id
-        $video_ids = \App\Models\ResourceQiniu::where('mimeType','video/mp4')->pluck('id')->toArray();
+        $video_ids = [];
 
-        //图片资源id
-        $cover_ids = \App\Models\ResourceQiniu::where('key', 'like', '%cover%')->limit(count($video_ids))->pluck('id')->toArray();
+        \App\Models\ResourceQiniu::where('key','like','seeder/videos/%')->get()->each(function ($model,$index)use(&$video_ids){
+            $video_ids[] = $model->resource->id;
+        });
+
+        //封面资源id
+        $cover_ids = [];
+
+        \App\Models\ResourceQiniu::where('key','like','seeder/cover/%')->limit(count($video_ids))->get()->each(function ($model,$index)use(&$cover_ids){
+            $cover_ids[] = $model->resource->id;
+        });
+
 
         $works = factory(\App\Models\Work::class)->times(count($video_ids))->make()->each(function ($model,$index)use($faker,$user_ids,$video_ids,$cover_ids,$category_ids){
             $model->user_id = array_random($user_ids);

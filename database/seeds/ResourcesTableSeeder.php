@@ -4,61 +4,41 @@ use Illuminate\Database\Seeder;
 
 class ResourcesTableSeeder extends Seeder
 {
-    private $dispatcher;
-
-    public function __construct()
-    {
-        $this->dispatcher = app('Dingo\Api\Dispatcher');
-    }
 
     /**
      * Run the database seeds.
      *
      * @return void
      */
-    public function run()
+    public function run(\App\Handlers\QiniuCloudHandler $handler)
     {
-        //获取所有要填充的图片
-        $images = $this->scanFile(public_path('seeder/resources/images'));unset($GLOBALS['result']);
-        //获取所有要填充的视频
-        $videos = $this->scanFile(public_path('seeder/resources/videos'));unset($GLOBALS['result']);
-
-        dump('images uploading...');
-        $this->putFile($images);
-        dump('images uploaded');
-
-        dump('videos uploading...');
-        $this->putFile($videos);
-        dump('videos uploaded');
+        $prefix = 'seeder/';
+        $this->seedFiles($handler->listFiles($handler->bucket,$prefix)['items']);
     }
 
-    //递归查看目录下的所有包含子目录的文件
-    public function scanFile($path) {
-        global $result;
-        $files = scandir($path);
-        foreach ($files as $file) {
-            if ($file != '.' && $file != '..') {
-                if (is_dir($path . '/' . $file)) {
-                    //这里调用自身方法
-                    $this->scanFile($path . '/' . $file);
-                } else {
-                    $result[] = $path . '/' . $file;
-                }
-            }
+    //通过获取的七牛文件信息，填充数据
+    public function seedFiles($files){
+        $insert = [];
+
+        foreach ($files as $k => $file){
+            $insert[$k]['endUser'] = 1;
+            $insert[$k]['mimeType'] = $file['mimeType'];
+            $insert[$k]['bucket'] = 'dozhan';
+            $insert[$k]['key'] = $file['key'];
+            $insert[$k]['etag'] = $file['hash'];
+            $insert[$k]['fsize'] = $file['fsize'];
         }
-        return $result;
-    }
 
-    public function putFile($files){
-        try{
-            foreach ($files as $file){
-                $this->dispatcher
-                    ->attach(['file' => $file])
-                    ->post('api/resources/seeder');
-            }
-        }catch (Dingo\Api\Exception\InternalHttpException $e){
-            dump('error');
-        }
-    }
+        \App\Models\ResourceQiniu::insert($insert);
 
+
+
+        \App\Models\ResourceQiniu::all()->each(function ($model,$index){
+            $resource = new \App\Models\Resource();
+            $resource->id = \Webpatser\Uuid\Uuid::generate(4);
+            $resource->mime = $model->mimeType;
+            $resource->user_id = 1;
+            $model->resource()->save($resource);
+        });
+    }
 }

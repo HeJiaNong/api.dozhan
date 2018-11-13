@@ -11,21 +11,20 @@ class CategoriesTableSeeder extends Seeder
      */
     public function run()
     {
-        $categories = factory(\App\Models\Category::class)->times(3)->create();
 
-        $category = \App\Models\Category::find(1);
-        $category->name  = '镜头特效';
-        $category->cover_url = 'http://pglgpkuzs.bkt.clouddn.com/image/icon/movie.svg';
-        $category->save();
+        $icon_ids = [];
 
-        $category = \App\Models\Category::find(2);
-        $category->name  = '图像处理';
-        $category->cover_url = 'http://pglgpkuzs.bkt.clouddn.com/image/icon/travel.svg';
-        $category->save();
+        \App\Models\ResourceQiniu::where('key','like','seeder/icon/%')->get()->each(function ($model,$index)use(&$icon_ids){
+            $icon_ids[] = $model->resource->id;
+        });
 
-        $category = \App\Models\Category::find(3);
-        $category->name  = '个人作品';
-        $category->cover_url = 'http://pglgpkuzs.bkt.clouddn.com/image/icon/humor.svg';
-        $category->save();
+        $categories = factory(\App\Models\Category::class)->times(count($icon_ids))->make();
+
+
+        foreach ($icon_ids as $k => $id){
+            $categories[$k]->icon_id = $id;
+            $categories[$k]->save();
+        }
+
     }
 }

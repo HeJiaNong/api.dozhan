@@ -32,10 +32,6 @@ class CategoriesController extends Controller
 
         $category->fill($request->all())->save();
 
-        $category->resources()->saveMany([
-            Resource::find($request->cover_id),
-        ]);
-
         return $this->response->created();
     }
 
@@ -56,15 +52,9 @@ class CategoriesController extends Controller
         //权限验证
         $this->authorize('update',Category::class);
 
-        $data = $request->only(['name','cover','description']);
+        $data = $request->only(['name','icon_id','description']);
 
         $category->update($data);
-
-        if ($request->has('cover_id')){
-            $category->resources()->saveMany([
-                Resource::find($request->cover_id),
-            ]);
-        }
 
         return $this->response->item($category,new CategoryTransformer());
     }

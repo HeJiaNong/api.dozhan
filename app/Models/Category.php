@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Category extends Model
 {
-    protected $fillable = ['name','cover','description'];
+    protected $fillable = ['name','icon_id','description'];
 
     /*
      * 获取此分类下的所有作品
@@ -16,16 +16,9 @@ class Category extends Model
     }
 
     /*
-     * testing获取此模型的资源文件
-     */
-    public function resources(){
-        return $this->morphMany(Resource::class,'modelable');
-    }
-
-    /*
      * 获取此分类的图标资源
      */
-    public function cover(){
-        return $this->belongsTo(Resource::class,'cover_id');
+    public function icon(){
+        return $this->belongsTo(Resource::class,'icon_id');
     }
 }

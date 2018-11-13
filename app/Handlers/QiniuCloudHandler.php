@@ -112,6 +112,25 @@ class QiniuCloudHandler
         return $res;
     }
 
+
+    /**
+     * 获取指定空间的文件列表信息
+     * @param $bucket
+     * @param string $prefix 要列取文件的公共前缀
+     * @param string $marker 上次列举返回的位置标记，作为本次列举的起点信息。
+     * @param int $limit 本次列举的条目数
+     * @param string $delimiter 指定目录分隔符
+     */
+    public function listFiles($bucket, $prefix = '', $marker = null, $limit = 100, $delimiter = null){
+
+        $bucketManager = new BucketManager($this->auth);
+
+        // 列举文件
+        $res = $bucketManager->listFiles($bucket, $prefix, $marker, $limit, $delimiter);
+
+        return $this->parseRes($res);
+    }
+
     //================================================
 
 

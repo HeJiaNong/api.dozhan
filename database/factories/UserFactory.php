@@ -24,7 +24,6 @@ $factory->define(App\Models\User::class, function (Faker $faker) {
     return [
         'do_id' => uniqid('do_'),
         'name' => $faker->name,
-        'avatar' => 'http://phcczptg4.bkt.clouddn.com/seeder/avatar/1.jpg',
         'introduction' => $faker->sentence,
         'email' => $faker->unique()->safeEmail,
         'phone' => $faker->phoneNumber,

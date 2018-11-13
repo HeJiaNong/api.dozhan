@@ -46,12 +46,6 @@ class WorksController extends Controller
         //入库
         $work->save();
 
-        //这样做的目的就是为了填充modelable_id和modelable_type字段
-        $work->resources()->saveMany([
-            Resource::find($request->video_id),
-            Resource::find($request->cover_id),
-        ]);
-
         //标签数据
         if ($request->tags = json_decode($request->tags,true)){
             //进行一次数据过滤格式转换
@@ -81,12 +75,6 @@ class WorksController extends Controller
         //更新作品数据
         $work->update(collect($request->validated())->only(['name','description','category_id','cover_id'])->toArray());
 
-        //这样做的目的就是为了填充modelable_id和modelable_type字段
-        if ($request->has('cover_id')){
-            $work->resources()->saveMany([
-                Resource::find($request->cover_id),
-            ]);
-        }
 
         //标签数据
         if ($request->tags = json_decode($request->tags,true)){
