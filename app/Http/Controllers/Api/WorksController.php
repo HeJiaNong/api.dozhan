@@ -35,8 +35,6 @@ class WorksController extends Controller
      * 发布作品
      */
     public function store(WorkRequest $request,Work $work){
-        //todo 由于更新了资源表的多态关联，这里需要在入库前赋值多态关联表数据
-//        return '数据验证成功';
         //接收作品相关数据
         $work->fill($request->validated());
 

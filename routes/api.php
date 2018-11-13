@@ -46,7 +46,6 @@ use Illuminate\Http\Request;
 //415 Unsupported Media Type - 如果请求中的内容类型是错误的
 //422 Unprocessable Entity - 用来表示校验错误
 //429 Too Many Requests - 由于请求频次达到上限而被拒绝访问
-
 // Dingo/api 路由 获得一个路由实例
 $api = app(\Dingo\Api\Routing\Router::class);
 
@@ -55,9 +54,7 @@ $api->version('v1',[
     'middleware' => [
         'serializer:array',
         'bindings', //路由模型绑定
-//        'cors'  //CORS跨域问题解决方案
     ],
-
 ],function ($api){
     //游客可以访问的接口
     //==============================================================================================================
