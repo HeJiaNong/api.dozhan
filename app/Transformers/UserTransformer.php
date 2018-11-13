@@ -9,13 +9,15 @@ class UserTransformer extends TransformerAbstract
     //同模型关联
     protected $availableIncludes = ['resources','comments','works','favours'];
 
+    protected $defaultIncludes = ['avatar'];
+
     public function transform(User $user){
         return [
             'id' => $user->id,
             'do_id' => $user->do_id,
             'name' => $user->name,
             'introduction' => $user->introduction,
-            'avatar' => $user->avatar,
+            'avatar_id' => $user->avatar_id,
             'email' => $user->email,
             'phone' => $user->phone ? substr_replace($user->phone,'****',3,4) : false,
             'qq' => $user->qq ??false,
@@ -39,6 +41,10 @@ class UserTransformer extends TransformerAbstract
 
     public function includeFavours(User $user){
         return $this->collection($user->favours,new FavourTransformer());
+    }
+
+    public function includeAvatar(User $user){
+        return $this->item($user->avatar,new ResourceTransformer());
     }
 
 }

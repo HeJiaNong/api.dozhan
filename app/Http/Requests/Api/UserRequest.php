@@ -2,6 +2,8 @@
 
 namespace App\Http\Requests\Api;
 
+use App\Rules\ResourceAuthor;
+use App\Rules\ResourceMime;
 use Illuminate\Support\Facades\Auth;
 
 class UserRequest extends FormRequest
@@ -31,7 +33,11 @@ class UserRequest extends FormRequest
                 }
                 return [
                     'name' => 'between:3,25|unique:users,name,' .$userId,    //unique:table,column,except,idColumn
-                    'avatar' => 'string',   //图片链接地址
+                    'avatar_id' => [
+                        'uuid',                             //值必须是uuid格式
+                        new ResourceAuthor(),               //资源用户必须和当前用户一致
+                        new ResourceMime('image/*'), //资源类型限制
+                    ],
                     'phone' => 'integer|unique:users,phone,' .$userId,    //强迫 Unique 规则忽略指定 ID
                     'qq' => 'integer|unique:users,qq,' .$userId,    //强迫 Unique 规则忽略指定 ID
                 ];
@@ -44,6 +50,7 @@ class UserRequest extends FormRequest
     public function messages()
     {
         return [
+            'avatar_id.uuid' => 'uuid 格式错误',
             'name.unique.unique' => '名称不能重复',
             'phone.unique' => '手机号码不能重复',
             'qq.unique' => 'QQ号码不能重复',

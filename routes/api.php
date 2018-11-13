@@ -2,9 +2,10 @@
 
 use Illuminate\Http\Request;
 
-header('Access-Control-Allow-Origin: *');
-header('Access-Control-Allow-Headers: Authorization, Content-Type, Access-Control-Allow-Headers, X-Requested-With');
-header('Access-Control-Allow-Methods: *');
+//header('Access-Control-Allow-Origin: *');
+////header('Access-Control-Allow-Headers: Authorization, Content-Type, Access-Control-Allow-Headers, X-Requested-With');
+//header('Access-Control-Allow-Headers: *');
+//header('Access-Control-Allow-Methods: *');
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -54,7 +55,7 @@ $api->version('v1',[
     'middleware' => [
         'serializer:array',
         'bindings', //路由模型绑定
-        'cors'  //CORS跨域问题解决方案
+//        'cors'  //CORS跨域问题解决方案
     ],
 
 ],function ($api){

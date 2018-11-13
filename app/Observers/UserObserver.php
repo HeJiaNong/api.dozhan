@@ -24,10 +24,10 @@ class UserObserver
 
     public function saving(User $user){
         //todo 用户默认头像
-//        if (!$user->avatar_id){
-//            //为未设置头像的用户添加默认头像
-//            $user->avatar_id = 'http://phcczptg4.bkt.clouddn.com/seeder/avatar/1.jpg';
-//        }
+        if (!$user->avatar_id){
+            //为未设置头像的用户添加默认头像
+            $user->avatar_id = \App\Models\ResourceQiniu::where('key','like','seeder/avatar/%')->limit(1)->first()->resource->id;
+        }
     }
 
 }
