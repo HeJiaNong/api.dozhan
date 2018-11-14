@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Requests\Api\AuthorizationRequest;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -44,5 +45,13 @@ class AuthorizationsController extends Controller
             'token_type' => 'Bearer',
             'expires_in' => \Auth::guard('api')->factory()->getTTL() * 60
         ]);
+    }
+
+    //获取某用户token(开发环境)
+    public function showToken(User $user){
+        if (in_array(app()->environment(),['local','testing'])){
+            return $this->responseWithToken(Auth::guard('api')->login($user));
+        }
+        return '非 开发/测试 环境';
     }
 }

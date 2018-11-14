@@ -1,11 +1,5 @@
 <?php
 
-use Illuminate\Http\Request;
-
-//header('Access-Control-Allow-Origin: *');
-////header('Access-Control-Allow-Headers: Authorization, Content-Type, Access-Control-Allow-Headers, X-Requested-With');
-//header('Access-Control-Allow-Headers: *');
-//header('Access-Control-Allow-Methods: *');
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -20,9 +14,8 @@ use Illuminate\Http\Request;
 /*
  * HTTP 设计了很多动词，来表示不同的操作，RESTful 很好的利用的这一点，我们需要正确的使用 HTTP 动词，来表明我们要如何操作资源。
  * 先来解释一个概念，幂等性，指一次和多次请求某一个资源应该具有同样的副作用，也就是一次访问与多次访问，对这个资源带来的变化是相同的。
- */
-
-/*
+ *
+ *
  *   动词	    描述	                                是否幂等
  *
  *   GET	    获取资源，单个或多个	                是
@@ -30,33 +23,37 @@ use Illuminate\Http\Request;
  *   PUT	    更新资源，客户端提供完整的资源数据	    是
  *   PATCH	    更新资源，客户端提供部分的资源数据	    否
  *   DELETE	    删除资源                             是
+ *   200 OK - 对成功的 GET、PUT、PATCH 或 DELETE 操作进行响应。也可以被用在不创建新资源的 POST 操作上
+ *   201 Created - 对创建新资源的 POST 操作进行响应。应该带着指向新资源地址的 Location 头
+ *   202 Accepted - 服务器接受了请求，但是还未处理，响应中应该包含相应的指示信息，告诉客户端该去哪里查询关于本次请求的信息
+ *   204 No Content - 对不会返回响应体的成功请求进行响应（比如 DELETE 请求）
+ *   304 Not Modified - HTTP缓存header生效的时候用
+ *   400 Bad Request - 请求异常，比如请求中的body无法解析
+ *   401 Unauthorized - 没有进行认证或者认证非法
+ *   403 Forbidden - 服务器已经理解请求，但是拒绝执行它
+ *   404 Not Found - 请求一个不存在的资源
+ *   405 Method Not Allowed - 所请求的 HTTP 方法不允许当前认证用户访问
+ *   410 Gone - 表示当前请求的资源不再可用。当调用老版本 API 的时候很有用
+ *   415 Unsupported Media Type - 如果请求中的内容类型是错误的
+ *   422 Unprocessable Entity - 用来表示校验错误
+ *   429 Too Many Requests - 由于请求频次达到上限而被拒绝访问
  */
 
-//200 OK - 对成功的 GET、PUT、PATCH 或 DELETE 操作进行响应。也可以被用在不创建新资源的 POST 操作上
-//201 Created - 对创建新资源的 POST 操作进行响应。应该带着指向新资源地址的 Location 头
-//202 Accepted - 服务器接受了请求，但是还未处理，响应中应该包含相应的指示信息，告诉客户端该去哪里查询关于本次请求的信息
-//204 No Content - 对不会返回响应体的成功请求进行响应（比如 DELETE 请求）
-//304 Not Modified - HTTP缓存header生效的时候用
-//400 Bad Request - 请求异常，比如请求中的body无法解析
-//401 Unauthorized - 没有进行认证或者认证非法
-//403 Forbidden - 服务器已经理解请求，但是拒绝执行它
-//404 Not Found - 请求一个不存在的资源
-//405 Method Not Allowed - 所请求的 HTTP 方法不允许当前认证用户访问
-//410 Gone - 表示当前请求的资源不再可用。当调用老版本 API 的时候很有用
-//415 Unsupported Media Type - 如果请求中的内容类型是错误的
-//422 Unprocessable Entity - 用来表示校验错误
-//429 Too Many Requests - 由于请求频次达到上限而被拒绝访问
+
 // Dingo/api 路由 获得一个路由实例
 $api = app(\Dingo\Api\Routing\Router::class);
 
 $api->version('v1',[
+
     'namespace' => 'App\Http\Controllers\Api',  //命名空间设置
     'middleware' => [
         'serializer:array',
         'bindings', //路由模型绑定
     ],
+
 ],function ($api){
-    //游客可以访问的接口
+
+    //dispark
     //==============================================================================================================
     //测试接口
     $api->get('test',function (\App\Handlers\QiniuCloudHandler $handler){
@@ -95,6 +92,8 @@ $api->version('v1',[
     //==============================================================================================================
     //获取Banner
     $api->get('sites/banners','SitesController@banners')->name('api.sites.banners');
+    //获取某用户登陆token(开发/测试环境)
+    $api->get('authorizations/{user}','AuthorizationsController@showToken');
     //==============================================================================================================
     //获取某用户的信息
     $api->get('users/{user}','UsersController@show')->name('api.users.show');
@@ -112,13 +111,13 @@ $api->version('v1',[
     $api->get('works/{work}','WorksController@show')->name('api.work.show');
     //获取某分类下的所有作品
     $api->get('categories/{category}/works','CategoriesController@worksIndex')->name('api.categories.works.index');
+    //获取某标签下的所有作品
+    $api->get('tags/{tag}/works','TagsController@worksIndex')->name('api.tags.works.index');
     //==============================================================================================================
     //获取所有标签
     $api->get('tags','TagsController@index')->name('api.tags.index');
     //标签信息
     $api->get('tags/{tag}','TagsController@show')->name('api.tags.show');
-    //获取某标签下的所有作品
-    $api->get('tags/{tag}/works','TagsController@worksIndex')->name('api.tags.works.index');
     //==============================================================================================================
     //获取评论列表
     $api->get('comments','CommentsController@index')->name('api.comments.index');

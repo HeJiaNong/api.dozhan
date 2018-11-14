@@ -131,7 +131,7 @@ return [
     //在使用 daily 日志模式时，Laravel 默认只保留五天份的日志文件。
     //如果要调整保留文件的数量，就在 app 配置文件中添加一个 log_max_files 配置项
     //最大日志文件数
-    'log_max_files' => 30,
+    'log_max_files' => 5,
 
     /*
     |--------------------------------------------------------------------------
@@ -171,11 +171,12 @@ return [
         Illuminate\Translation\TranslationServiceProvider::class,
         Illuminate\Validation\ValidationServiceProvider::class,
         Illuminate\View\ViewServiceProvider::class,
-        Barryvdh\Debugbar\ServiceProvider::class,
+
 
         /*
          * Package Service Providers...
          */
+        Barryvdh\Debugbar\ServiceProvider::class,
 
         /*
          * Application Service Providers...
