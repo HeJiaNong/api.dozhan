@@ -49,6 +49,7 @@ class FavoursTableSeeder extends Seeder
 
         //获取评论下的点赞数量并写入值
         \App\Models\Comment::all()->each(function ($model,$index){
+            $model->timestamps = false;
             $model->increment('favour_count',$model->favours->count());
         });
     }

@@ -15,13 +15,13 @@ class CommentsController extends Controller
 {
     //获取评论列表
     public function index(){
-        return $this->response->paginator(Comment::where('parent_id',null)->paginate(20),new CommentTransformer());
+        return $this->response->paginator(Comment::where('parent_id',null)->paginate(10),new CommentTransformer());
     }
 
     //获取某视频下的一级评论列表
     public function worksIndex(Work $work){
         //一级评论列表
-        return $this->response->paginator($work->comments()->where(['parent_id' => null])->paginate(20),new CommentTransformer());
+        return $this->response->paginator($work->comments()->where(['parent_id' => null])->paginate(10),new CommentTransformer());
     }
 
     //评论详情
