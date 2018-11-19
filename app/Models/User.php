@@ -11,11 +11,19 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class User extends Authenticatable implements JWTSubject
 {
-    use HasRoles;   //用户权限管理包
+    use HasRoles;
     use Notifiable{
         notify as protected laravelNotify;
     }
-    use SoftDeletes;    //启用软删除
+    use SoftDeletes;
+
+    protected $dates = ['deleted_at'];
+
+    protected $fillable = ['name','avatar_id','introduction','phone','qq'];
+
+    protected $hidden = ['password','auth_token',];
+
+    protected $guard_name = 'api';
 
     /*
      * 对laravel消息通知的notify方法的优化
@@ -29,25 +37,6 @@ class User extends Authenticatable implements JWTSubject
         $this->increment('notification_count');
         $this->laravelNotify($instance);
     }
-
-    /**
-     * 需要被转换成日期的属性。
-     *
-     * @var array
-     */
-    protected $dates = ['deleted_at'];
-
-
-    /*
-     * 批量赋值允许字段
-     */
-    protected $fillable = ['name','avatar_id','introduction','phone','qq'];
-
-
-    /*
-     * 隐藏字段
-     */
-    protected $hidden = ['password','auth_token',];
 
     /*
      * 返回了 User 的 id
