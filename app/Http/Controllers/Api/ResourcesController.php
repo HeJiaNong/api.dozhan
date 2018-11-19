@@ -68,7 +68,7 @@ class ResourcesController extends Controller
     public function token(ResourceRequest $request,QiniuCloudHandler $qiniu){
         //todo 这里是否允许自定义文件名
         //文件名
-        $key = utf8_encode(config('services.qiniu.upload.other.prefix').uniqid());
+        $key = utf8_encode('other/'.uniqid());
 
         //上传策略
         $policy = [
@@ -133,24 +133,27 @@ class ResourcesController extends Controller
          */
 
         //文件名
-        $key = utf8_encode(\config('services.qiniu.upload.video.prefix').uniqid());
+        $key = utf8_encode('video/'.uniqid());
 
         //转码MP4+水印 文件名
-        $ops1SaveName = base64_urlSafeEncode($qiniu->bucket.':'.$key.'[mp4,wm]');
+        $ops1SaveName = base64_urlSafeEncode("{$qiniu->bucket}:{$key}");
         //转码HLS+水印 文件名
-        $ops2SaveName = base64_urlSafeEncode($qiniu->bucket . ':'.$key. '[hls,wm]');
+        $ops2SaveName = base64_urlSafeEncode("{$qiniu->bucket}:{$key}(hls)");
         //切片ts文件名称前缀
-        $hlsName = base64_urlSafeEncode($key."[hls,wm]"."($(count))");
+        $hlsName = base64_urlSafeEncode("{$key}(hls-$(count))");
 
-        //水印文字
-        $wmText = base64_urlSafeEncode('Dozhan');
-        //水印颜色
-        $wmColor = base64_urlSafeEncode('white');
+        //水印路径
+        $wmUrl = base64_urlSafeEncode(config('services.qiniu.video.watermarkUrl'));
+        //水印位置
+        $Gravity = 'NorthWest';
+        //水印指令
+        $wm = "wmImage/{$wmUrl}/wmGravity/{$Gravity}";
 
         //转码MP4+水印指令
-        $ops1 = "avthumb/mp4/wmText/$wmText/wmGravityText/NorthWest/wmFontColor/$wmColor/wmFontSize/50|saveas/$ops1SaveName";
+        $ops1 = "avthumb/mp4/{$wm}|saveas/{$ops1SaveName}";
+
         //转码HLS+水印指令
-        $ops2 = "avthumb/m3u8/noDomain/1/segtime/20/vb/5m/pattern/$hlsName/r/60/wmText/$wmText/wmGravityText/NorthWest/wmFontColor/$wmColor/wmFontSize/50|saveas/$ops2SaveName";
+        $ops2 = "avthumb/m3u8/noDomain/1/segtime/20/vb/5m/pattern/{$hlsName}/r/60/{$wm}|saveas/{$ops2SaveName}";
 
         //上传策略
         $policy = [
@@ -201,15 +204,17 @@ class ResourcesController extends Controller
     /*
      * 图片token
      */
-    public function imageToken(QiniuCloudHandler $qiniu){
+    public function imageToken($scene,QiniuCloudHandler $qiniu){
+        $thumbnail = '/thumbnail/'.$this->getStandardImageSize($scene).'!';
+
         //文件名
-        $key = utf8_encode(config('services.qiniu.upload.image.prefix').uniqid());
+        $key = utf8_encode("image/{$scene}/".uniqid());
 
         //水印文件另存编码
-        $ops1SaveName = base64_urlSafeEncode($qiniu->bucket . ":" .$key. '[webp,thumbnail]');
+        $ops1SaveName = base64_urlSafeEncode("{$qiniu->bucket}:{$key}");
 
         //转码webp+缩放
-        $ops1 = "imageMogr2/auto-orient/format/webp"."|saveas/$ops1SaveName";
+        $ops1 = "imageMogr2/auto-orient{$thumbnail}/format/webp"."|saveas/{$ops1SaveName}";
 
         //上传策略
         $policy = [
@@ -299,12 +304,12 @@ class ResourcesController extends Controller
     /*
      * 表单上传图片
      */
-    public function image(ResourceRequest $request,QiniuCloudHandler $qiniu){
+    public function image($scene,ResourceRequest $request,QiniuCloudHandler $qiniu){
         //文件本地路径
         $filepath = $request->file('image')->getRealPath();
 
         //获取token
-        $res = $this->api->be($this->user)->get('api/resource/image/token',['scene' => $request->scene]);
+        $res = $this->api->be($this->user)->get("api/resource/image/token/{$scene}");
 
         //上传文件
         list($ret,$err) = $qiniu->putFile($res['token'],$res['key'],$filepath,$res['putExtra']['params']);
@@ -320,20 +325,13 @@ class ResourcesController extends Controller
      * 获取场景对应图片尺寸
      */
     public function getStandardImageSize($scene){
-        switch ($scene){
-            case 'avatar':
-                return '200x200';
-                break;
-            case 'banner':
-                return '1024x400';
-                break;
-            case 'cover':
-                return '480x300';
-                break;
-            default:
-                abort(422);
-                break;
+        $sizes = config('services.qiniu.image.size');
+        foreach ($sizes as $sce => $siz){
+            if ($scene == $sce){
+                return $siz;
+            }
         }
+        abort(422);
     }
 
     //todo 这里需要一个专门为seeder准备的方法，用于上传文件，如果上传的文件已经存在，则读取文件信息，存入数据库

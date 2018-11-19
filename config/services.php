@@ -41,13 +41,12 @@ return [
         'access_key' => '7jLUeoq1Un9H5fJjTid-kNwva3x2uAASEsD3DXyd',
         //SK
         'secret_key' => '07HYzerzkxElZyPgnShHn9luffNPNuKwegpE16oY',
-        //七牛默认域名
+        //空间域名
         'domain'   => 'phcczptg4.bkt.clouddn.com',
         //对象存储空间默认名
         'bucket' => 'dozhan',
         //自定义凭证有效期（expires单位为秒，为上传凭证的有效时间）
-        'expires' => time()+ 60*60,
-
+        'expires' => time() + 60*60,
         //上传策略
         'policy' => [
             //七牛callbackUrl回调地址
@@ -65,6 +64,19 @@ return [
             'persistentNotifyUrl' => function(){
                 return (string)app(\Dingo\Api\Routing\UrlGenerator::class)->version('v1')->route('api.resource.qiniu.notification');
             },
+        ],
+        'image' => [
+            //图片尺寸缩放限制
+            'size' => [
+                'user_avatar' => '200x200',
+                'site_banner' => '1024x400',
+                'video_cover' => '480x300',
+                'category_icon' => '200x200',
+            ],
+        ],
+        'video' => [
+            //水印logo地址
+            'watermarkUrl' => 'http://phcczptg4.bkt.clouddn.com/seeder/logo/logo.png',
         ],
     ],
 

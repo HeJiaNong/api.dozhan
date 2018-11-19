@@ -152,13 +152,13 @@ $api->version('v1',[
             //获取作品上传凭证
             $api->get('video/token','ResourcesController@videoToken')->name('api.resource.videos.token');
             //获取图片上传凭证
-            $api->get('image/token','ResourcesController@imageToken')->name('api.resource.videos.token');
+            $api->get('image/token/{scene}','ResourcesController@imageToken')->name('api.resource.videos.token');
             //上传文件
             $api->post('file','ResourcesController@store');
             //上传视频
             $api->post('video','ResourcesController@video');
             //上传图片
-            $api->post('image','ResourcesController@image');
+            $api->post('image/{scene}','ResourcesController@image');
 
         });
 
