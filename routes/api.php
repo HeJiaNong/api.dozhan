@@ -190,8 +190,9 @@ $api->version('v1',[
         //删除标签
         $api->delete('tags/{tag}','TagsController@destroy')->name('api.tags.destroy');
         //==============================================================================================================
-        //新增评论
-        $api->post('comments','CommentsController@store')->name('api.comments.store');
+        //新增作品评论
+        $api->post('works/{work}/comments','CommentsController@workStore')->name('api.works.comments.store');
+
         //修改评论
         $api->patch('comments/{comment}','CommentsController@update')->name('api.comments.update');
         //删除评论

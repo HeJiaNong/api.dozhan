@@ -17,13 +17,15 @@ class CommentObserver
 
         $commentable = $comment->commentable;
 
+        //模型评论数量统计+1
         $commentable->increment('comment_count');
 
+        //如果有目标用户
         if ($comment->target_id){
-            //如果是回复，则回复的目标用户也会收到消息
+            //回复的目标用户也会收到消息
             $comment->target->notify(new \App\Notifications\Comment($comment));
         }else{
-            //当有评论时，通知视频作者
+            //通知视频作者
             $commentable->user->notify(new \App\Notifications\Comment($comment));
         }
     }

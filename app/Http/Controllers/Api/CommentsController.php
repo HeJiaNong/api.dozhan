@@ -10,6 +10,8 @@ use App\Transformers\CommentTransformer;
 use App\Transformers\ReplyTransformer;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Validator;
 
 class CommentsController extends Controller
 {
@@ -33,52 +35,53 @@ class CommentsController extends Controller
         return $this->response->item($comment,new CommentTransformer());
     }
 
-    //增加评论
-    public function store(CommentRequest $request,Comment $comment){
-        //通过「多态映射表」名称获取对应的操作模型
-        $commentable_type = Relation::getMorphedModel($request->commentable_type);
-        //生成多态映射表对应实例
-        $commentable = $commentable_type::find($request->commentable_id);
+    /*
+     * 增加作品评论
+     */
+    public function workStore(Work $work,Request $request,Comment $comment){
+        $v = Validator::make($request->all(),[
+            'content' => 'required|string|max:255',
+            'parent_id' => 'required_with:target_id|integer|exists:comments,id',
+            'target_id' => 'integer|exists:users,id',
+        ]);
+
+        $v->validate();
 
         $comment->content = $request['content'];
         $comment->user_id = $this->user()->id;
-
-        //二级评论检测
         if ($comment->parent_id = $request->parent_id){
             //获取父级评论实例
-            $parent = Comment::find($request->parent_id);
+            $parent = Comment::findOrFail($request->parent_id);
 
-            //二级评论的多态映射表必须和一级评论的相同
-            if ($parent->commentable_id != $request->commentable_id || $parent->commentable_type != $request->commentable_type){
-                return $this->response->error('参数错误',422);
+            //不能回复自己
+            if ($request->target_id == $this->user->id){
+                return $this->response->error('不能回复自己',422);
             }
 
-            //如果此条评论是二级评论，那么它的父级评论就只能是一级评论
-            if (!empty($parent->parent_id)){
-                return $this->response->error('参数错误',422);
+            //二级评论的多态映射表必须和一级评论的相同
+            if ($parent->commentable_id != $work->id || $parent->commentable_type != $work->getTable()){
+                return $this->response->error('该评论不属于此作品',422);
             }
 
             //如果有回复用户，那么回复的用户必须也是此父级评论的回复
             if ($comment->target_id = $request->target_id){
                 if (!in_array($request->target_id,$parent->replies()->pluck('user_id')->toArray())){
-                    return $this->response->error('参数错误',422);
+                    return $this->response->error('此用户不在评论列表',422);
                 }
             }
         }
 
-        //以多态映射表调用模型关联天添加评论
-        $commentable->comments()->save($comment);
+        //调用模型关联天添加评论
+        $work->comments()->save($comment);
 
         $this->response->created();
     }
 
-    //更新评论
-    public function update(Comment $comment,CommentRequest $request){
+    //修改评论
+    public function update(Comment $comment,Request $request){
         $this->authorize('update',$comment);
 
-        $data = $request->only(['comment','target_id']);
-
-        $comment->update($data);
+        $comment->fill($request->all())->save();
 
         return $this->response->item($comment,new CommentTransformer());
     }

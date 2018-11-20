@@ -29,8 +29,8 @@ class CommentTransformer extends TransformerAbstract
 //            'target_id' => $comment->target_id,
 //            'commentable_id' => $comment->commentable_id,
 //            'commentable_type' => $comment->commentable_type,
-//            'created_at' => $comment->created_at->toDateTimeString(),
-            'updated_at' => $comment->updated_at->diffForHumans(),
+            'created_at' => $comment->created_at->diffForHumans(),
+//            'updated_at' => $comment->updated_at->diffForHumans(),
         ];
     }
 
