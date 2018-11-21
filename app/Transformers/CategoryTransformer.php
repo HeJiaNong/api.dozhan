@@ -13,9 +13,9 @@ class CategoryTransformer extends TransformerAbstract
     public function transform(Category $category){
         return [
             'id' => $category->id,
-            'name' => $category->name,
+            'name' => htmlspecialchars($category->name),
             'icon_id' => $category->icon_id,
-            'description' => $category->description,
+            'description' => htmlspecialchars($category->description),
             'created_at' => $category->created_at->toDateTimeString(),
             'updated_at' => $category->updated_at->toDateTimeString(),
         ];

@@ -17,10 +17,8 @@ class Comment extends Model
         static::addGlobalScope('hottest', function (Builder $builder) {
             /*
              * TODO 热评排序算法
-             * 1.时间倒序排序
-             * 2.
              */
-            $builder->orderByDesc('favour_count')->orderByDesc('created_at');
+            $builder->latest();
         });
     }
 

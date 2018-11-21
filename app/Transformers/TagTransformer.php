@@ -11,7 +11,7 @@ class TagTransformer extends TransformerAbstract
     public function transform(Tag $tag){
         return [
             'id' => $tag->id,
-            'name' => $tag->name,
+            'name' => htmlspecialchars($tag->name),
             'use_count' => $tag->use_count,
             'created_at' => $tag->created_at->toDateTimeString(),
             'updated_at' => $tag->updated_at->toDateTimeString(),

@@ -15,8 +15,8 @@ class UserTransformer extends TransformerAbstract
         return [
             'id' => $user->id,
             'do_id' => $user->do_id,
-            'name' => $user->name,
-            'introduction' => $user->introduction,
+            'name' => htmlspecialchars($user->name),
+            'introduction' => htmlspecialchars($user->introduction),
             'avatar_id' => $user->avatar_id,
             'email' => $user->email,
             'phone' => $user->phone ? substr_replace($user->phone,'****',3,4) : false,
