@@ -90,6 +90,9 @@ class User extends Authenticatable implements JWTSubject
         return $this->hasMany(Favour::class);
     }
 
+    /*
+     * 获取此用户的头像
+     */
     public function avatar(){
         return $this->belongsTo(Resource::class,'avatar_id');
     }

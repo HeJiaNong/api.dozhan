@@ -134,6 +134,7 @@ $api->version('v1',[
     //获取评论信息
     $api->get('comments/{comment}','CommentsController@show')->name('api.comment.show');
 
+    $api->get('favours/me','FavoursController@meIndex')->name('api.favours.me.index');
 
     //需要token验证的接口
     $api->group(['middleware' => 'api.auth'],function ($api){

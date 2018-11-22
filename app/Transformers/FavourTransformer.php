@@ -6,7 +6,7 @@ use League\Fractal\TransformerAbstract;
 
 class FavourTransformer extends TransformerAbstract
 {
-    protected $availableIncludes = ['user'];
+    protected $availableIncludes = ['user','favourable'];
 
     public function transform(Favour $favour){
         return [
@@ -20,6 +20,16 @@ class FavourTransformer extends TransformerAbstract
     }
 
     public function includeUser(Favour $favour){
-        return $this->collection($favour->user,new UserTransformer());
+        return $this->item($favour->user,new UserTransformer());
+    }
+
+    public function includeFavourable(Favour $favour){
+        $transformerName = $this->getFavourableTransformerName($favour->favourable);
+
+        return $this->item($favour->favourable,new $transformerName());
+    }
+
+    protected function getFavourableTransformerName($favourable){
+        return '\App\Transformers\\'.substr(get_class($favourable),strrpos(get_class($favourable),'\\')+1).'Transformer';
     }
 }
