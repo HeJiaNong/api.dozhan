@@ -90,8 +90,10 @@ $api->version('v1',[
         $api->post('authorizations','AuthorizationsController@store')->name('api.authorizations.store');
     });
     //==============================================================================================================
-    //获取Banner
+    //获取站点Banner
     $api->get('sites/banners','SitesController@banners')->name('api.sites.banners');
+    //获取站点友情链接
+    $api->get('sites/links','SitesController@links')->name('api.sites.banners');
     //获取某用户登陆token(开发/测试环境)
     $api->get('authorizations/{user}','AuthorizationsController@showToken');
     //==============================================================================================================

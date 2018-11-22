@@ -2,15 +2,10 @@
 
 namespace App\Http\Controllers\Api;
 
-use App\Http\Requests\Api\CommentRequest;
-use App\Models\Av;
 use App\Models\Comment;
 use App\Models\Work;
 use App\Transformers\CommentTransformer;
-use App\Transformers\ReplyTransformer;
-use Illuminate\Database\Eloquent\Relations\Relation;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Mail;
+use App\Http\Requests\Api\FormRequest as Request;
 use Illuminate\Support\Facades\Validator;
 
 class CommentsController extends Controller
@@ -81,12 +76,16 @@ class CommentsController extends Controller
     public function update(Comment $comment,Request $request){
         $this->authorize('update',$comment);
 
+        Validator::make($request->all(),[
+            'content' => 'required|string|max:255',
+        ])->validate();
+
         $comment->fill($request->all())->save();
 
         return $this->response->item($comment,new CommentTransformer());
     }
 
-    //删除回复
+    //删除评论
     public function destroy(Comment $comment){
         $this->authorize('destroy',$comment);
 

@@ -2,12 +2,12 @@
 
 return [
     'banners' => [
-        'http://pglgpkuzs.bkt.clouddn.com/image/banner/1.webp',
-        'http://pglgpkuzs.bkt.clouddn.com/image/banner/2.webp',
-        'http://pglgpkuzs.bkt.clouddn.com/image/banner/3.webp',
+        'http://phcczptg4.bkt.clouddn.com/seeder/banner/1.jpg' => 'welcome',
+        'http://phcczptg4.bkt.clouddn.com/seeder/banner/2.jpg' => 'dozhan',
+        'http://phcczptg4.bkt.clouddn.com/seeder/banner/3.jpg' => '666',
     ],
     'links' => [
-        'http://www.baidu.com',
-        'http://www.sina.com',
+        '百度' => 'http://www.baidu.com',
+        '新浪' => 'http://www.sina.com',
     ],
 ];
