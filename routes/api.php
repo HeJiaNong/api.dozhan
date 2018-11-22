@@ -94,6 +94,12 @@ $api->version('v1',[
     $api->get('sites/banners','SitesController@banners')->name('api.sites.banners');
     //获取站点友情链接
     $api->get('sites/links','SitesController@links')->name('api.sites.banners');
+    //获取站点所有路由
+    $api->get('sites/routes','SitesController@routes')->name('api.sites.routes');
+    //通过路由名获取API路由
+    $api->get('sites/routes/api/{route}','SitesController@getApiRoute');
+    //通过路由名获取WEB路由
+    $api->get('sites/routes/web/{route}','SitesController@getWebRoute');
     //获取某用户登陆token(开发/测试环境)
     $api->get('authorizations/{user}','AuthorizationsController@showToken');
     //==============================================================================================================
