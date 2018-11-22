@@ -97,4 +97,18 @@ class User extends Authenticatable implements JWTSubject
         return $this->belongsTo(Resource::class,'avatar_id');
     }
 
+    /*
+     * 获取此用户的所有粉丝
+     */
+    public function followers(){
+        return $this->belongsToMany(User::class,'followers','user_id','follower_id');
+    }
+
+    /*
+     * 获取此用户关注了那些人
+     */
+    public function followed(){
+        return $this->belongsToMany(User::class,'followers','follower_id','user_id');
+    }
+
 }

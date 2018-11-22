@@ -9,7 +9,7 @@ use App\Models\Favour;
 class FavourObserver
 {
     public function created(Favour $favour){
-        //TODO 消息通知
+        //TODO 点赞，消息通知
     }
 
 }

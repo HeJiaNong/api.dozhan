@@ -147,6 +147,21 @@ $api->version('v1',[
     $api->delete('me/favours/{favour}','FavoursController@destroy')->name('api.favours.destroy');
     //为某评论点赞
     $api->post('comments/{comment}/favours','FavoursController@commentStore')->name('api.comment.favours.store');
+    //==============================================================================================================
+
+    //==============================================================================================================
+    //获取me的粉丝
+    $api->get('me/followers','FollowersController@meFollowers')->name('api.me.followers');
+    //获取me的关注
+    $api->get('me/followed','FollowersController@meFollowed')->name('api.me.followed');
+    //获取某用户的粉丝
+    $api->get('users/{user}/followers','FollowersController@userFollowers')->name('api.user.followers');
+    //获取某用户的订阅
+    $api->get('users/{user}/followed','FollowersController@userFollowed')->name('api.user.followed');
+    //订阅某用户
+    $api->post('users/{user}/follower','FollowersController@store')->name('api.user.store');
+    //取消订阅某用户
+    $api->delete('users/{user}/follower','FollowersController@destroy')->name('api.user.destroy');
 
     //需要token验证的接口
     $api->group(['middleware' => 'api.auth'],function ($api){
