@@ -134,7 +134,19 @@ $api->version('v1',[
     //获取评论信息
     $api->get('comments/{comment}','CommentsController@show')->name('api.comment.show');
 
-    $api->get('favours/me','FavoursController@meIndex')->name('api.favours.me.index');
+    //==============================================================================================================
+    //获取me点过的赞
+    $api->get('me/favours','FavoursController@meIndex')->name('api.me.favours.index');
+    //获取某作品下所有点赞
+    $api->get('works/{work}/favours','FavoursController@workIndex')->name('api.work.favours.index');
+    //获取某作品下所有点赞
+    $api->get('comments/{comment}/favours','FavoursController@commentIndex')->name('api.comment.favours.index');
+    //为某作品点赞
+    $api->post('works/{work}/favours','FavoursController@workStore')->name('api.work.favours.store');
+    //取消某点赞
+    $api->delete('me/favours/{favour}','FavoursController@destroy')->name('api.favours.destroy');
+    //为某评论点赞
+    $api->post('comments/{comment}/favours','FavoursController@commentStore')->name('api.comment.favours.store');
 
     //需要token验证的接口
     $api->group(['middleware' => 'api.auth'],function ($api){
