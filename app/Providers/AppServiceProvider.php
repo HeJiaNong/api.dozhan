@@ -32,6 +32,7 @@ class AppServiceProvider extends ServiceProvider
         \App\Models\Work::observe(\App\Observers\WorkObserver::class);
         \App\Models\Tag::observe(\App\Observers\TagObserver::class);
         \App\Models\Comment::observe(\App\Observers\CommentObserver::class);
+        \App\Models\Favour::observe(\App\Observers\FavourObserver::class);
     }
 
     /**
