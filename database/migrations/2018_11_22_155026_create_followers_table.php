@@ -23,7 +23,7 @@ class CreateFollowersTable extends Migration
         });
 
         Schema::table('users',function (Blueprint $table){
-            $table->integer('followers_count')->after('qq')->comment('粉丝数量');
+            $table->integer('followers_count')->after('qq')->default(0)->comment('粉丝数量');
         });
     }
 

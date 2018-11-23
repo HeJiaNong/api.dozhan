@@ -50,7 +50,7 @@ class UsersController extends Controller
 
         //创建用户
         $user->email = $request->email;
-        $user->password = bcrypt($request->email);
+        $user->password = bcrypt($request->password);
         $user->save();
 
         //清除 此条验证码缓存
