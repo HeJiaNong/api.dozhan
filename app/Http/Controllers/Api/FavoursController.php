@@ -10,25 +10,33 @@ use App\Transformers\FavourTransformer;
 
 class FavoursController extends Controller
 {
+    protected $per_page = 20;
+
     public function __construct()
     {
         $this->middleware('api.auth')->except(['workIndex','commentIndex']);;
     }
 
     public function meIndex(){
-        return $this->response->collection($this->user()->favours,new FavourTransformer());
+        return $this->response->paginator($this->user()->favours()->paginate($this->per_page),new FavourTransformer());
     }
 
     public function workIndex(Work $work){
-        return $this->response->collection($work->favours,new FavourTransformer());
+        return $this->response->paginator($work->favours()->paginate($this->per_page),new FavourTransformer());
     }
 
     public function commentIndex(Comment $comment){
-        return $this->response->collection($comment->favours,new FavourTransformer());
+        return $this->response->paginator($comment->favours()->paginate($this->per_page),new FavourTransformer());
     }
 
     public function workStore(Work $work){
         $favour = $work->favours()->firstOrCreate(['user_id' => $this->user->id]);
+
+        return $this->response->item($favour,new FavourTransformer());
+    }
+
+    public function commentStore(Comment $comment){
+        $favour = $comment->favours()->firstOrCreate(['user_id' => $this->user->id]);
 
         return $this->response->item($favour,new FavourTransformer());
     }
@@ -39,9 +47,4 @@ class FavoursController extends Controller
         return $this->response->noContent();
     }
 
-    public function commentStore(Comment $comment){
-        $favour = $comment->favours()->firstOrCreate(['user_id' => $this->user->id]);
-
-        return $this->response->item($favour,new FavourTransformer());
-    }
 }
