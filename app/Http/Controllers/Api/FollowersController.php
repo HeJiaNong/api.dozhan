@@ -13,32 +13,33 @@ class FollowersController extends Controller
 
     public function __construct()
     {
-        $this->middleware('api.auth')->except(['userFollowers','userFollowed']);
+        $this->middleware('api.auth')->except(['userFollowers','userFollowings']);
     }
 
     public function meFollowers(){
         return $this->response->paginator($this->user()->followers()->paginate($this->per_page),new UserTransformer());
     }
 
-    public function meFollowed(){
-        return $this->response->paginator($this->user()->followed()->paginate($this->per_page),new UserTransformer());
+    public function meFollowings(){
+        return $this->response->paginator($this->user()->followings()->paginate($this->per_page),new UserTransformer());
     }
 
     public function userFollowers(User $user){
         return $this->response->paginator($user->followers()->paginate($this->per_page),new UserTransformer());
     }
 
-    public function userFollowed(User $user){
-        return $this->response->paginator($user->followed()->paginate($this->per_page),new UserTransformer());
+    public function userFollowings(User $user){
+        return $this->response->paginator($user->followings()->paginate($this->per_page),new UserTransformer());
     }
 
-    public function store(User $user){
-        $this->user->followed()->syncWithoutDetaching($user->id);
+    public function follow(User $user){
+        $this->user()->follow([$user->id]);
+        //TODO 订阅消息通知
         return $this->response->noContent();
     }
 
-    public function destroy(User $user){
-        $this->user->followed()->detach($user->id);
+    public function unfollow(User $user){
+        $this->user()->unfollow([$user->id]);
         return $this->response->noContent();
     }
 

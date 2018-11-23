@@ -15,9 +15,9 @@ class CreateFollowersTable extends Migration
     {
         Schema::create('followers', function (Blueprint $table) {
 
-            $table->integer('follower_id')->unsigned()->comment('粉丝id');
+            $table->integer('follower_id')->unsigned()->index()->comment('粉丝id');
 
-            $table->integer('user_id')->unsigned()->comment('被订阅用户id');
+            $table->integer('user_id')->unsigned()->index()->comment('被订阅用户id');
 
             $table->timestamps();
         });

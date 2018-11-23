@@ -31,13 +31,11 @@ class FavoursController extends Controller
 
     public function workStore(Work $work){
         $favour = $work->favours()->firstOrCreate(['user_id' => $this->user->id]);
-
         return $this->response->item($favour,new FavourTransformer());
     }
 
     public function commentStore(Comment $comment){
         $favour = $comment->favours()->firstOrCreate(['user_id' => $this->user->id]);
-
         return $this->response->item($favour,new FavourTransformer());
     }
 

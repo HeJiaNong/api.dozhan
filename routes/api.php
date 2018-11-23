@@ -53,7 +53,6 @@ $api->version('v1',[
 
 ],function ($api){
 
-    //dispark
     //==============================================================================================================
     //测试接口
     $api->get('test',function (\App\Handlers\QiniuCloudHandler $handler){
@@ -70,12 +69,16 @@ $api->version('v1',[
         phpinfo();
     });
     //==============================================================================================================
+
+    //==============================================================================================================
     //七牛持久化处理状态通知回调地址
     $api->post('resources/qiniu/notification','ResourcesController@notification')->name('api.resource.qiniu.notification');
     //七牛callbackUrl地址
     $api->post('resources/qiniu/callback','ResourcesController@qiniuCallback')->name('api.resources.qiniu.callback');
     //seeder填充文件
     $api->post('resources/seeder','ResourcesController@uploadOfSeeder');
+    //==============================================================================================================
+
     //==============================================================================================================
     $api->group([
         'middleware' => 'api.throttle', //DingoApi 已经为我们提供了调用频率限制的中间件 api.throttle
@@ -90,6 +93,8 @@ $api->version('v1',[
         $api->post('authorizations','AuthorizationsController@store')->name('api.authorizations.store');
     });
     //==============================================================================================================
+
+    //==============================================================================================================
     //获取站点Banner
     $api->get('sites/banners','SitesController@banners')->name('api.sites.banners');
     //获取站点友情链接
@@ -103,13 +108,19 @@ $api->version('v1',[
     //获取某用户登陆token(开发/测试环境)
     $api->get('authorizations/{user}','AuthorizationsController@showToken');
     //==============================================================================================================
+
+    //==============================================================================================================
     //获取某用户的信息
     $api->get('users/{user}','UsersController@show')->name('api.users.show');
+    //==============================================================================================================
+
     //==============================================================================================================
     //获取分类信息
     $api->get('categories/{category}','CategoriesController@show')->name('api.categories.show');
     //获取分类列表
     $api->get('categories','CategoriesController@index')->name('api.categories.index');
+    //==============================================================================================================
+
     //==============================================================================================================
     //作品列表
     $api->get('works','WorksController@index')->name('api.works.index');
@@ -122,10 +133,14 @@ $api->version('v1',[
     //获取某标签下的所有作品
     $api->get('tags/{tag}/works','TagsController@worksIndex')->name('api.tags.works.index');
     //==============================================================================================================
+
+    //==============================================================================================================
     //获取所有标签
     $api->get('tags','TagsController@index')->name('api.tags.index');
     //标签信息
     $api->get('tags/{tag}','TagsController@show')->name('api.tags.show');
+    //==============================================================================================================
+
     //==============================================================================================================
     //获取评论列表
     $api->get('comments','CommentsController@index')->name('api.comments.index');
@@ -133,6 +148,7 @@ $api->version('v1',[
     $api->get('works/{work}/comments','CommentsController@worksIndex')->name('api.works.comments.index');
     //获取评论信息
     $api->get('comments/{comment}','CommentsController@show')->name('api.comment.show');
+    //==============================================================================================================
 
     //==============================================================================================================
     //获取me点过的赞
@@ -153,15 +169,16 @@ $api->version('v1',[
     //获取me的粉丝
     $api->get('me/followers','FollowersController@meFollowers')->name('api.me.followers');
     //获取me的关注
-    $api->get('me/followed','FollowersController@meFollowed')->name('api.me.followed');
+    $api->get('me/followings','FollowersController@meFollowings')->name('api.me.followed');
     //获取某用户的粉丝
     $api->get('users/{user}/followers','FollowersController@userFollowers')->name('api.user.followers');
     //获取某用户的订阅
-    $api->get('users/{user}/followed','FollowersController@userFollowed')->name('api.user.followed');
-    //订阅某用户
-    $api->post('users/{user}/follower','FollowersController@store')->name('api.user.store');
-    //取消订阅某用户
-    $api->delete('users/{user}/follower','FollowersController@destroy')->name('api.user.destroy');
+    $api->get('users/{user}/followings','FollowersController@userFollowings')->name('api.user.followed');
+    //订阅用户
+    $api->post('users/{user}/follow','FollowersController@follow')->name('api.user.follow');
+    //取消订阅用户
+    $api->delete('users/{user}/unfollow','FollowersController@unfollow')->name('api.user.unfollow');
+    //==============================================================================================================
 
     //需要token验证的接口
     $api->group(['middleware' => 'api.auth'],function ($api){

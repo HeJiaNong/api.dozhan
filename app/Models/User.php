@@ -34,6 +34,7 @@ class User extends Authenticatable implements JWTSubject
             return;
         }
 
+        //未读消息总数++
         $this->increment('notification_count');
         $this->laravelNotify($instance);
     }
@@ -107,8 +108,29 @@ class User extends Authenticatable implements JWTSubject
     /*
      * 获取此用户关注了那些人
      */
-    public function followed(){
+    public function followings(){
         return $this->belongsToMany(User::class,'followers','follower_id','user_id');
+    }
+
+    /*
+     * 批量订阅
+     */
+    public function follow(array $user_ids)
+    {
+        foreach ($user_ids as $k => $id){
+            //不能订阅自己
+            $this->id == $id ? eval('unset($user_ids[$k]);') : $id;
+        }
+
+        $this->followings()->sync($user_ids, false);
+    }
+
+    /*
+     * 批量取消订阅
+     */
+    public function unfollow(array $user_ids)
+    {
+        $this->followings()->detach($user_ids);
     }
 
 }
