@@ -9,25 +9,27 @@ use App\Transformers\UserTransformer;
 class FollowersController extends Controller
 {
 
+    protected $per_page = 20;
+
     public function __construct()
     {
         $this->middleware('api.auth')->except(['userFollowers','userFollowed']);
     }
 
     public function meFollowers(){
-        return $this->response->collection($this->user()->followers,new UserTransformer());
+        return $this->response->paginator($this->user()->followers()->paginate($this->per_page),new UserTransformer());
     }
 
     public function meFollowed(){
-        return $this->response->collection($this->user()->followed,new UserTransformer());
+        return $this->response->paginator($this->user()->followed()->paginate($this->per_page),new UserTransformer());
     }
 
     public function userFollowers(User $user){
-        return $this->response->collection($user->followers,new UserTransformer());
+        return $this->response->paginator($user->followers()->paginate($this->per_page),new UserTransformer());
     }
 
     public function userFollowed(User $user){
-        return $this->response->collection($user->followed,new UserTransformer());
+        return $this->response->paginator($user->followed()->paginate($this->per_page),new UserTransformer());
     }
 
     public function store(User $user){
