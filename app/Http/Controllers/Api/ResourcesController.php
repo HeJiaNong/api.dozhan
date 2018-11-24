@@ -75,7 +75,6 @@ class ResourcesController extends Controller
             'endUser' => (string)$this->user->id,
             'callbackUrl' => $qiniu->policy['callbackUrl'],
             'callbackBody' => '{
-                "params"        : $(x:params),
                 "endUser"       : $(endUser),
                 "persistentId"  : $(persistentId),
                 "bucket"        : $(bucket),
@@ -95,17 +94,7 @@ class ResourcesController extends Controller
         //生成上传凭证
         $token = $qiniu->uploadToken($qiniu->bucket,$key,$qiniu->expires,$policy);
 
-        //前端需求的上传参数
-        $putExtra = [
-            //自定义变量
-            'params' => [
-                'x:params' => json_encode([
-                    'user_id' => $this->user->id,
-                ]),
-            ],
-        ];
-
-        return compact('key','token','putExtra');
+        return compact('key','token');
     }
 
     /*
@@ -160,7 +149,6 @@ class ResourcesController extends Controller
             'endUser' => (string)$this->user->id,
             'callbackUrl' => $qiniu->policy['callbackUrl'],
             'callbackBody' => '{
-                "params"        : $(x:params),
                 "endUser"       : $(endUser),
                 "persistentId"  : $(persistentId),
                 "bucket"        : $(bucket),
@@ -186,19 +174,7 @@ class ResourcesController extends Controller
         //生成上传凭证
         $token = $qiniu->uploadToken($qiniu->bucket,$key,$qiniu->expires,$policy);
 
-        //前端需求的上传参数
-        $putExtra = [
-            //自定义变量
-            'params' => [
-                'x:params' => json_encode([
-                    'user_id' => $this->user->id,
-                    'persistent' => [$ops1,$ops2],
-                ]),
-            ],
-            'mimeType' => 'video/*',
-        ];
-
-        return $this->response->array(compact('key','token','putExtra'));
+        return $this->response->array(compact('key','token'));
     }
 
     /*
@@ -221,7 +197,6 @@ class ResourcesController extends Controller
             'endUser' => (string)$this->user->id,
             'callbackUrl' => $qiniu->policy['callbackUrl'],
             'callbackBody' => '{
-                "params"        : $(x:params),
                 "endUser"       : $(endUser),
                 "persistentId"  : $(persistentId),
                 "bucket"        : $(bucket),
@@ -245,22 +220,10 @@ class ResourcesController extends Controller
             'mimeLimit' => 'image/*',
         ];
 
-        //前端需求的上传参数
-        $putExtra = [
-            //自定义变量
-            'params' => [
-                'x:params' => json_encode([
-                    'user_id' => $this->user->id,
-                    'persistent' => [$ops1],
-                ]),
-            ],
-            'mimeType' => 'image/*',
-        ];
-
         //生成上传凭证
         $token = $qiniu->uploadToken($qiniu->bucket,$key,$qiniu->expires,$policy);
 
-        return compact('key','token','putExtra');
+        return compact('key','token');
     }
 
     /*
@@ -273,7 +236,7 @@ class ResourcesController extends Controller
         $filepath = $request->file('file')->getRealPath();
 
         //上传文件
-        list($ret,$err) = $qiniu->putFile($res['token'],$res['key'],$filepath,$res['putExtra']['params']);
+        list($ret,$err) = $qiniu->putFile($res['token'],$res['key'],$filepath);
 
         if ($err){
             return $this->response->errorForbidden();
@@ -292,7 +255,7 @@ class ResourcesController extends Controller
         $filepath = $request->file('video')->getRealPath();
 
         //上传文件
-        list($ret,$err) = $qiniu->putFile($res['token'],$res['key'],$filepath,$res['putExtra']['params']);
+        list($ret,$err) = $qiniu->putFile($res['token'],$res['key'],$filepath);
 
         if ($err){
             return $this->response->errorForbidden();
@@ -312,7 +275,7 @@ class ResourcesController extends Controller
         $res = $this->api->be($this->user)->get("api/resource/image/token/{$scene}");
 
         //上传文件
-        list($ret,$err) = $qiniu->putFile($res['token'],$res['key'],$filepath,$res['putExtra']['params']);
+        list($ret,$err) = $qiniu->putFile($res['token'],$res['key'],$filepath);
 
         if ($err){
             return $this->response->errorForbidden();
