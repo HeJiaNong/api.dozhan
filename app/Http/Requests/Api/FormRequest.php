@@ -16,4 +16,8 @@ class FormRequest extends Request
         return true;
     }
 
+    public function rules(){
+        return [];
+    }
+
 }

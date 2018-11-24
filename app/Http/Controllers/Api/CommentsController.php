@@ -69,7 +69,7 @@ class CommentsController extends Controller
         //调用模型关联天添加评论
         $work->comments()->save($comment);
 
-        $this->response->created();
+        return $this->response->item($comment,new CommentTransformer());
     }
 
     //修改评论
