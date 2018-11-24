@@ -23,7 +23,7 @@ class CommentTransformer extends TransformerAbstract
         return [
             'id' => $comment->id,
             'content' => htmlspecialchars($comment->content),
-            'favour_count' => $comment->favour_count,
+            'favour_count' => (int)$comment->favour_count,
 //            'user_id' => $comment->user_id,
 //            'parent_id' => $comment->parent_id,
 //            'target_id' => $comment->target_id,
