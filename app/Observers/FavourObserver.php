@@ -15,7 +15,7 @@ class FavourObserver
 
         //TODO 用户表消息通知数+1
 
-        dd('TODO 消息通知');
+        dd(666,$favour);
     }
 
 }

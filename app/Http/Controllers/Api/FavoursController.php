@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Http\Requests\Api\FormRequest as Request;
 use App\Models\Comment;
 use App\Models\Favour;
+use App\Models\User;
 use App\Models\Work;
 use App\Transformers\FavourTransformer;
 

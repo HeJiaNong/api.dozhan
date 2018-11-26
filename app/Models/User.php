@@ -131,11 +131,16 @@ class User extends Authenticatable implements JWTSubject
             $this->id == $id ? eval('unset($user_ids[$k]);') : $id;
         }
 
-        $attach = $this->followings()->sync($user_ids, false)['attached'];
+        $users = User::find($this->followings()->sync($user_ids, false)['attached']);
 
-        //TODO 订阅消息通知
+        //被订阅用户粉丝数+1
+        $users->each(function ($model,$index){
+            $model->increment('followers_count');
+        });
+
+        //订阅消息通知
         if (!empty($attach)){
-            \Notification::send(User::find($attach),new Follow($this));
+            \Notification::send($users,new Follow($this));
         }
 
     }
@@ -145,7 +150,20 @@ class User extends Authenticatable implements JWTSubject
      */
     public function unfollow(array $user_ids)
     {
+        $followings = $this->followings()->pluck('id')->all();
+
+        if (!empty(array_diff($user_ids,$followings))){
+            return abort('422','参数错误');
+        }
+
         $this->followings()->detach($user_ids);
+
+        //被取消订阅用户粉丝数-1
+        User::find($user_ids)->each(function ($model,$index){
+            $model->decrement('followers_count');
+        });
+
+        //TODO 取消订阅消息通知
     }
 
 }
