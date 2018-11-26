@@ -19,7 +19,7 @@ class UserTransformer extends TransformerAbstract
             'introduction' => htmlspecialchars($user->introduction),
             'avatar_id' => $user->avatar_id,
             'email' => $user->email,
-            'phone' => $user->phone ? substr_replace($user->phone,'****',3,4) : false,
+            'phone' => $user->phone ??false,
             'qq' => $user->qq ??false,
             'notification_count' => $user->notification_count,
             'created_at' => $user->created_at->toDateTimeString(),

@@ -34,7 +34,6 @@ class FollowersController extends Controller
 
     public function follow(User $user){
         $this->user()->follow([$user->id]);
-        //TODO 订阅消息通知
         return $this->response->noContent();
     }
 

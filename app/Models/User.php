@@ -2,9 +2,11 @@
 
 namespace App\Models;
 
+use App\Notifications\Follow;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Notification;
 use Spatie\Permission\Traits\HasRoles;
 use Tymon\JWTAuth\Contracts\JWTSubject;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -21,7 +23,7 @@ class User extends Authenticatable implements JWTSubject
 
     protected $fillable = ['name','avatar_id','introduction','phone','qq'];
 
-    protected $hidden = ['password','auth_token',];
+        protected $hidden = ['password','auth_token',];
 
     protected $guard_name = 'api';
 
@@ -53,6 +55,13 @@ class User extends Authenticatable implements JWTSubject
     public function getJWTCustomClaims()
     {
         return [];
+    }
+
+    /*
+     * 获取手机号属性
+     */
+    public function getPhoneAttribute($value){
+        return substr_replace($value,'****',3,4);
     }
 
     /*
@@ -122,7 +131,13 @@ class User extends Authenticatable implements JWTSubject
             $this->id == $id ? eval('unset($user_ids[$k]);') : $id;
         }
 
-        $this->followings()->sync($user_ids, false);
+        $attach = $this->followings()->sync($user_ids, false)['attached'];
+
+        //TODO 订阅消息通知
+        if (!empty($attach)){
+            \Notification::send(User::find($attach),new Follow($this));
+        }
+
     }
 
     /*
