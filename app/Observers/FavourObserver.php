@@ -9,13 +9,17 @@ use App\Models\Favour;
 class FavourObserver
 {
     public function created(Favour $favour){
-        //TODO 点赞对应模型点赞总数+1
 
-        //TODO 点赞消息通知队列
+        //点赞对应模型点赞总数+1
+        $favour->favourable->increment('favour_count');
 
-        //TODO 用户表消息通知数+1
+        //点赞消息通知
+        $favour->favourable->user->notify(new \App\Notifications\Favour($favour->favourable));
+    }
 
-        dd(666,$favour);
+    public function deleted(Favour $favour){
+        //点赞对应模型点赞总数-1
+        $favour->favourable->decrement('favour_count');
     }
 
 }
