@@ -31,7 +31,7 @@ class Follow extends Notification implements ShouldQueue
      */
     public function via($notifiable)
     {
-        return config('site.notifications.Follow.via');
+        return ['mail','database'];
 
     }
 

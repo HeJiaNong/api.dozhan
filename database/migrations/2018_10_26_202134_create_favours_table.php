@@ -15,7 +15,7 @@ class CreateFavoursTable extends Migration
     {
         Schema::create('favours', function (Blueprint $table) {
             $table->increments('id');
-            $table->integer('user_id')->unsigned()->comment('用户id');
+            $table->integer('user_id')->unsigned()->index()->comment('用户id');
             $table->morphs('favourable');
             $table->timestamps();
         });
