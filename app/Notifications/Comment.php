@@ -22,7 +22,7 @@ class Comment extends Notification implements ShouldQueue
     public function via($notifiable)
     {
         // 开启通知的频道
-        return ['database','mail'];
+        return config('site.notifications.Comment.via');
     }
 
     //这个返回的数组将被转成 JSON 格式并存储到通知数据表的 data 列

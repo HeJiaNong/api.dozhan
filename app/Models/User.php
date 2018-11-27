@@ -139,7 +139,7 @@ class User extends Authenticatable implements JWTSubject
         });
 
         //订阅消息通知
-        if (!empty($attach)){
+        if ($users->isNotEmpty()){
             \Notification::send($users,new Follow($this));
         }
 

@@ -31,7 +31,7 @@ class Favour extends Notification implements ShouldQueue
      */
     public function via($notifiable)
     {
-        return ['database','mail'];
+        return config('site.notifications.Favour.via');
     }
 
     public function toMail($notifiable)
