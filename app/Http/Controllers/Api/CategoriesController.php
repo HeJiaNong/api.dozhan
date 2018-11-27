@@ -3,12 +3,8 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Requests\Api\CategoryRequest;
-use App\Models\Album;
-use App\Models\Av;
 use App\Models\Category;
 use App\Models\Resource;
-use App\Transformers\AlbumTransformer;
-use App\Transformers\AvTransformer;
 use App\Transformers\CategoryTransformer;
 use App\Transformers\WorkTransformer;
 use Illuminate\Http\Request;

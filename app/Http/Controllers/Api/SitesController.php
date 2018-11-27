@@ -2,18 +2,12 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Models\Site;
 use Dingo\Api\Routing\UrlGenerator;
 use App\Http\Requests\Api\FormRequest as Request;
 
 class SitesController extends Controller
 {
-    /*
-     * 获取站点首页banner
-     */
-    public function banners(){
-        return $this->response->array(config('site.banners'));
-    }
-
     /*
      * 获取所有友情链接
      */

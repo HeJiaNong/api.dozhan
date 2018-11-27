@@ -22,6 +22,8 @@ class AuthServiceProvider extends ServiceProvider
         \Illuminate\Notifications\DatabaseNotification::class => \App\Policies\NotificationPolicy::class,
         \Spatie\Permission\Models\Permission::class => \App\Policies\PermissionPolicy::class,
         \App\Models\Favour::class => \App\Policies\FavourPolicy::class,
+        \App\Models\Banner::class => \App\Policies\BannerPolicy::class,
+        \App\Models\Link::class => \App\Policies\LinkPolicy::class,
     ];
 
     /**

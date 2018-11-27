@@ -95,10 +95,28 @@ $api->version('v1',[
     //==============================================================================================================
 
     //==============================================================================================================
-    //获取站点Banner
-    $api->get('sites/banners','SitesController@banners')->name('api.sites.banners');
-    //获取站点友情链接
-    $api->get('sites/links','SitesController@links')->name('api.sites.banners');
+    //获取Banner
+    $api->get('banners','BannersController@index')->name('api.banners.index');
+    //新增Banner
+    $api->post('banners','BannersController@store')->name('api.banners.store');
+    //修改banner
+    $api->patch('banners/{banner}','BannersController@update')->name('api.banners.update');
+    //删除banner
+    $api->delete('banners/{banner}','BannersController@destroy')->name('api.banners.destroy');
+    //==============================================================================================================
+
+    //==============================================================================================================
+    //获取links
+    $api->get('links','LinksController@index')->name('api.links.index');
+    //新增link
+    $api->post('links','LinksController@store')->name('api.links.store');
+    //修改link
+    $api->patch('links/{link}','LinksController@update')->name('api.links.update');
+    //删除link
+    $api->delete('links/{link}','LinksController@destroy')->name('api.links.destroy');
+    //==============================================================================================================
+
+    //==============================================================================================================
     //获取站点所有路由
     $api->get('sites/routes','SitesController@routes')->name('api.sites.routes');
     //通过路由名获取API路由
