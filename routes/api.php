@@ -290,10 +290,6 @@ $api->version('v1',[
     */
     //获取站点所有路由
     $api->get('site/routes','SiteController@routes')->name('api.routes.index');
-    //通过路由名获取API路由
-    $api->get('site/routes/api/{route}','SiteController@getApiRoute')->name('api.routes.show');
-    //通过路由名获取WEB路由
-    $api->get('site/routes/web/{route}','SiteController@getWebRoute')->name('web.routes.show');
 
     /*
     |--------------------------------------------------------------------------

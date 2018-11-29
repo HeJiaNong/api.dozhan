@@ -20,18 +20,4 @@ class SiteController extends Controller
         }
         return $this->response->array($path);
     }
-
-    /*
-     * 通过路由名获取API路由
-     */
-    public function getApiRoute($routeName){
-        return app(UrlGenerator::class)->version('v1')->route($routeName);
-    }
-
-    /*
-     * 通过路由名获取WEB路由
-     */
-    public function getWebRoute($routeName){
-        return route($routeName);
-    }
 }
