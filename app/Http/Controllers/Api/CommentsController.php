@@ -10,13 +10,18 @@ use Illuminate\Support\Facades\Validator;
 
 class CommentsController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('api.auth')->except(['index','workIndex','show']);
+    }
+
     //获取评论列表
     public function index(){
         return $this->response->paginator(Comment::where('parent_id',null)->paginate(10),new CommentTransformer());
     }
 
     //获取某视频下的一级评论列表
-    public function worksIndex(Work $work){
+    public function workIndex(Work $work){
         //一级评论列表
         return $this->response->paginator($work->comments()->where(['parent_id' => null])->paginate(10),new CommentTransformer());
     }
@@ -30,9 +35,7 @@ class CommentsController extends Controller
         return $this->response->item($comment,new CommentTransformer());
     }
 
-    /*
-     * 增加作品评论
-     */
+    //增加作品评论
     public function workStore(Work $work,Request $request,Comment $comment){
         $v = Validator::make($request->all(),[
             'content' => 'required|string|max:255',

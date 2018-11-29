@@ -11,6 +11,12 @@ use Illuminate\Http\Request;
 
 class TagsController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('api.auth')->except(['index','show']);
+    }
+
+
     //获取所有标签
     public function index(){
         return $this->response->collection(Tag::all(),new TagTransformer());
@@ -42,11 +48,6 @@ class TagsController extends Controller
         $tag->delete();
 
         return $this->response->noContent();
-    }
-
-    //获取某标签下的所有视频
-    public function worksIndex(Tag $tag){
-        return $this->response->paginator($tag->works()->paginate(20),new WorkTransformer());
     }
 
     //标签信息

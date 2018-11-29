@@ -6,15 +6,8 @@ use App\Models\Site;
 use Dingo\Api\Routing\UrlGenerator;
 use App\Http\Requests\Api\FormRequest as Request;
 
-class SitesController extends Controller
+class SiteController extends Controller
 {
-    /*
-     * 获取所有友情链接
-     */
-    public function links(){
-        return $this->response->array(config('site.links'));
-    }
-
     /*
      * 获取站点所有路由
      */
@@ -22,7 +15,7 @@ class SitesController extends Controller
         $routes = app()->routes->getRoutes();
         foreach ($routes as $k=>$value){
             $path[$k]['uri'] = $value->uri;
-            $path[$k]['path'] = $value->methods[0];
+            $path[$k]['method'] = $value->methods[0];
             $path[$k]['name'] = $value->action['as']??null;
         }
         return $this->response->array($path);

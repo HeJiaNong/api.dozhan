@@ -15,6 +15,7 @@ class UsersController extends Controller
     public function __construct()
     {
         $this->middleware('throttle:60,1')->only(['store']);
+        $this->middleware('api.auth')->except(['emailRegister','store','show']);
     }
 
     //邮箱认证注册用户

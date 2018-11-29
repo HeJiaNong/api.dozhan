@@ -15,6 +15,11 @@ use Webpatser\Uuid\Uuid;
 
 class ResourcesController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('api.auth')->except(['qiniuCallback','notification','uploadOfSeeder']);
+    }
+
     /*
      * 七牛文件上传回调地址
      */
@@ -287,7 +292,7 @@ class ResourcesController extends Controller
     /*
      * 获取场景对应图片尺寸
      */
-    public function getStandardImageSize($scene){
+    protected function getStandardImageSize($scene){
         $sizes = config('services.qiniu.image.size');
         foreach ($sizes as $sce => $siz){
             if ($scene == $sce){

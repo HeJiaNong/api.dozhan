@@ -9,6 +9,11 @@ use Illuminate\Notifications\DatabaseNotification;
 
 class NotificationsController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('api.auth');
+    }
+
     //获取当前用户的所有通知
     public function index(){
         return $this->response->paginator($this->user()->notifications()->paginate(20),new NotificationTransformer());

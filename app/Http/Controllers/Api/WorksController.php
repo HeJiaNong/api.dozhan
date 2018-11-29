@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Requests\Api\WorkRequest;
+use App\Models\Category;
 use App\Models\Resource;
 use App\Models\Tag;
 use App\Models\User;
@@ -11,6 +12,11 @@ use App\Transformers\WorkTransformer;
 
 class WorksController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('api.auth')->except(['index','categoryIndex','tagIndex','userIndex','show']);
+    }
+
     /*
      * 获取作品列表
      */
@@ -29,6 +35,16 @@ class WorksController extends Controller
 
         //返回数据
         return $this->response->paginator($paginates,new WorkTransformer());
+    }
+
+    //获取某分类下的所有作品
+    public function categoryIndex(Category $category){
+        return $this->response->paginator($category->works()->paginate(20),new WorkTransformer());
+    }
+
+    //获取某标签下的所有作品
+    public function tagIndex(Tag $tag){
+        return $this->response->paginator($tag->works()->paginate(20),new WorkTransformer());
     }
 
     /*
@@ -110,10 +126,7 @@ class WorksController extends Controller
     /*
      * 获取被软删除的作品
      */
-    public function destroys(){
-        //权限验证
-        $this->authorize('destroy',Work::class);
-
+    public function meDestroys(){
         return $this->response->paginator($this->user()->works()->withTrashed()->where('deleted_at','!=',null)->paginate(20),new WorkTransformer());
     }
 

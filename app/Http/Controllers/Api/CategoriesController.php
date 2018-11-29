@@ -11,14 +11,14 @@ use Illuminate\Http\Request;
 
 class CategoriesController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('api.auth')->except(['index','show']);
+    }
+
     //获取分类列表
     public function index(){
         return $this->response->collection(Category::all(),new CategoryTransformer());
-    }
-
-    //获取某分类下的所有作品
-    public function worksIndex(Category $category){
-        return $this->response->paginator($category->works()->paginate(20),new WorkTransformer());
     }
 
     //新增分类

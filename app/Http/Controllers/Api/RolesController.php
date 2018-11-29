@@ -10,6 +10,11 @@ use Spatie\Permission\Models\Role;
 
 class RolesController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('api.auth');
+    }
+
     //获取所有角色
     public function index(){
         $this->authorize('isAdmin',Permission::class);

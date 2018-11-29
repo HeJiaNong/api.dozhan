@@ -62,7 +62,7 @@ return [
 
             //七牛持久化处理结果消息通知地址
             'persistentNotifyUrl' => function(){
-                return (string)app(\Dingo\Api\Routing\UrlGenerator::class)->version('v1')->route('api.resource.qiniu.notification');
+                return (string)app(\Dingo\Api\Routing\UrlGenerator::class)->version('v1')->route('api.resources.qiniu.notification');
             },
         ],
         'image' => [

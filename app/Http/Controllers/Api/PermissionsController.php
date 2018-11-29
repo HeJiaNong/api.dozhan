@@ -8,6 +8,11 @@ use Spatie\Permission\Models\Permission;
 
 class PermissionsController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('api.auth');
+    }
+
     //获取权限列表
     public function index(){
         $this->authorize('isAdmin',Permission::class);
