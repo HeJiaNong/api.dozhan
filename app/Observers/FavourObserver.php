@@ -9,7 +9,6 @@ use App\Models\Favour;
 class FavourObserver
 {
     public function created(Favour $favour){
-
         //点赞对应模型点赞总数+1
         $favour->favourable->increment('favour_count');
 

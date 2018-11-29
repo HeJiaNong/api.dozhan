@@ -51,9 +51,6 @@ class SendMailboxVerificationCode implements ShouldQueue
      */
     public function handle()
     {
-
-//        dump(666);
-//        Mail::to($this->email)->send(new VerificationCodesMail($this->code));
         //发送邮件
         try{
             Mail::to($this->email)->send(new VerificationCodesMail($this->code));
@@ -71,8 +68,8 @@ class SendMailboxVerificationCode implements ShouldQueue
     public function failed(Exception $exception)
     {
         // 给用户发送失败通知，等等...
-        logger('============================');
+        logger('==============邮件验证码错误==============');
         logger($exception->getMessage());
-        logger('============================');
+        logger('==============邮件验证码错误==============');
     }
 }

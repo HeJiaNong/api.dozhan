@@ -3,13 +3,20 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Requests\Api\UserRequest;
+use App\Jobs\SendMailboxVerificationCode;
 use App\Models\User;
 use App\Transformers\UserTransformer;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
 
 class UsersController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('throttle:60,1')->only(['store']);
+    }
+
     //邮箱认证注册用户
     public function emailRegister(UserRequest $request){
         if (!$request->key){
@@ -123,4 +130,5 @@ class UsersController extends Controller
 
         return $this->response->item($user,new UserTransformer());
     }
+
 }

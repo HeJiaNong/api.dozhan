@@ -80,18 +80,16 @@ $api->version('v1',[
     //==============================================================================================================
 
     //==============================================================================================================
-    $api->group([
-        'middleware' => 'api.throttle', //DingoApi 已经为我们提供了调用频率限制的中间件 api.throttle
-        'limit' => config('api.rate_limits.sign.limit'),    //接口频率限制次数
-        'expires' => config('api.rate_limits.sign.expires'),    //接口频率限制过期时间
-    ],function ($api){
-        //邮箱验证码
-        $api->post('verificationCodes/email','VerificationCodesController@email')->name('api.verificationCodes.email');
-        //用户注册
-        $api->post('user','UsersController@store')->name('api.users.store');
-        //用户登陆
-        $api->post('authorizations','AuthorizationsController@store')->name('api.authorizations.store');
-    });
+    //注册邮箱验证码
+    $api->post('auth/register/verification-code','AuthController@registerVerificationCode');
+    //用户注册
+    $api->post('auth/register','AuthController@register');
+    //用户登陆
+    $api->post('auth/login','AuthController@login');
+    //重置密码
+    $api->patch('auth/reset-password','AuthController@resetPassword');
+    //重置密码邮箱验证码
+    $api->post('auth/reset-password/verification-code','AuthController@resetPasswordCode');
     //==============================================================================================================
 
     //==============================================================================================================
@@ -124,7 +122,7 @@ $api->version('v1',[
     //通过路由名获取WEB路由
     $api->get('sites/routes/web/{route}','SitesController@getWebRoute');
     //获取某用户登陆token(开发/测试环境)
-    $api->get('authorizations/{user}','AuthorizationsController@showToken');
+    $api->get('auth/{user}','AuthController@showToken');
     //==============================================================================================================
 
     //==============================================================================================================
@@ -202,9 +200,9 @@ $api->version('v1',[
     $api->group(['middleware' => 'api.auth'],function ($api){
         //==============================================================================================================
         //刷新token
-        $api->put('authorizations/current','AuthorizationsController@update')->name('api.authorizations.update');
-        //删除token
-        $api->delete('authorizations/current','AuthorizationsController@destroy')->name('api.authorizations.destroy');
+        $api->put('auth/refresh','AuthController@refresh')->name('api.auth.update');
+        //登出
+        $api->delete('auth/logout','AuthController@logout')->name('api.auth.destroy');
         //当前登陆用户信息
         $api->get('user','UsersController@me')->name('api.user.show');
         //编辑登陆用户信息 patch 部分修改资源，提供部分资源信息 注意，PATCH 请求方式只能接收 application/x-www-form-urlencoded 的 [Content-type] 的表单信息

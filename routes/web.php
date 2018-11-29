@@ -11,31 +11,19 @@
 |
 */
 
-use Illuminate\Support\Facades\Route;
 
 //首页
 Route::view('/','home')->name('home');
 
-//登陆注册
-Route::view('/login','auth.login_and_register')->name('login');
+//用户认证
+Route::view('authentications','authentications.index')->name('authentications');
 
-Route::view('play','play');
-//用户登陆
-//Auth::routes();
+//resources
+Route::resources([
+    'works' => 'WorksController',
+]);
 
-//// Authentication Routes...
-//Route::get('login', 'Auth\LoginController@showLoginForm')->name('login');
-//Route::post('login', 'Auth\LoginController@login');
-//Route::post('logout', 'Auth\LoginController@logout')->name('logout');
-//
-//// Registration Routes...
-//Route::get('register', 'Auth\RegisterController@showRegistrationForm')->name('register');
-//Route::post('register', 'Auth\RegisterController@register');
-//
-//// Password Reset Routes...
-//Route::get('password/reset', 'Auth\ForgotPasswordController@showLinkRequestForm')->name('password.request');
-//Route::post('password/email', 'Auth\ForgotPasswordController@sendResetLinkEmail')->name('password.email');
-//Route::get('password/reset/{token}', 'Auth\ResetPasswordController@showResetForm')->name('password.reset');
-//Route::post('password/reset', 'Auth\ResetPasswordController@reset');
-//
-//Route::get('/home', 'HomeController@index')->name('home');
+
+Route::prefix('admin')->namespace('Admin')->group(function () {
+
+});

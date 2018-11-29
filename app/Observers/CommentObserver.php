@@ -11,6 +11,9 @@ class CommentObserver
     public function deleted(Comment $comment){
         //评论删除后，该评论下的所有回复都将会被删除
         DB::table('comments')->where('parent_id',$comment->id)->delete();
+
+        //模型评论数量统计-1
+        $comment->commentable->decrement('comment_count');
     }
 
     public function created(Comment $comment){

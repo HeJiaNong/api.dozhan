@@ -22,6 +22,7 @@ class UserTransformer extends TransformerAbstract
             'phone' => $user->phone ??false,
             'qq' => $user->qq ??false,
             'notification_count' => $user->notification_count,
+            'followers_count' => $user->followers_count,
             'created_at' => $user->created_at->toDateTimeString(),
             'updated_at' => $user->updated_at->toDateTimeString(),
         ];

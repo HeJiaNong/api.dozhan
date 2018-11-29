@@ -2,10 +2,10 @@
 <nav class="main-nav">
 
     <div class="container">
-        <a href="#" class="nav-item-nav">
+        <a href="{{ route('home') }}" class="nav-item-nav">
             <img src="{{ asset('img/logos/dozhan_logo.svg') }}">
         </a>
-        <a href="#" class="nav-item">首页</a>
+        <a href="{{ route('home') }}" class="nav-item">首页</a>
         <a href="#" class="nav-item">视频特效</a>
         <a href="#" class="nav-item">图像处理</a>
 
