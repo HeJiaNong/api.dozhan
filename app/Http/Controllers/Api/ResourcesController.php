@@ -236,7 +236,7 @@ class ResourcesController extends Controller
      */
     public function store(ResourceRequest $request,QiniuCloudHandler $qiniu,Resource $resource){
         //内部请求token接口
-        $res = $this->api->be($this->user)->get('api/resource/token',['key' => $request->key]);
+        $res = $this->api->be($this->user)->get('api/resources/token',['key' => $request->key]);
 
         $filepath = $request->file('file')->getRealPath();
 
@@ -255,7 +255,7 @@ class ResourcesController extends Controller
      */
     public function video(ResourceRequest $request,QiniuCloudHandler $qiniu){
         //内部请求视频token接口，获取视频上传token
-        $res = $this->api->be($this->user)->get('api/resource/video/token');
+        $res = $this->api->be($this->user)->get('api/resources/video/token');
 
         $filepath = $request->file('video')->getRealPath();
 
@@ -277,7 +277,7 @@ class ResourcesController extends Controller
         $filepath = $request->file('image')->getRealPath();
 
         //获取token
-        $res = $this->api->be($this->user)->get("api/resource/image/token/{$scene}");
+        $res = $this->api->be($this->user)->get("api/resources/image/token/{$scene}");
 
         //上传文件
         list($ret,$err) = $qiniu->putFile($res['token'],$res['key'],$filepath);

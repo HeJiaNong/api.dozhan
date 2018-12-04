@@ -38,13 +38,13 @@ return [
     //七牛服务配置
     'qiniu' => [
         //AK
-        'access_key' => '7jLUeoq1Un9H5fJjTid-kNwva3x2uAASEsD3DXyd',
+        'access_key' => env('QINIU_ACCESS_KEY'),
         //SK
-        'secret_key' => '07HYzerzkxElZyPgnShHn9luffNPNuKwegpE16oY',
+        'secret_key' => env('QINIU_SECRET_KEY'),
         //空间域名
-        'domain'   => 'phcczptg4.bkt.clouddn.com',
+        'domain'   => env('QINIU_DOMAIN'),
         //对象存储空间默认名
-        'bucket' => 'dozhan',
+        'bucket' => env('QINIU_BUCKET'),
         //自定义凭证有效期（expires单位为秒，为上传凭证的有效时间）
         'expires' => time() + 60*60,
         //上传策略
