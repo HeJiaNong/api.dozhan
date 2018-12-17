@@ -17,7 +17,7 @@ class ResourcesController extends Controller
 {
     public function __construct()
     {
-        $this->middleware('api.auth')->except(['qiniuCallback','notification','uploadOfSeeder']);
+        $this->middleware('api.auth')->except(['qiniuCallback','notification','uploadOfSeeder','show']);
     }
 
     /*
@@ -362,5 +362,11 @@ class ResourcesController extends Controller
 
             return $this->response->array($ret);
         }
+    }
+
+    public function show(Resource $resource){
+        //TODO
+        return $resource->show();
+        return redirect('http://'.$resource->resourceable->key);
     }
 }
