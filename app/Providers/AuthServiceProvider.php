@@ -37,6 +37,7 @@ class AuthServiceProvider extends ServiceProvider
 
         //Horizon授权访问
         Horizon::auth(function ($request){
+            //TODO open permission
             return true;
         });
     }

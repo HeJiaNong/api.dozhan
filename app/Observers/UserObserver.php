@@ -25,6 +25,7 @@ class UserObserver
     public function saving(User $user){
         //todo 用户默认头像
         if (!$user->avatar_id){
+            //TODO 默认头像方案待优化,这里由于所有资源都是唯一id形式，默认头像却是可以重复的
             //为未设置头像的用户添加默认头像
             $user->avatar_id = \App\Models\ResourceQiniu::where('key','like','seeder/avatar/%')->limit(1)->first()->resource->id;
         }

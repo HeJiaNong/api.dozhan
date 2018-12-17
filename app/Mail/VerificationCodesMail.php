@@ -30,6 +30,6 @@ class VerificationCodesMail extends Mailable
      */
     public function build()
     {
-        return $this->view('emails.user_register');
+        return $this->view('emails.registered',['code' => $this->code]);
     }
 }

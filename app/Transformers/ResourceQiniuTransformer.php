@@ -18,7 +18,7 @@ class ResourceQiniuTransformer extends TransformerAbstract
 
     public function transform(ResourceQiniu $model){
         return [
-            'url' => $model->showUrl($model),
+            'url' => $model->show(),
         ];
         if ($this->showPlayUrl){
             return $model->showUrl($model);

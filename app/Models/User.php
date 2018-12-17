@@ -61,7 +61,12 @@ class User extends Authenticatable implements JWTSubject
      * 获取手机号属性
      */
     public function getPhoneAttribute($value){
-        return substr_replace($value,'****',3,4);
+        if ($value){
+            return substr_replace($value,'****',3,4);
+        }
+
+        return $value;
+
     }
 
     /*
