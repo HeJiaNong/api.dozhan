@@ -3,52 +3,15 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use App\Contracts\DoResource;
 
-class ResourceQiniu extends Model
+class ResourceQiniu extends Model implements DoResource
 {
     //声明表名
     protected $table = 'resources_qiniu';
 
-    protected $fillable = [
-        'params',
-        'endUser',
-        'persistentId',
-        'bucket',
-        'key',
-        'etag',
-        'fsize',
-        'mimeType',
-        'imageAve',
-        'ext',
-        'exif',
-        'imageInfo',
-        'avinfo',
-    ];
-
-    /*
-     * 获取此资源的展示链接
-     */
-    public function showUrl(ResourceQiniu $resourceQiniu){
-
-        //默认为原文件url
-        $url = $resourceQiniu->key;
-
-        //如果该资源有持久化处理资源
-        if ($persistent = $resourceQiniu->persistent){
-            foreach ($persistent->items as $item){
-                if ($item['code'] == 0){
-                    //对每个item进行筛选
-                    //todo 这里暂时没有pick
-                    $url = $item['key'];
-                }
-            }
-        }
-
-        return $url;
-    }
-
-
-
+    protected $fillable = ['params', 'endUser', 'persistentId', 'bucket', 'key', 'etag', 'fsize', 'mimeType', 'imageAve',
+        'ext', 'exif', 'imageInfo', 'avinfo',];
 
     /*
      * 访问器，拼接 key 为链接地址
@@ -116,5 +79,33 @@ class ResourceQiniu extends Model
     public function resource(){
         return $this->morphOne(Resource::class,'resourceable');
     }
+
+    /*
+     * 获取此资源的展示链接
+     */
+    public function show(){
+
+        //默认为原文件url
+        $url = $this->key;
+
+        //如果该资源有持久化处理资源
+        if ($persistent = $this->persistent){
+            foreach ($persistent->items as $item){
+                if ($item['code'] == 0){
+                    //对每个item进行筛选
+                    //todo 这里暂时没有pick
+                    $url = $item['key'];
+                }
+            }
+        }
+
+        return $url;
+    }
+
+    public function download()
+    {
+        // TODO: Implement download() method.
+    }
+
 
 }

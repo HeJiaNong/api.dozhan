@@ -17,7 +17,7 @@ class ResourcesController extends Controller
 {
     public function __construct()
     {
-        $this->middleware('api.auth')->except(['qiniuCallback','notification','uploadOfSeeder']);
+        $this->middleware('api.auth')->except(['qiniuCallback','notification','uploadOfSeeder','show']);
     }
 
     /*
@@ -302,7 +302,7 @@ class ResourcesController extends Controller
         abort(422);
     }
 
-    //todo 这里需要一个专门为seeder准备的方法，用于上传文件，如果上传的文件已经存在，则读取文件信息，存入数据库
+    //TODO 这里需要一个专门为seeder准备的方法，用于上传文件，如果上传的文件已经存在，则读取文件信息，存入数据库
     public function uploadOfSeeder(ResourceRequest $request,QiniuCloudHandler $handler,ResourceQiniu $qiniu,Resource $resource){
         $file = $request->file('file')->getRealPath();
         if ($info = $handler->fileInfo($handler->bucket,$file)[0]){
@@ -362,5 +362,14 @@ class ResourcesController extends Controller
 
             return $this->response->array($ret);
         }
+    }
+
+    /**
+     * 通过资源 id 获取资源展示链接
+     * @param Resource $resource
+     * @return string
+     */
+    public function show(Resource $resource){
+        return $resource->show();
     }
 }

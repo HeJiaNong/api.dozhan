@@ -54,7 +54,7 @@ $api->version('v1',[
     ],
 ],function ($api){
     /*
-    |--------------------------------------------------------------------------
+    |--------------------------------------------------------------r------------
     | Auth
     |--------------------------------------------------------------------------
     */
@@ -117,6 +117,8 @@ $api->version('v1',[
         $api->post('video','ResourcesController@video')->name('api.resources.video.upload');
         //上传图片
         $api->post('image/{scene}','ResourcesController@image')->name('api.resources.image.upload');
+        //通过文件id展示文件
+        $api->get('/{resource}','ResourcesController@show')->name('api.resource.show');
     });
 
     /*
