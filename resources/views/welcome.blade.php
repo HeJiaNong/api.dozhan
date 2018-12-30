@@ -71,7 +71,7 @@
 
     <div class="content">
         <div class="title m-b-md">
-            Dozhan.API
+            {{ env('APP_NAME','Laravel') }}
         </div>
 
         {{--<div class="links">--}}
