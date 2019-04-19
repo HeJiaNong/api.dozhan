@@ -34,10 +34,13 @@ class SendEmail extends Command
     /**
      * Execute the console command.
      *
+     * @throws \Overtrue\EasySms\Exceptions\InvalidArgumentException
      * @return mixed
      */
     public function handle()
     {
+        $phone = $this->ask('pls enter your phone number:');
+
         $config = [
             // HTTP 请求的超时时间（秒）
             'timeout' => 5.0,
@@ -63,15 +66,15 @@ class SendEmail extends Command
         ];
 
         $easySms = new EasySms($config);
+        
+        try{
+            $easySms->send($phone, [
+                'template' => 'SMS_156990210',
+            ]);
+        } catch (\Overtrue\EasySms\Exceptions\NoGatewayAvailableException $exception) {
+            $message = $exception->getException('aliyun')->getMessage();
+            dd($message);
+        }
 
-        $phone = $this->ask('pls enter your phone number:');
-
-        $easySms->send($phone, [
-//            'content'  => '您的验证码为: 6379',
-            'template' => 'SMS_156995172',
-//            'data' => [
-//                'code' => 6379
-//            ],
-        ]);
     }
 }
