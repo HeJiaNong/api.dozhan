@@ -13,6 +13,3 @@ dozhan-游戏视频创作----
 配置项目crontab定时任务
 
 配置supervisor 项目的horizon
-
-
-哎，，好像就累些了，网球了
