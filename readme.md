@@ -1,15 +1,12 @@
-dozhan-游戏视频创作----
+# dozhan-游戏视频创作
 
-拉下来，cmposer install
-
-
+`cmposer install`
 
 
-配置好数据库，redis连接，七牛云，sms，smtp
+> 配置database，redis，七牛云，sms，smtp
 
-跑 php artisan migrate --seed
-还要跑啥子我也忘了
+`php artisan migrate`
 
-配置项目crontab定时任务
+> 配置项目crontab定时任务
 
-配置supervisor 项目的horizon
+> 配置supervisor
